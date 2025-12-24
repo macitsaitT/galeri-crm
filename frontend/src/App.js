@@ -1445,22 +1445,18 @@ export default function App() {
   useEffect(() => {
     const initAuth = async () => {
         try {
-            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                await signInWithCustomToken(auth, __initial_auth_token);
-            } else {
-                await signInAnonymously(auth);
-            }
+            // Sabit user ID kullan - tüm cihazlarda aynı
+            const fixedUserId = 'galeri-admin-user-2024';
+            setUser({ uid: fixedUserId });
+            setIsAuthLoading(false);
+            console.log('✅ User set with fixed ID:', fixedUserId);
         } catch (e) {
-            console.error("Firebase Auth Error:", e);
+            console.error("Auth Error:", e);
+            setUser({ uid: 'galeri-admin-user-2024' });
+            setIsAuthLoading(false);
         }
     };
     initAuth();
-    // This listener handles the user object once authenticated/anonymously signed in.
-    return onAuthStateChanged(auth, (u) => {
-        setUser(u);
-        // Only set loading false once the user object is received
-        if(u) setIsAuthLoading(false);
-    });
   }, []);
 
   // --- FIREBASE DATA SUBSCRIPTIONS (Firestore) ---
