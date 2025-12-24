@@ -58,17 +58,21 @@ import {
 } from 'firebase/firestore';
 
 // --- CONFIGURATION ---
-const firebaseConfig = typeof __firebase_config !== 'undefined'
-  ? JSON.parse(__firebase_config)
-  : { apiKey: "", authDomain: "", projectId: "", storageBucket: "", messagingSenderId: "", appId: "" };
+const firebaseConfig = {
+  apiKey: "AIzaSyBLHWzRA3YCKnqPY-azW2rk6YBF6RW8rVQ",
+  authDomain: "galericrm.firebaseapp.com",
+  projectId: "galericrm",
+  storageBucket: "galericrm.firebasestorage.app",
+  messagingSenderId: "817592744736",
+  appId: "1:817592744736:web:ecc3a201c030a3737c7545",
+  measurementId: "G-R9TG832BDD"
+};
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// FIX: appId içindeki slash (/) karakterleri Firestore yol yapısını bozduğu için temizlenmeli.
-const rawAppId = typeof __app_id !== 'undefined' ? String(__app_id) : 'default-app-id';
-const appId = rawAppId.replace(/[^a-zA-Z0-9_-]/g, '_');
+const appId = 'galeri-crm-app';
 
 // --- STATIC DATA & CONSTANTS ---
 const CAR_DATA = {
