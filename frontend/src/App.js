@@ -456,20 +456,56 @@ export default function App() {
     if (!user || isAuthLoading) return;
     const path = `artifacts/${appId}/users/${user.uid}`;
    
-    const unsubInv = onSnapshot(collection(db, path, 'inventory'), s => {
+    console.log("Setting up Firestore subscriptions for path:", path);
+   
+    const unsubInv = onSnapshot(
+      collection(db, path, 'inventory'), 
+      s => {
+        console.log("Inventory snapshot received:", s.docs.length, "items");
         setInventory(s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>new Date(b.entryDate)-new Date(a.entryDate)));
-    }, (error) => console.error("Inventory Snapshot Error:", error));
+      }, 
+      (error) => {
+        console.error("Inventory Snapshot Error:", error);
+        setInventory([]); // Set empty array on error
+      }
+    );
    
-    const unsubTrans = onSnapshot(collection(db, path, 'transactions'), s => {
+    const unsubTrans = onSnapshot(
+      collection(db, path, 'transactions'), 
+      s => {
+        console.log("Transactions snapshot received:", s.docs.length, "items");
         setTransactions(s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>new Date(b.date) - new Date(a.date)));
-    }, (error) => console.error("Transactions Snapshot Error:", error));
+      }, 
+      (error) => {
+        console.error("Transactions Snapshot Error:", error);
+        setTransactions([]);
+      }
+    );
    
-    const unsubProf = onSnapshot(doc(db, path, 'settings', 'profile'), d => {
-        if(d.exists()) setUserProfile(d.data());
-        else setDoc(doc(db, path, 'settings', 'profile'), DEFAULT_PROFILE);
-    }, (error) => console.error("Profile Snapshot Error:", error));
+    const unsubProf = onSnapshot(
+      doc(db, path, 'settings', 'profile'), 
+      d => {
+        if(d.exists()) {
+          console.log("Profile loaded:", d.data());
+          setUserProfile(d.data());
+        } else {
+          console.log("Profile not found, creating default");
+          setDoc(doc(db, path, 'settings', 'profile'), DEFAULT_PROFILE).catch(err => {
+            console.error("Error creating profile:", err);
+          });
+        }
+      }, 
+      (error) => {
+        console.error("Profile Snapshot Error:", error);
+      }
+    );
 
-    return () => { unsubInv(); unsubTrans(); unsubProf(); };
+    return () => { 
+      console.log("Cleaning up Firestore subscriptions");
+      unsubInv(); 
+      unsubTrans(); 
+      unsubProf(); 
+    };
   }, [user, isAuthLoading]);
 
   const showToast = (message, type = 'success') => setToast({ message, type });
