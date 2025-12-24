@@ -1443,22 +1443,32 @@ export default function App() {
   useEffect(() => {
     const initAuth = async () => {
         try {
-            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                await signInWithCustomToken(auth, __initial_auth_token);
-            } else {
-                await signInAnonymously(auth);
-            }
+            await signInAnonymously(auth);
         } catch (e) {
             console.error("Firebase Auth Error:", e);
+            setUser({ uid: 'local-user-' + Date.now() });
+            setIsAuthLoading(false);
         }
     };
     initAuth();
-    // This listener handles the user object once authenticated/anonymously signed in.
-    return onAuthStateChanged(auth, (u) => {
+    
+    const unsubscribe = onAuthStateChanged(auth, (u) => {
         setUser(u);
-        // Only set loading false once the user object is received
         if(u) setIsAuthLoading(false);
     });
+    
+    // Timeout fallback - if auth takes too long
+    const timeout = setTimeout(() => {
+        if (!user) {
+            setUser({ uid: 'local-user-' + Date.now() });
+            setIsAuthLoading(false);
+        }
+    }, 3000);
+    
+    return () => {
+        unsubscribe();
+        clearTimeout(timeout);
+    };
   }, []);
 
   // --- FIREBASE DATA SUBSCRIPTIONS (Firestore) ---
