@@ -1433,9 +1433,13 @@ export default function App() {
     const script = document.createElement('script');
     script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
     script.async = true;
+    script.onload = () => console.log('✅ HTML2PDF loaded');
+    script.onerror = () => console.error('❌ HTML2PDF failed to load');
     document.body.appendChild(script);
     return () => {
-      document.body.removeChild(script);
+      if (document.body.contains(script)) {
+        document.body.removeChild(script);
+      }
     };
   }, []);
 
