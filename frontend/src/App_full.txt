@@ -1,0 +1,1 @@
+Dosya çok büyük olduğu için direkt bulk_file_writer kullanacağım
