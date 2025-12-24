@@ -1398,7 +1398,7 @@ const AddGeneralExpenseModal = ({ isOpen, onClose, onSave }) => {
 
 export default function App() {
   const [user, setUser] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(localStorage.getItem('isAuthenticated') === 'true');
   const [isAuthLoading, setIsAuthLoading] = useState(true);
  
   const [activeView, setActiveView] = useState('dashboard');
