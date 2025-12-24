@@ -418,15 +418,37 @@ export default function App() {
     const initAuth = async () => {
         try {
             await signInAnonymously(auth);
+            console.log("Firebase Auth initialized");
         } catch (e) {
             console.error("Firebase Auth Error:", e);
+            // Fallback: set a dummy user to proceed
+            setUser({ uid: 'local-user-' + Date.now() });
+            setIsAuthLoading(false);
         }
     };
     initAuth();
-    return onAuthStateChanged(auth, (u) => {
+    
+    const unsubscribe = onAuthStateChanged(auth, (u) => {
+        console.log("Auth state changed:", u);
         setUser(u);
-        if(u) setIsAuthLoading(false);
+        if(u) {
+            setIsAuthLoading(false);
+        }
     });
+    
+    // Timeout fallback - if auth takes too long, proceed anyway
+    const timeout = setTimeout(() => {
+        if (!user) {
+            console.log("Auth timeout - proceeding with local user");
+            setUser({ uid: 'local-user-' + Date.now() });
+            setIsAuthLoading(false);
+        }
+    }, 3000);
+    
+    return () => {
+        unsubscribe();
+        clearTimeout(timeout);
+    };
   }, []);
 
   // --- FIREBASE DATA SUBSCRIPTIONS (Firestore) ---
