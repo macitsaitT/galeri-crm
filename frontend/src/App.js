@@ -2561,6 +2561,7 @@ export default function App() {
             newCustomer={newCustomer}
             setNewCustomer={setNewCustomer}
             onSave={handleAddCustomer}
+            inventory={inventory}
         />
         <DepositModal
             isOpen={depositModal.isOpen}
