@@ -180,6 +180,66 @@ frontend:
           agent: "testing"
           comment: "Consignment Cars section is accessible from sidebar. Shows proper empty state when no consignment cars exist. Owner display functionality is implemented."
 
+  - task: "Phone Number Input - Fixed"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Need to test phone number input in customer form - should appear as typed (05308487836) without auto-filling zeros. Placeholder should show 05301234567."
+
+  - task: "Customer Edit Feature - New"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Need to test customer edit functionality - add customer, click edit icon, verify modal opens with correct title, update name, verify changes saved."
+
+  - task: "Interested Car Display on Customer Card"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Need to test if customer has 'İlgilendiği Araç' selected, it displays as yellow highlighted section on customer card and opens car details modal when clicked."
+
+  - task: "Phone Number Format Display"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Need to verify phone numbers display formatted as 0(XXX)XXXXXXX format in customer list."
+
+  - task: "Admin Settings Phone"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "testing"
+          comment: "Need to test phone field in Admin settings allows normal typing without auto-filling zeros."
+
   - task: "Reports Modal (Raporlar)"
     implemented: true
     working: "NA"
