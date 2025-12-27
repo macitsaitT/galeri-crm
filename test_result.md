@@ -151,49 +151,61 @@ frontend:
     implemented: true
     working: "NA"
     file: "/app/frontend/src/App.js"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
     needs_retesting: true
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Implemented customer dropdown in SaleModal to select buyer during sale process. Customer ID and name are saved to vehicle document in Firebase."
+        - working: "NA"
+          agent: "testing"
+          comment: "PARTIAL TESTING: ✅ Car entry working (Toyota Corolla 2023 added successfully), ✅ Customer addition working (Test Müşteri added with phone 05301234567), ❌ Could not access sale modal via 3-dot menu on car cards. Need to verify SaleModal customer dropdown functionality manually."
 
   - task: "Cancel Sale Feature"
     implemented: true
     working: "NA"
     file: "/app/frontend/src/App.js"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
     needs_retesting: true
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Added 'Satışı İptal Et' button in dropdown menu for sold vehicles. Returns vehicle to 'Stokta' status and soft-deletes related sale transactions."
+        - working: "NA"
+          agent: "testing"
+          comment: "TESTING BLOCKED: Could not access sale modal to test cancel sale feature. The 3-dot menu on car cards is not accessible via automated testing. Manual verification required."
 
   - task: "Change Sale Price Feature"
     implemented: true
     working: "NA"
     file: "/app/frontend/src/App.js"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
     needs_retesting: true
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Added 'Fiyat Değiştir' button in dropdown menu for sold vehicles. Opens prompt to enter new sale price and updates both vehicle and transaction records."
+        - working: "NA"
+          agent: "testing"
+          comment: "TESTING BLOCKED: Could not access sale modal to test price change feature. The 3-dot menu on car cards is not accessible via automated testing. Manual verification required."
 
   - task: "Display Buyer Name in Sold Vehicles"
     implemented: true
     working: "NA"
     file: "/app/frontend/src/App.js"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
     needs_retesting: true
     status_history:
         - working: "NA"
           agent: "main"
           comment: "Sold vehicles table now shows buyer name (Alıcı: X) below vehicle info with blue user icon. Also displays sale date."
+        - working: "NA"
+          agent: "testing"
+          comment: "TESTING BLOCKED: Could not complete sale process to verify buyer name display. Need to access sale modal first to test this feature."
 
   - task: "Income/Expense Deletion (Gelir & Gider)"
     implemented: true
