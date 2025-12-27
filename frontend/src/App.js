@@ -106,6 +106,154 @@ const CAR_DATA = {
   "Porsche": ["718", "911", "Panamera", "Macan", "Cayenne", "Taycan"]
 };
 
+// Motor Tipleri - Sahibinden.com formatında
+const ENGINE_DATA = {
+  "Toyota": {
+    "Corolla": ["1.2 T", "1.3", "1.33", "1.4", "1.4 D-4D", "1.5", "1.6", "1.8", "1.8 Hybrid", "2.0", "2.0 D-4D", "2.2 D-4D"],
+    "Yaris": ["1.0", "1.0 VVT-i", "1.3", "1.33", "1.4 D-4D", "1.5", "1.5 Hybrid"],
+    "C-HR": ["1.2 T", "1.8 Hybrid", "2.0 Hybrid"],
+    "RAV4": ["2.0", "2.0 D-4D", "2.2 D-4D", "2.5 Hybrid"],
+    "Corolla Cross": ["1.8 Hybrid", "2.0 Hybrid"],
+    "Camry": ["2.0", "2.5", "2.5 Hybrid"],
+    "Hilux": ["2.4 D-4D", "2.8 D-4D"],
+    "Land Cruiser": ["2.8 D-4D", "3.0 D-4D", "4.0", "4.5 V8 D-4D", "4.6 V8"]
+  },
+  "Mercedes-Benz": {
+    "C 180": ["1.6"],
+    "C 200": ["1.5", "2.0"],
+    "C 220": ["2.0 d", "2.1 CDI"],
+    "C 300": ["2.0"],
+    "E 200": ["2.0"],
+    "E 220": ["2.0 d", "2.1 CDI"],
+    "A 180": ["1.3", "1.5 d"],
+    "A 200": ["1.3", "2.0"],
+    "GLC 200": ["2.0"],
+    "GLC 220": ["2.0 d"],
+    "GLC 250": ["2.0", "2.0 d"],
+    "Vito": ["1.6 CDI", "2.0 CDI", "2.1 CDI"]
+  },
+  "BMW": {
+    "320i": ["2.0"],
+    "320d": ["2.0 d"],
+    "520i": ["2.0"],
+    "520d": ["2.0 d"],
+    "X1": ["1.5", "2.0", "2.0 d"],
+    "X3": ["2.0", "2.0 d", "3.0"],
+    "X5": ["2.0 d", "3.0", "3.0 d", "4.4"]
+  },
+  "Volkswagen": {
+    "Passat": ["1.4 TSI", "1.5 TSI", "1.6 TDI", "2.0 TDI"],
+    "Golf": ["1.0 TSI", "1.2 TSI", "1.4 TSI", "1.5 TSI", "1.6 TDI", "2.0 TDI", "2.0 TSI GTI"],
+    "Polo": ["1.0", "1.0 TSI", "1.2 TSI", "1.4 TDI", "1.6 TDI"],
+    "Tiguan": ["1.4 TSI", "1.5 TSI", "2.0 TDI", "2.0 TSI"],
+    "T-Roc": ["1.0 TSI", "1.5 TSI", "2.0 TDI"],
+    "Caddy": ["1.0 TSI", "1.4 TDI", "1.6 TDI", "2.0 TDI"],
+    "Transporter": ["2.0 TDI"]
+  },
+  "Renault": {
+    "Clio": ["0.9 TCe", "1.0 TCe", "1.2", "1.3 TCe", "1.5 dCi"],
+    "Megane": ["1.2 TCe", "1.3 TCe", "1.5 dCi", "1.6"],
+    "Captur": ["0.9 TCe", "1.0 TCe", "1.2 TCe", "1.3 TCe", "1.5 dCi"],
+    "Kadjar": ["1.2 TCe", "1.3 TCe", "1.5 dCi", "1.6 dCi"],
+    "Taliant": ["1.0 TCe", "1.0 SCe"]
+  },
+  "Fiat": {
+    "Egea": ["1.3 MultiJet", "1.4", "1.4 T-Jet", "1.6 MultiJet"],
+    "500": ["0.9 TwinAir", "1.0 Hybrid", "1.2", "1.4"],
+    "Doblo": ["1.3 MultiJet", "1.6 MultiJet"],
+    "Tipo": ["1.3 MultiJet", "1.4", "1.6", "1.6 MultiJet"],
+    "Panda": ["0.9 TwinAir", "1.0 Hybrid", "1.2"]
+  },
+  "Hyundai": {
+    "i10": ["1.0", "1.2"],
+    "i20": ["1.0 T-GDI", "1.2", "1.4", "1.4 CRDi"],
+    "i30": ["1.0 T-GDI", "1.4", "1.4 CRDi", "1.5", "1.6", "1.6 CRDi", "2.0 N"],
+    "Tucson": ["1.6", "1.6 CRDi", "1.6 T-GDI", "2.0", "2.0 CRDi"],
+    "Kona": ["1.0 T-GDI", "1.6 CRDi", "1.6 T-GDI", "Elektrik"],
+    "Bayon": ["1.0 T-GDI", "1.2", "1.4"],
+    "Elantra": ["1.6", "1.6 CRDi", "2.0"]
+  },
+  "Honda": {
+    "Civic": ["1.0 VTEC Turbo", "1.5 VTEC Turbo", "1.6 i-DTEC", "2.0 Type R"],
+    "Jazz": ["1.3", "1.5 Hybrid"],
+    "CR-V": ["1.5 VTEC Turbo", "2.0 Hybrid", "2.2 i-DTEC"],
+    "HR-V": ["1.5", "1.5 Hybrid", "1.6 i-DTEC"]
+  },
+  "Ford": {
+    "Focus": ["1.0 EcoBoost", "1.5 EcoBoost", "1.5 TDCi", "2.0 TDCi"],
+    "Fiesta": ["1.0 EcoBoost", "1.1", "1.4 TDCi", "1.5 TDCi"],
+    "Puma": ["1.0 EcoBoost", "1.0 EcoBoost Hybrid", "1.5 EcoBoost"],
+    "Kuga": ["1.5 EcoBoost", "1.5 TDCi", "2.0 EcoBoost", "2.0 TDCi", "2.5 Hybrid"],
+    "Ranger": ["2.0 EcoBlue", "2.2 TDCi", "3.2 TDCi"]
+  },
+  "Peugeot": {
+    "208": ["1.0 VTi", "1.2 PureTech", "1.5 BlueHDi", "1.6 BlueHDi", "e-208 Elektrik"],
+    "308": ["1.2 PureTech", "1.5 BlueHDi", "1.6 BlueHDi", "1.6 THP"],
+    "2008": ["1.2 PureTech", "1.5 BlueHDi", "e-2008 Elektrik"],
+    "3008": ["1.2 PureTech", "1.5 BlueHDi", "1.6 THP", "2.0 BlueHDi", "Hybrid"],
+    "5008": ["1.2 PureTech", "1.5 BlueHDi", "2.0 BlueHDi"]
+  },
+  "Opel": {
+    "Corsa": ["1.0", "1.2", "1.2 Turbo", "1.4", "1.5 D", "e-Corsa Elektrik"],
+    "Astra": ["1.0", "1.2 Turbo", "1.4", "1.4 Turbo", "1.5 D", "1.6 CDTI"],
+    "Mokka": ["1.2 Turbo", "1.4", "1.5 D"],
+    "Crossland": ["1.2", "1.2 Turbo", "1.5 D"],
+    "Grandland": ["1.2 Turbo", "1.5 D", "1.6 Turbo", "Hybrid"]
+  },
+  "Skoda": {
+    "Octavia": ["1.0 TSI", "1.4 TSI", "1.5 TSI", "1.6 TDI", "2.0 TDI", "2.0 TSI RS"],
+    "Superb": ["1.4 TSI", "1.5 TSI", "2.0 TDI", "2.0 TSI"],
+    "Kamiq": ["1.0 TSI", "1.5 TSI", "1.6 TDI"],
+    "Karoq": ["1.0 TSI", "1.5 TSI", "1.6 TDI", "2.0 TDI"],
+    "Kodiaq": ["1.4 TSI", "1.5 TSI", "2.0 TDI", "2.0 TSI"]
+  },
+  "Audi": {
+    "A3": ["1.0 TFSI", "1.4 TFSI", "1.5 TFSI", "2.0 TDI", "2.0 TFSI"],
+    "A4": ["1.4 TFSI", "2.0 TDI", "2.0 TFSI", "3.0 TDI"],
+    "A6": ["2.0 TDI", "2.0 TFSI", "3.0 TDI", "3.0 TFSI"],
+    "Q3": ["1.4 TFSI", "2.0 TDI", "2.0 TFSI"],
+    "Q5": ["2.0 TDI", "2.0 TFSI", "3.0 TDI"],
+    "Q7": ["3.0 TDI", "3.0 TFSI", "4.0 TDI"]
+  },
+  "Nissan": {
+    "Qashqai": ["1.2 DIG-T", "1.3 DIG-T", "1.5 dCi", "1.6 DIG-T", "1.7 dCi"],
+    "Juke": ["1.0 DIG-T", "1.2 DIG-T", "1.5 dCi", "1.6"],
+    "X-Trail": ["1.6 dCi", "1.7 dCi", "2.0 dCi", "2.5"]
+  },
+  "Dacia": {
+    "Duster": ["1.0 TCe", "1.3 TCe", "1.5 dCi", "1.6"],
+    "Sandero": ["0.9 TCe", "1.0 TCe", "1.0 SCe", "1.5 dCi"],
+    "Jogger": ["1.0 TCe", "1.0 TCe Hybrid"]
+  },
+  "Kia": {
+    "Sportage": ["1.6", "1.6 CRDi", "1.6 T-GDI", "2.0", "2.0 CRDi"],
+    "Ceed": ["1.0 T-GDI", "1.4", "1.4 CRDi", "1.5 T-GDI", "1.6 CRDi"],
+    "Picanto": ["1.0", "1.2"],
+    "Rio": ["1.0 T-GDI", "1.2", "1.4", "1.4 CRDi"],
+    "Stonic": ["1.0 T-GDI", "1.4"]
+  },
+  "Volvo": {
+    "XC40": ["1.5 T3", "2.0 D3", "2.0 D4", "2.0 T4", "2.0 T5", "Recharge Elektrik"],
+    "XC60": ["2.0 B4", "2.0 B5", "2.0 D4", "2.0 D5", "2.0 T5", "2.0 T6", "2.0 T8 Hybrid"],
+    "XC90": ["2.0 B5", "2.0 D5", "2.0 T5", "2.0 T6", "2.0 T8 Hybrid"],
+    "S60": ["2.0 T4", "2.0 T5", "2.0 D4"],
+    "V60": ["2.0 D3", "2.0 D4", "2.0 T4", "2.0 T5"]
+  },
+  "Citroen": {
+    "C3": ["1.2 PureTech", "1.5 BlueHDi"],
+    "C4": ["1.2 PureTech", "1.5 BlueHDi", "e-C4 Elektrik"],
+    "C5 Aircross": ["1.2 PureTech", "1.5 BlueHDi", "1.6 THP", "Hybrid"],
+    "Berlingo": ["1.2 PureTech", "1.5 BlueHDi"]
+  },
+  "Seat": {
+    "Ibiza": ["1.0", "1.0 TSI", "1.6 TDI"],
+    "Leon": ["1.0 TSI", "1.4 TSI", "1.5 TSI", "2.0 TDI", "2.0 TSI"],
+    "Ateca": ["1.0 TSI", "1.5 TSI", "2.0 TDI"],
+    "Arona": ["1.0 TSI", "1.5 TSI", "1.6 TDI"]
+  },
+  "default": ["Belirtilmemiş"]
+};
+
 const PACKAGE_DATA = {
   "Mercedes-Benz": {
     "C 180": ["AMG Line", "Exclusive", "Avantgarde", "Style", "Standart"],
