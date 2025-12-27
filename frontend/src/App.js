@@ -695,34 +695,47 @@ const PromoCardModal = ({ isOpen, onClose, inventory, userProfile, showToast }) 
             </div>
             <style>{`
                 @media print {
-                    @page { size: A4 portrait; margin: 0; }
-                    body { margin: 0; padding: 0; background: white; }
-                    body * { visibility: hidden; }
-                    #printable-area, #printable-area * { visibility: visible; }
+                    @page { size: A4 portrait; margin: 10mm; }
+                    html, body { 
+                        margin: 0 !important; 
+                        padding: 0 !important; 
+                        background: white !important;
+                        -webkit-print-color-adjust: exact !important;
+                        print-color-adjust: exact !important;
+                    }
+                    body > * { visibility: hidden !important; }
+                    #printable-area, 
+                    #printable-area *, 
+                    #printable-promo-card, 
+                    #printable-promo-card * { 
+                        visibility: visible !important; 
+                    }
                     #printable-area {
-                        position: fixed;
-                        left: 0;
-                        top: 0;
-                        width: 210mm;
-                        height: 297mm;
-                        margin: 0;
-                        padding: 0;
-                        background: white;
-                        z-index: 9999;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        -webkit-print-color-adjust: exact;
-                        print-color-adjust: exact;
+                        position: absolute !important;
+                        left: 0 !important;
+                        top: 0 !important;
+                        width: 100% !important;
+                        height: auto !important;
+                        margin: 0 !important;
+                        padding: 0 !important;
+                        background: white !important;
+                        z-index: 99999 !important;
+                        display: block !important;
+                        overflow: visible !important;
                     }
                     #printable-promo-card {
                         width: 190mm !important;
-                        height: 275mm !important;
+                        height: auto !important;
+                        min-height: 270mm !important;
+                        max-height: 280mm !important;
                         box-shadow: none !important;
                         margin: 0 auto !important;
                         border: none !important;
-                        background: white;
+                        background: white !important;
+                        page-break-inside: avoid !important;
                     }
+                    .print\\:hidden { display: none !important; }
+                    .fixed { position: absolute !important; }
                 }
             `}</style>
         </div>
