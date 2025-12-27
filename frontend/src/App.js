@@ -2457,7 +2457,10 @@ export default function App() {
                                     </div>
                                 )}
                                 <p className="text-xs text-neutral-600 bg-neutral-50 p-2 rounded min-h-[40px]">{c.notes || 'Not yok.'}</p>
-                                <button onClick={(e) => {e.stopPropagation(); setActiveItem(c.id); setActiveItemType('customer'); setModals({...modals, delete: true});}} className="absolute top-2 right-2 p-1 text-neutral-400 hover:text-red-500 rounded-full hover:bg-red-50"><Trash2 size={16}/></button>
+                                <div className="absolute top-2 right-2 flex gap-1">
+                                    <button onClick={(e) => {e.stopPropagation(); setEditingCustomerId(c.id); setNewCustomer({name: c.name, phone: c.phone, type: c.type, notes: c.notes || '', interestedCarId: c.interestedCarId || ''}); setModals({...modals, addCustomer: true});}} className="p-1 text-neutral-400 hover:text-yellow-600 rounded-full hover:bg-yellow-50"><Edit size={16}/></button>
+                                    <button onClick={(e) => {e.stopPropagation(); setActiveItem(c.id); setActiveItemType('customer'); setModals({...modals, delete: true});}} className="p-1 text-neutral-400 hover:text-red-500 rounded-full hover:bg-red-50"><Trash2 size={16}/></button>
+                                </div>
                             </div>
                         );}) : <p className="text-neutral-400 text-sm py-4">Henüz müşteri kaydı yok.</p>}
                     </div>
