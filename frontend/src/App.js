@@ -1919,7 +1919,7 @@ export default function App() {
   const [toast, setToast] = useState({ message: '', type: '' });
 
   const currentYear = new Date().getFullYear();
-  const defaultCar = { brand: '', model: '', year: currentYear, plate: '', km: '', vehicleType: 'Sedan', purchasePrice: '', salePrice: '', description: '', status: 'Stokta', entryDate: new Date().toISOString().split('T')[0], inspectionDate: '', fuelType: 'Dizel', gear: 'Otomatik', ownership: 'stock', ownerName: '', ownerPhone: '', commissionRate: '', photos: [], expertise: {}, packageInfo: '' };
+  const defaultCar = { brand: '', model: '', year: currentYear, plate: '', km: '', vehicleType: 'Sedan', purchasePrice: '', salePrice: '', description: '', status: 'Stokta', entryDate: new Date().toISOString().split('T')[0], inspectionDate: '', fuelType: 'Dizel', gear: 'Otomatik', ownership: 'stock', ownerName: '', ownerPhone: '', commissionRate: '', photos: [], expertise: {}, packageInfo: '', engineType: '' };
   const [newCar, setNewCar] = useState(defaultCar);
   const [newCustomer, setNewCustomer] = useState({ name: '', phone: '', type: 'Potansiyel', notes: '', interestedCarId: '' });
   const [newTransaction, setNewTransaction] = useState({ type: 'expense', category: '', description: '', amount: '', date: new Date().toISOString().split('T')[0] });
