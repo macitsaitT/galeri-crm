@@ -1748,15 +1748,49 @@ export default function App() {
      
       try {
           const path = activeItemType === 'inventory' ? 'inventory' : 'customers';
-          await deleteDoc(doc(db, `artifacts/${appId}/users/${user.uid}`, path, activeItem));
+          // Soft delete - deleted: true yap
+          await updateDoc(doc(db, `artifacts/${appId}/users/${user.uid}`, path, activeItem), {
+              deleted: true,
+              deletedAt: new Date().toISOString()
+          });
          
           setModals(m => ({...m, delete: false}));
           setActiveItem(null);
           setActiveItemType(null);
-          showToast(activeItemType === 'inventory' ? "Araç silindi." : "Müşteri silindi.");
+          showToast(activeItemType === 'inventory' ? "Araç çöp kutusuna taşındı." : "Müşteri çöp kutusuna taşındı.");
       } catch (e) {
-          console.error("Deletion Error:", e);
+          console.error("Soft Delete Error:", e);
           showToast("Silme işlemi başarısız oldu.", "error");
+      }
+  };
+
+  const handlePermanentDelete = async (itemId, itemType) => {
+      if(!user || !itemId || !itemType) return;
+      if (!window.confirm("Kalıcı olarak silmek istediğinize emin misiniz? Bu işlem geri alınamaz!")) return;
+     
+      try {
+          const path = itemType === 'inventory' ? 'inventory' : 'customers';
+          await deleteDoc(doc(db, `artifacts/${appId}/users/${user.uid}`, path, itemId));
+          showToast("Kalıcı olarak silindi.");
+      } catch (e) {
+          console.error("Permanent Delete Error:", e);
+          showToast("Kalıcı silme başarısız.", "error");
+      }
+  };
+
+  const handleRestore = async (itemId, itemType) => {
+      if(!user || !itemId || !itemType) return;
+     
+      try {
+          const path = itemType === 'inventory' ? 'inventory' : 'customers';
+          await updateDoc(doc(db, `artifacts/${appId}/users/${user.uid}`, path, itemId), {
+              deleted: false,
+              deletedAt: null
+          });
+          showToast("Geri yüklendi.");
+      } catch (e) {
+          console.error("Restore Error:", e);
+          showToast("Geri yükleme başarısız.", "error");
       }
   };
 
