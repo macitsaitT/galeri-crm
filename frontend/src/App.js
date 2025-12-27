@@ -1677,11 +1677,12 @@ export default function App() {
   const currentYear = new Date().getFullYear();
   const defaultCar = { brand: '', model: '', year: currentYear, plate: '', km: '', vehicleType: 'Sedan', purchasePrice: '', salePrice: '', description: '', status: 'Stokta', entryDate: new Date().toISOString().split('T')[0], inspectionDate: '', fuelType: 'Dizel', gear: 'Otomatik', ownership: 'stock', ownerName: '', ownerPhone: '', commissionRate: '', photos: [], expertise: {}, packageInfo: '' };
   const [newCar, setNewCar] = useState(defaultCar);
-  const [newCustomer, setNewCustomer] = useState({ name: '', phone: '', type: 'Potansiyel', notes: '' });
+  const [newCustomer, setNewCustomer] = useState({ name: '', phone: '', type: 'Potansiyel', notes: '', interestedCarId: '' });
   const [newTransaction, setNewTransaction] = useState({ type: 'expense', category: '', description: '', amount: '', date: new Date().toISOString().split('T')[0] });
 
   const [modals, setModals] = useState({ addCar: false, addCustomer: false, addTransaction: false, settings: false, delete: false, message: false, analysis: false, carExpenses: false, addGeneralExpense: false, report: false, carDetail: false, deposit: false, promoCard: false });
   const [editingCarId, setEditingCarId] = useState(null);
+  const [editingCustomerId, setEditingCustomerId] = useState(null);
   const [activeCarDetail, setActiveCarDetail] = useState(null);
   const [activeItem, setActiveItem] = useState(null); // Used for Delete Modal (id)
   const [activeItemType, setActiveItemType] = useState(null); // Used for Delete Modal (type)
