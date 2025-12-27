@@ -2463,10 +2463,107 @@ export default function App() {
           }
 
           showToast(`Araç satışı ${formatCurrency(finalPrice)} bedelle tamamlandı.`);
-          setSaleModal({ isOpen: false, carId: null, price: '', employeeShare: '' });
+          setSaleModal({ isOpen: false, carId: null, price: '', employeeShare: '', customerId: '' });
       } catch (err) {
           console.error(err);
           showToast("Satış işlemi kaydedilemedi.", "error");
+      }
+  };
+
+  // Satışı İptal Et
+  const handleCancelSale = async (car) => {
+      if (!user || !car) return;
+      
+      const confirmCancel = window.confirm(`${car.brand} ${car.model} (${car.plate?.toLocaleUpperCase('tr-TR')}) satışını iptal etmek istediğinize emin misiniz?\n\nBu işlem:\n- Aracı tekrar "Stokta" durumuna getirecek\n- İlgili satış işlemlerini silecektir.`);
+      if (!confirmCancel) return;
+      
+      const basePath = `artifacts/${appId}/users/${user.uid}`;
+      
+      try {
+          // 1. Araç satış bilgilerini temizle
+          await updateDoc(doc(db, basePath, 'inventory', car.id), {
+              status: 'Stokta',
+              soldDate: null,
+              customerId: null,
+              customerName: null,
+              employeeShare: null
+          });
+          
+          // 2. Bu araca ait satış ve çalışan payı işlemlerini sil (soft delete)
+          const saleTransactions = transactions.filter(t => 
+              !t.deleted && 
+              t.carId === car.id && 
+              (t.category === 'Araç Satışı' || t.category === 'Çalışan Payı' || t.category === 'Araç Sahibine Ödeme')
+          );
+          
+          for (const trans of saleTransactions) {
+              await updateDoc(doc(db, basePath, 'transactions', trans.id), {
+                  deleted: true,
+                  deletedAt: new Date().toISOString()
+              });
+          }
+          
+          showToast(`${car.brand} ${car.model} satışı iptal edildi. Araç tekrar stoka alındı.`);
+          setActiveMenuId(null);
+      } catch (err) {
+          console.error(err);
+          showToast("Satış iptal edilemedi.", "error");
+      }
+  };
+
+  // Satış Fiyatını Değiştir
+  const handleChangeSalePrice = async (car) => {
+      if (!user || !car) return;
+      
+      const currentPrice = car.salePrice || 0;
+      const newPriceStr = window.prompt(
+          `${car.brand} ${car.model} için yeni satış fiyatını girin:\n\nMevcut Fiyat: ${formatCurrency(currentPrice)}`,
+          currentPrice.toString()
+      );
+      
+      if (newPriceStr === null) return; // Kullanıcı iptal etti
+      
+      const newPrice = parseFloat(newPriceStr.replace(/[^\d]/g, '')) || 0;
+      if (newPrice <= 0) {
+          showToast("Geçerli bir fiyat girin.", "error");
+          return;
+      }
+      
+      if (newPrice === currentPrice) {
+          showToast("Fiyat değişmedi.", "error");
+          return;
+      }
+      
+      const basePath = `artifacts/${appId}/users/${user.uid}`;
+      
+      try {
+          // 1. Araç satış fiyatını güncelle
+          await updateDoc(doc(db, basePath, 'inventory', car.id), {
+              salePrice: newPrice
+          });
+          
+          // 2. İlgili satış gelir işlemini güncelle
+          const saleTransaction = transactions.find(t => 
+              !t.deleted && 
+              t.carId === car.id && 
+              t.category === 'Araç Satışı'
+          );
+          
+          if (saleTransaction) {
+              const deposit = car.depositAmount || 0;
+              const newIncomeAmount = newPrice - deposit;
+              
+              await updateDoc(doc(db, basePath, 'transactions', saleTransaction.id), {
+                  amount: newIncomeAmount > 0 ? newIncomeAmount : 0,
+                  description: `Satış - ${car.plate?.toLocaleUpperCase('tr-TR')} ${car.brand} ${car.model} ${deposit > 0 ? '(Kalan Tutar)' : ''} [Fiyat güncellendi]`
+              });
+          }
+          
+          showToast(`Satış fiyatı ${formatCurrency(newPrice)} olarak güncellendi.`);
+          setActiveMenuId(null);
+      } catch (err) {
+          console.error(err);
+          showToast("Fiyat güncellenemedi.", "error");
       }
   };
 
