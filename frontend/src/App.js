@@ -2881,6 +2881,13 @@ export default function App() {
                                                                     <button onClick={() => initiateDeposit(car.id)} className="w-full px-4 py-2 text-sm hover:bg-neutral-50 flex items-center"><CreditCard size={14} className="mr-2"/> Kapora İşlemi</button>
                                                                </>
                                                              )}
+                                                             {/* Satılan araçlar için özel işlemler */}
+                                                             {car.status === 'Satıldı' && (
+                                                               <>
+                                                                    <button onClick={() => handleChangeSalePrice(car)} className="w-full px-4 py-2 text-sm hover:bg-neutral-50 flex items-center text-blue-600"><Coins size={14} className="mr-2"/> Fiyat Değiştir</button>
+                                                                    <button onClick={() => handleCancelSale(car)} className="w-full px-4 py-2 text-sm hover:bg-orange-50 flex items-center text-orange-600"><RotateCcw size={14} className="mr-2"/> Satışı İptal Et</button>
+                                                               </>
+                                                             )}
                                                              <button onClick={() => {setActiveExpenseCar(car); setModals({...modals, carExpenses: true}); setActiveMenuId(null);}} className="w-full px-4 py-2 text-sm hover:bg-neutral-50 flex items-center"><Receipt size={14} className="mr-2"/> Finans & Masraf</button>
                                                              <button onClick={() => { setEditingCarId(car.id); setNewCar({...car, km: formatNumberInput(car.km), purchasePrice: formatNumberInput(car.purchasePrice), salePrice: formatNumberInput(car.salePrice)}); setModals({...modals, addCar: true}); setActiveMenuId(null); }} className="w-full px-4 py-2 text-sm hover:bg-neutral-50 flex items-center"><Edit size={14} className="mr-2"/> Düzenle</button>
                                                              <div className="border-t border-neutral-100 my-1"></div>
