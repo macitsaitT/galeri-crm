@@ -2209,9 +2209,24 @@ export default function App() {
                         </div>
                         {filteredInventory.length > 0 ? (
                             <table className="w-full text-left text-sm">
-                                <thead className="bg-neutral-50 text-neutral-600 font-medium"><tr><th className="p-4">Araç</th><th className="p-4">Fiyat</th><th className="p-4">Durum</th><th className="p-4">Stok Gün Sayısı</th><th className="p-4 text-right">İşlem</th></tr></thead>
+                                <thead className="bg-neutral-50 text-neutral-600 font-medium">
+                                    <tr>
+                                        <th className="p-4">Araç</th>
+                                        <th className="p-4">{activeView === 'sold' ? 'Satış Fiyatı' : 'Fiyat'}</th>
+                                        <th className="p-4">Durum</th>
+                                        <th className="p-4">{activeView === 'sold' ? 'Kâr/Zarar' : 'Stok Gün Sayısı'}</th>
+                                        <th className="p-4 text-right">İşlem</th>
+                                    </tr>
+                                </thead>
                                 <tbody className="divide-y divide-neutral-100">
-                                    {filteredInventory.map(car => (
+                                    {filteredInventory.map(car => {
+                                        // Satılan araçlar için kâr/zarar hesapla
+                                        const carTrans = transactions.filter(t => t.carId === car.id);
+                                        const totalIncome = carTrans.filter(t => t.type === 'income').reduce((a, c) => a + c.amount, 0);
+                                        const totalExpense = carTrans.filter(t => t.type === 'expense').reduce((a, c) => a + c.amount, 0);
+                                        const profit = totalIncome - totalExpense;
+                                        
+                                        return (
                                         <tr key={car.id} className="hover:bg-neutral-50 cursor-pointer" onClick={() => {setActiveCarDetail(car); setModals({...modals, carDetail: true});}}>
                                             <td className="p-4">
                                                 <div className="font-bold text-black">{car.brand} {car.model}</div>
@@ -2224,14 +2239,20 @@ export default function App() {
                                             </td>
                                             <td className="p-4 font-bold">{formatCurrency(car.salePrice)}</td>
                                             <td className="p-4">
-                                                <span className={`px-2 py-1 rounded text-xs font-bold ${car.status === 'Satıldı' ? 'bg-neutral-100 text-neutral-500' : car.status === 'Kapora Alındı' ? 'bg-orange-100 text-orange-700' : 'bg-green-100 text-green-700'}`}>
+                                                <span className={`px-2 py-1 rounded text-xs font-bold ${car.status === 'Satıldı' ? 'bg-green-100 text-green-700' : car.status === 'Kapora Alındı' ? 'bg-orange-100 text-orange-700' : 'bg-blue-100 text-blue-700'}`}>
                                                     {car.status}
                                                 </span>
                                             </td>
                                             <td className="p-4">
-                                                <span className={`text-xs font-bold ${calculateDaysDifference(car.entryDate) >= 60 ? 'text-red-500' : calculateDaysDifference(car.entryDate) >= 30 ? 'text-yellow-600' : 'text-green-600'}`}>
-                                                    {calculateDaysDifference(car.entryDate)} gün
-                                                </span>
+                                                {activeView === 'sold' ? (
+                                                    <span className={`text-sm font-bold ${profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                                        {profit >= 0 ? '+' : ''}{formatCurrency(profit)}
+                                                    </span>
+                                                ) : (
+                                                    <span className={`text-xs font-bold ${calculateDaysDifference(car.entryDate) >= 60 ? 'text-red-500' : calculateDaysDifference(car.entryDate) >= 30 ? 'text-yellow-600' : 'text-green-600'}`}>
+                                                        {calculateDaysDifference(car.entryDate)} gün
+                                                    </span>
+                                                )}
                                             </td>
                                             <td className="p-4 text-right" onClick={e => e.stopPropagation()}>
                                                 <div className="relative inline-block text-left">
@@ -2254,10 +2275,10 @@ export default function App() {
                                                 </div>
                                             </td>
                                         </tr>
-                                    ))}
+                                    );})}
                                 </tbody>
                             </table>
-                        ) : <div className="p-10 text-center text-neutral-400">Bu kategoride araç bulunamadı.</div>}
+                        ) : <div className="p-10 text-center text-neutral-400">{activeView === 'sold' ? 'Henüz satılan araç yok.' : 'Bu kategoride araç bulunamadı.'}</div>}
                     </div>
                 </div>
             )}
