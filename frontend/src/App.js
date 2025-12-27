@@ -1551,11 +1551,11 @@ const AddCarModal = ({ isOpen, onClose, newCar, setNewCar, onSave, isEditing, sh
                         <select
                             className="input-std"
                             value={newCar.engineType || ''}
-                            onChange={e => setNewCar({...newCar, engineType: e.target.value})}
+                            onChange={handleEngineChange}
                             disabled={!newCar.brand || !newCar.model}
                         >
                             <option value="">Seçiniz</option>
-                            {(ENGINE_DATA[newCar.brand]?.[newCar.model] || ENGINE_DATA.default).map(eng => (
+                            {getAvailableEngines().map(eng => (
                                 <option key={eng} value={eng}>{eng}</option>
                             ))}
                         </select>
