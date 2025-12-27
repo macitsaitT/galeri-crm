@@ -2379,8 +2379,8 @@ export default function App() {
                         <StatCard title="Stok Araç Sayısı" value={inventory.filter(c => !c.deleted && c.ownership === 'stock' && c.status !== 'Satıldı').length} icon={Car} colorClass="bg-black text-white"/>
                         <StatCard title="Konsinye Araç Sayısı" value={inventory.filter(c => !c.deleted && c.ownership === 'consignment' && c.status !== 'Satıldı').length} icon={Handshake} colorClass="bg-purple-600 text-white"/>
                         <StatCard title="Kaporası Alınan" value={inventory.filter(c => !c.deleted && c.status === 'Kapora Alındı').length} icon={CreditCard} colorClass="bg-orange-500 text-white"/>
-                        <StatCard title="Bu Ay Satış" value={transactions.filter(t => t.type === 'income' && t.category === 'Araç Satışı' && t.date.startsWith(new Date().toISOString().substring(0, 7))).length} icon={TrendingUp} colorClass="bg-green-600 text-white"/>
-                        <StatCard title="Kasa Durumu" value={formatCurrency(transactions.reduce((acc, t) => acc + (t.type === 'income' ? (Number(t.amount) || 0) : -(Number(t.amount) || 0)), 0))} icon={Wallet} colorClass="bg-yellow-500 text-black"/>
+                        <StatCard title="Bu Ay Satış" value={transactions.filter(t => !t.deleted && t.type === 'income' && t.category === 'Araç Satışı' && t.date.startsWith(new Date().toISOString().substring(0, 7))).length} icon={TrendingUp} colorClass="bg-green-600 text-white"/>
+                        <StatCard title="Kasa Durumu" value={formatCurrency(transactions.filter(t => !t.deleted).reduce((acc, t) => acc + (t.type === 'income' ? (Number(t.amount) || 0) : -(Number(t.amount) || 0)), 0))} icon={Wallet} colorClass="bg-yellow-500 text-black"/>
                     </div>
                 </div>
             )}
