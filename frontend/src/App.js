@@ -601,9 +601,14 @@ const PromoCardModal = ({ isOpen, onClose, inventory, userProfile, showToast }) 
                     {selectedCar ? (
                         <div id="printable-promo-card" className="bg-white w-[190mm] h-[275mm] shadow-2xl relative flex flex-col print:shadow-none print:w-[190mm] print:h-[275mm] print:m-0 overflow-hidden box-border bg-white text-black mx-auto">
                             <div className="h-[40mm] bg-black text-white flex flex-col justify-center items-center relative overflow-hidden shrink-0 print:bg-black print:text-white" style={{WebkitPrintColorAdjust: 'exact'}}>
-                                <div className="relative z-10 text-center">
-                                    <h1 className="text-4xl font-black tracking-tighter mb-1 uppercase">ASLANBAŞ OTO A.Ş.</h1>
-                                    <p className="text-xs tracking-[0.3em] uppercase text-neutral-400 font-bold">GÜVENİLİR 2. EL ARAÇ MERKEZİ</p>
+                                <div className="relative z-10 text-center flex items-center gap-4">
+                                    {userProfile.logo && (
+                                        <img src={userProfile.logo} alt="Logo" className="h-16 w-16 object-contain rounded-lg"/>
+                                    )}
+                                    <div>
+                                        <h1 className="text-4xl font-black tracking-tighter mb-1 uppercase">ASLANBAŞ OTO A.Ş.</h1>
+                                        <p className="text-xs tracking-[0.3em] uppercase text-neutral-400 font-bold">GÜVENİLİR 2. EL ARAÇ MERKEZİ</p>
+                                    </div>
                                 </div>
                                 <div className="absolute top-0 right-0 w-24 h-24 bg-yellow-500 transform rotate-45 translate-x-12 -translate-y-12 opacity-30"></div>
                                 <div className="absolute bottom-0 left-0 w-16 h-16 bg-yellow-500 transform rotate-45 -translate-x-8 translate-y-8 opacity-30"></div>
