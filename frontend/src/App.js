@@ -2416,6 +2416,7 @@ export default function App() {
             transactions={transactions}
             inventory={inventory}
             showToast={showToast}
+            userProfile={userProfile}
         />
         <SettingsModal
             isOpen={modals.settings}
