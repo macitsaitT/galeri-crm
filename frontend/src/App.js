@@ -1493,11 +1493,29 @@ const AddCarModal = ({ isOpen, onClose, newCar, setNewCar, onSave, isEditing, sh
       onClose();
   }
 
-  const getAvailablePackages = () => {
-      if (newCar.brand && newCar.model) {
-          return PACKAGE_DATA[newCar.brand]?.[newCar.model] || PACKAGE_DATA.default;
+  // Motor seçeneklerini al - VEHICLE_DATA yapısından
+  const getAvailableEngines = () => {
+      if (newCar.brand && newCar.model && VEHICLE_DATA[newCar.brand]?.[newCar.model]) {
+          return Object.keys(VEHICLE_DATA[newCar.brand][newCar.model]);
       }
-      return PACKAGE_DATA.default;
+      return Object.keys(VEHICLE_DATA.default?.default || {});
+  };
+
+  // Paket seçeneklerini al - Motor seçimine göre
+  const getAvailablePackages = () => {
+      if (newCar.brand && newCar.model && newCar.engineType) {
+          return VEHICLE_DATA[newCar.brand]?.[newCar.model]?.[newCar.engineType] || VEHICLE_DATA.default?.default?.default || ["Standart"];
+      }
+      if (newCar.brand && newCar.model) {
+          // Motor seçilmemişse tüm paketleri birleştir
+          const allPackages = new Set();
+          const modelData = VEHICLE_DATA[newCar.brand]?.[newCar.model];
+          if (modelData) {
+              Object.values(modelData).forEach(packages => packages.forEach(p => allPackages.add(p)));
+          }
+          return allPackages.size > 0 ? Array.from(allPackages) : VEHICLE_DATA.default?.default?.default || ["Standart"];
+      }
+      return VEHICLE_DATA.default?.default?.default || ["Standart"];
   };
 
   return (
