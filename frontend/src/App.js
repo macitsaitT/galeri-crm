@@ -281,17 +281,17 @@ const PACKAGE_DATA = {
     "e": ["Base", "Advance", "Standart"]
   },
   "Hyundai": {
-    "i10": ["Style", "Elite", "Standart"],
-    "i20": ["Style", "Elite", "Platinum", "N Line", "Standart"],
-    "i30": ["Style", "Elite", "Platinum", "N Line", "N", "Standart"],
-    "Elantra": ["Style", "Elite", "Platinum", "N Line", "Standart"],
-    "Tucson": ["Style", "Elite", "Platinum", "N Line", "Standart"],
-    "Santa Fe": ["Style", "Elite", "Platinum", "Standart"],
-    "Kona": ["Style", "Elite", "Platinum", "N Line", "N", "Standart"],
-    "Bayon": ["Style", "Elite", "Platinum", "Standart"],
-    "Ioniq": ["Style", "Elite", "Platinum", "Standart"],
-    "Ioniq 5": ["Base", "Inspiration", "Ultimate", "Standart"],
-    "Ioniq 6": ["Base", "Inspiration", "Ultimate", "Standart"],
+    "i10": ["Jump", "Style", "Elite", "Standart"],
+    "i20": ["Jump", "Style", "Elite", "Elite Platinum", "N Line", "Standart"],
+    "i30": ["Style", "Elite", "Elite Plus", "N Line", "N", "Standart"],
+    "Elantra": ["Style", "Elite", "Elite Plus", "N Line", "Standart"],
+    "Tucson": ["Style", "Elite", "Elite Plus", "N Line", "Standart"],
+    "Santa Fe": ["Style", "Elite", "Elite Plus", "Standart"],
+    "Kona": ["Style", "Elite", "Elite Plus", "N Line", "N", "Electric", "Standart"],
+    "Bayon": ["Style", "Elite", "Elite Plus", "Standart"],
+    "Ioniq": ["Style", "Elite", "Elite Plus", "Standart"],
+    "Ioniq 5": ["Style", "Elite", "Elite Plus", "Standart"],
+    "Ioniq 6": ["Style", "Elite", "Elite Plus", "Standart"],
     "Staria": ["Style", "Elite", "Premium", "Standart"]
   },
   "Peugeot": {
