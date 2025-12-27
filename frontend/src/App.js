@@ -2367,7 +2367,7 @@ export default function App() {
   };
 
   const initiateSale = (car) => {
-      setSaleModal({ isOpen: true, carId: car.id, price: formatNumberInput(car.salePrice) });
+      setSaleModal({ isOpen: true, carId: car.id, price: formatNumberInput(car.salePrice), employeeShare: '' });
       setActiveMenuId(null);
   };
 
