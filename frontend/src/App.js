@@ -2040,10 +2040,12 @@ export default function App() {
   };
 
   const filteredInventory = activeView === 'consignment'
-    ? inventory.filter(c => c.ownership === 'consignment' && c.status !== 'Satıldı')
+    ? inventory.filter(c => c.ownership === 'consignment' && c.status !== 'Satıldı' && !c.deleted)
     : activeView === 'inventory'
-    ? inventory.filter(c => c.ownership !== 'consignment' && c.status !== 'Satıldı')
-    : inventory;
+    ? inventory.filter(c => c.ownership !== 'consignment' && c.status !== 'Satıldı' && !c.deleted)
+    : activeView === 'trash'
+    ? inventory.filter(c => c.deleted)
+    : inventory.filter(c => !c.deleted);
 
   if (isAuthLoading) return <div className="min-h-screen bg-black flex items-center justify-center text-white"><Loader2 className="animate-spin mr-2"/> Uygulama Yükleniyor...</div>;
   if (!isAuthenticated) return <LoginScreen onLogin={handleLocalLogin} onReset={handlePasswordReset} error={loginError} />;
