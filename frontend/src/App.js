@@ -2621,11 +2621,12 @@ export default function App() {
         />
         <AddCustomerModal
             isOpen={modals.addCustomer}
-            onClose={() => setModals({...modals, addCustomer: false})}
+            onClose={() => {setModals({...modals, addCustomer: false}); setEditingCustomerId(null); setNewCustomer({ name: '', phone: '', type: 'Potansiyel', notes: '', interestedCarId: '' });}}
             newCustomer={newCustomer}
             setNewCustomer={setNewCustomer}
             onSave={handleAddCustomer}
             inventory={inventory}
+            isEditing={!!editingCustomerId}
         />
         <DepositModal
             isOpen={depositModal.isOpen}
