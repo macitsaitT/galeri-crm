@@ -2839,6 +2839,18 @@ export default function App() {
                                                         <Handshake size={12}/> Sahibi: {car.ownerName}
                                                     </div>
                                                 )}
+                                                {/* Satılan araçlar için alıcı bilgisi */}
+                                                {activeView === 'sold' && car.customerName && (
+                                                    <div className="text-xs text-blue-600 font-medium mt-1 flex items-center gap-1">
+                                                        <User size={12}/> Alıcı: {car.customerName}
+                                                    </div>
+                                                )}
+                                                {/* Satış tarihi */}
+                                                {activeView === 'sold' && car.soldDate && (
+                                                    <div className="text-xs text-neutral-400 mt-1">
+                                                        Satış: {formatDate(car.soldDate)}
+                                                    </div>
+                                                )}
                                             </td>
                                             <td className="p-4 font-bold">{formatCurrency(car.salePrice)}</td>
                                             <td className="p-4">
