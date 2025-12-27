@@ -3108,6 +3108,9 @@ export default function App() {
             onConfirm={handleConfirmSale}
             price={saleModal.price}
             setPrice={(val) => setSaleModal({ ...saleModal, price: val })}
+            employeeShare={saleModal.employeeShare}
+            setEmployeeShare={(val) => setSaleModal({ ...saleModal, employeeShare: val })}
+            car={inventory.find(c => c.id === saleModal.carId)}
         />
         <PromoCardModal
             isOpen={modals.promoCard}
