@@ -1465,6 +1465,8 @@ const AddCarModal = ({ isOpen, onClose, newCar, setNewCar, onSave, isEditing, sh
  
   const handleModelChange = (e) => setNewCar({ ...newCar, model: e.target.value, packageInfo: '', engineType: '' });
 
+  const handleEngineChange = (e) => setNewCar({ ...newCar, engineType: e.target.value, packageInfo: '' });
+
   const handleNumberChange = (e, field) => setNewCar({ ...newCar, [field]: formatNumberInput(e.target.value) });
  
   const handlePhotoUpload = async (e) => {
