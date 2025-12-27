@@ -106,152 +106,422 @@ const CAR_DATA = {
   "Porsche": ["718", "911", "Panamera", "Macan", "Cayenne", "Taycan"]
 };
 
-// Motor Tipleri - Sahibinden.com formatında
-const ENGINE_DATA = {
+// Motor Tipleri ve Paketleri - Sahibinden.com formatında
+// Yapı: VEHICLE_DATA[marka][model][motor] = [paketler]
+const VEHICLE_DATA = {
   "Toyota": {
-    "Corolla": ["1.2 T", "1.3", "1.33", "1.4", "1.4 D-4D", "1.5", "1.6", "1.8", "1.8 Hybrid", "2.0", "2.0 D-4D", "2.2 D-4D"],
-    "Yaris": ["1.0", "1.0 VVT-i", "1.3", "1.33", "1.4 D-4D", "1.5", "1.5 Hybrid"],
-    "C-HR": ["1.2 T", "1.8 Hybrid", "2.0 Hybrid"],
-    "RAV4": ["2.0", "2.0 D-4D", "2.2 D-4D", "2.5 Hybrid"],
-    "Corolla Cross": ["1.8 Hybrid", "2.0 Hybrid"],
-    "Camry": ["2.0", "2.5", "2.5 Hybrid"],
-    "Hilux": ["2.4 D-4D", "2.8 D-4D"],
-    "Land Cruiser": ["2.8 D-4D", "3.0 D-4D", "4.0", "4.5 V8 D-4D", "4.6 V8"]
-  },
-  "Mercedes-Benz": {
-    "C 180": ["1.6"],
-    "C 200": ["1.5", "2.0"],
-    "C 220": ["2.0 d", "2.1 CDI"],
-    "C 300": ["2.0"],
-    "E 200": ["2.0"],
-    "E 220": ["2.0 d", "2.1 CDI"],
-    "A 180": ["1.3", "1.5 d"],
-    "A 200": ["1.3", "2.0"],
-    "GLC 200": ["2.0"],
-    "GLC 220": ["2.0 d"],
-    "GLC 250": ["2.0", "2.0 d"],
-    "Vito": ["1.6 CDI", "2.0 CDI", "2.1 CDI"]
-  },
-  "BMW": {
-    "320i": ["2.0"],
-    "320d": ["2.0 d"],
-    "520i": ["2.0"],
-    "520d": ["2.0 d"],
-    "X1": ["1.5", "2.0", "2.0 d"],
-    "X3": ["2.0", "2.0 d", "3.0"],
-    "X5": ["2.0 d", "3.0", "3.0 d", "4.4"]
+    "Corolla": {
+      "1.2 T": ["Dream", "Flame", "Vision", "Standart"],
+      "1.3": ["Terra", "Comfort", "Elegant", "Standart"],
+      "1.33": ["Life", "Fun", "Elegant", "Standart"],
+      "1.4": ["Terra", "Comfort", "Elegant", "Standart"],
+      "1.4 D-4D": ["Terra", "Comfort", "Elegant", "Active", "Standart"],
+      "1.5": ["Dream", "Flame", "Vision", "Standart"],
+      "1.6": ["Terra", "Comfort", "Elegant", "Executive", "Standart"],
+      "1.8": ["Dream", "Dream X-Pack", "Flame", "Flame X-Pack", "Passion", "Passion X-Pack", "Vision", "Vision Plus", "Standart"],
+      "1.8 Hybrid": ["Dream", "Dream X-Pack", "Flame", "Flame X-Pack", "Passion", "Passion X-Pack", "Vision", "Vision Plus", "Standart"],
+      "2.0": ["Dream", "Flame", "Passion", "Standart"],
+      "2.0 D-4D": ["Terra", "Comfort", "Elegant", "Executive", "Standart"],
+      "2.2 D-4D": ["Elegant", "Executive", "Standart"]
+    },
+    "Yaris": {
+      "1.0": ["Active", "Fun", "Standart"],
+      "1.0 VVT-i": ["Active", "Fun", "Cool", "Standart"],
+      "1.3": ["Active", "Fun", "Cool", "Sol", "Standart"],
+      "1.33": ["Active", "Fun", "Cool", "Sol", "Life", "Standart"],
+      "1.4 D-4D": ["Active", "Sol", "Executive", "Standart"],
+      "1.5": ["Dream", "Flame", "Vision", "Standart"],
+      "1.5 Hybrid": ["Dream", "Flame", "Vision", "Style", "Standart"]
+    },
+    "C-HR": {
+      "1.2 T": ["Dream", "Flame", "Passion", "Standart"],
+      "1.8 Hybrid": ["Dream", "Dream X-Pack", "Flame", "Flame X-Pack", "Passion", "Passion X-Pack", "Standart"],
+      "2.0 Hybrid": ["Dream", "Flame", "Passion", "Passion X-Pack", "Standart"]
+    },
+    "RAV4": {
+      "2.0": ["Dream", "Flame", "Passion", "Adventure", "Standart"],
+      "2.0 D-4D": ["Active", "Elegant", "Executive", "Standart"],
+      "2.2 D-4D": ["Active", "Elegant", "Executive", "Standart"],
+      "2.5 Hybrid": ["Dream", "Flame", "Passion", "Adventure", "Standart"]
+    },
+    "Corolla Cross": {
+      "1.8 Hybrid": ["Dream", "Flame", "Passion", "Adventure", "Standart"],
+      "2.0 Hybrid": ["Dream", "Flame", "Passion", "Adventure", "Standart"]
+    },
+    "Camry": {
+      "2.0": ["Passion", "Executive", "Standart"],
+      "2.5": ["Passion", "Executive", "Standart"],
+      "2.5 Hybrid": ["Passion", "Passion Advanced", "Executive", "Standart"]
+    },
+    "Hilux": {
+      "2.4 D-4D": ["Life", "Style", "Adventure", "Standart"],
+      "2.8 D-4D": ["Style", "Adventure", "Invincible", "Standart"]
+    }
   },
   "Volkswagen": {
-    "Passat": ["1.4 TSI", "1.5 TSI", "1.6 TDI", "2.0 TDI"],
-    "Golf": ["1.0 TSI", "1.2 TSI", "1.4 TSI", "1.5 TSI", "1.6 TDI", "2.0 TDI", "2.0 TSI GTI"],
-    "Polo": ["1.0", "1.0 TSI", "1.2 TSI", "1.4 TDI", "1.6 TDI"],
-    "Tiguan": ["1.4 TSI", "1.5 TSI", "2.0 TDI", "2.0 TSI"],
-    "T-Roc": ["1.0 TSI", "1.5 TSI", "2.0 TDI"],
-    "Caddy": ["1.0 TSI", "1.4 TDI", "1.6 TDI", "2.0 TDI"],
-    "Transporter": ["2.0 TDI"]
-  },
-  "Renault": {
-    "Clio": ["0.9 TCe", "1.0 TCe", "1.2", "1.3 TCe", "1.5 dCi"],
-    "Megane": ["1.2 TCe", "1.3 TCe", "1.5 dCi", "1.6"],
-    "Captur": ["0.9 TCe", "1.0 TCe", "1.2 TCe", "1.3 TCe", "1.5 dCi"],
-    "Kadjar": ["1.2 TCe", "1.3 TCe", "1.5 dCi", "1.6 dCi"],
-    "Taliant": ["1.0 TCe", "1.0 SCe"]
+    "Passat": {
+      "1.4 TSI": ["Trendline", "Comfortline", "Highline", "R-Line", "Standart"],
+      "1.5 TSI": ["Business", "Elegance", "R-Line", "Standart"],
+      "1.6 TDI": ["Trendline", "Comfortline", "Highline", "Standart"],
+      "2.0 TDI": ["Comfortline", "Highline", "R-Line", "Elegance", "Standart"]
+    },
+    "Golf": {
+      "1.0 TSI": ["Trendline", "Comfortline", "Standart"],
+      "1.2 TSI": ["Trendline", "Comfortline", "Highline", "Standart"],
+      "1.4 TSI": ["Comfortline", "Highline", "R-Line", "Standart"],
+      "1.5 TSI": ["Life", "Style", "R-Line", "Standart"],
+      "1.6 TDI": ["Trendline", "Comfortline", "Highline", "Standart"],
+      "2.0 TDI": ["Comfortline", "Highline", "R-Line", "Standart"],
+      "2.0 TSI GTI": ["GTI", "GTI Performance", "Clubsport", "Standart"]
+    },
+    "Polo": {
+      "1.0": ["Trendline", "Comfortline", "Standart"],
+      "1.0 TSI": ["Life", "Style", "R-Line", "Standart"],
+      "1.2 TSI": ["Trendline", "Comfortline", "Highline", "Standart"],
+      "1.4 TDI": ["Trendline", "Comfortline", "Standart"],
+      "1.6 TDI": ["Comfortline", "Highline", "Standart"]
+    },
+    "Tiguan": {
+      "1.4 TSI": ["Trendline", "Comfortline", "Highline", "Standart"],
+      "1.5 TSI": ["Life", "Elegance", "R-Line", "Standart"],
+      "2.0 TDI": ["Comfortline", "Highline", "R-Line", "Elegance", "Standart"],
+      "2.0 TSI": ["R-Line", "R", "Standart"]
+    },
+    "T-Roc": {
+      "1.0 TSI": ["Life", "Style", "Standart"],
+      "1.5 TSI": ["Life", "Style", "R-Line", "Standart"],
+      "2.0 TDI": ["Style", "R-Line", "Standart"]
+    }
   },
   "Fiat": {
-    "Egea": ["1.3 MultiJet", "1.4", "1.4 T-Jet", "1.6 MultiJet"],
-    "500": ["0.9 TwinAir", "1.0 Hybrid", "1.2", "1.4"],
-    "Doblo": ["1.3 MultiJet", "1.6 MultiJet"],
-    "Tipo": ["1.3 MultiJet", "1.4", "1.6", "1.6 MultiJet"],
-    "Panda": ["0.9 TwinAir", "1.0 Hybrid", "1.2"]
+    "Egea": {
+      "1.3 MultiJet": ["Easy", "Urban", "Lounge", "Cross", "Standart"],
+      "1.4": ["Easy", "Urban", "Urban Plus", "Lounge", "Standart"],
+      "1.4 T-Jet": ["Urban Plus", "Lounge", "Cross Plus", "Standart"],
+      "1.6 MultiJet": ["Urban", "Urban Plus", "Lounge", "Cross", "Cross Plus", "Standart"]
+    },
+    "500": {
+      "0.9 TwinAir": ["Pop", "Lounge", "Sport", "Standart"],
+      "1.0 Hybrid": ["Pop", "Lounge", "La Prima", "Standart"],
+      "1.2": ["Pop", "Lounge", "Sport", "Standart"],
+      "1.4": ["Sport", "Abarth", "Standart"]
+    },
+    "Doblo": {
+      "1.3 MultiJet": ["Easy", "Safeline", "Premio", "Standart"],
+      "1.6 MultiJet": ["Easy", "Safeline", "Premio", "Trekking", "Standart"]
+    },
+    "Tipo": {
+      "1.3 MultiJet": ["Easy", "City Life", "Standart"],
+      "1.4": ["Easy", "City Life", "Life", "Standart"],
+      "1.6": ["Life", "Cross", "Standart"],
+      "1.6 MultiJet": ["City Life", "Life", "Cross", "Sport", "Standart"]
+    }
+  },
+  "Renault": {
+    "Clio": {
+      "0.9 TCe": ["Joy", "Touch", "Icon", "Standart"],
+      "1.0 TCe": ["Joy", "Touch", "Icon", "RS Line", "Standart"],
+      "1.2": ["Authentique", "Expression", "Standart"],
+      "1.3 TCe": ["Touch", "Icon", "Techno", "RS Line", "Standart"],
+      "1.5 dCi": ["Joy", "Touch", "Icon", "Standart"]
+    },
+    "Megane": {
+      "1.2 TCe": ["Joy", "Touch", "Icon", "Standart"],
+      "1.3 TCe": ["Joy", "Touch", "Icon", "RS Line", "Standart"],
+      "1.5 dCi": ["Joy", "Touch", "Icon", "Standart"],
+      "1.6": ["Expression", "Privilege", "Dynamique", "Standart"]
+    },
+    "Captur": {
+      "0.9 TCe": ["Joy", "Touch", "Standart"],
+      "1.0 TCe": ["Joy", "Touch", "Icon", "Standart"],
+      "1.3 TCe": ["Touch", "Icon", "Techno", "RS Line", "Standart"],
+      "1.5 dCi": ["Joy", "Touch", "Icon", "Standart"]
+    },
+    "Taliant": {
+      "1.0 TCe": ["Joy", "Touch", "Techno", "Standart"],
+      "1.0 SCe": ["Joy", "Touch", "Standart"]
+    }
   },
   "Hyundai": {
-    "i10": ["1.0", "1.2"],
-    "i20": ["1.0 T-GDI", "1.2", "1.4", "1.4 CRDi"],
-    "i30": ["1.0 T-GDI", "1.4", "1.4 CRDi", "1.5", "1.6", "1.6 CRDi", "2.0 N"],
-    "Tucson": ["1.6", "1.6 CRDi", "1.6 T-GDI", "2.0", "2.0 CRDi"],
-    "Kona": ["1.0 T-GDI", "1.6 CRDi", "1.6 T-GDI", "Elektrik"],
-    "Bayon": ["1.0 T-GDI", "1.2", "1.4"],
-    "Elantra": ["1.6", "1.6 CRDi", "2.0"]
+    "i10": {
+      "1.0": ["Jump", "Style", "Standart"],
+      "1.2": ["Style", "Elite", "Standart"]
+    },
+    "i20": {
+      "1.0 T-GDI": ["Style", "Elite", "Elite Plus", "N Line", "Standart"],
+      "1.2": ["Jump", "Style", "Standart"],
+      "1.4": ["Style", "Elite", "Elite Plus", "Standart"],
+      "1.4 CRDi": ["Style", "Elite", "Elite Plus", "Standart"]
+    },
+    "i30": {
+      "1.0 T-GDI": ["Style", "Elite", "Standart"],
+      "1.4": ["Style", "Elite", "Standart"],
+      "1.5": ["Style", "Elite", "Elite Plus", "N Line", "Standart"],
+      "1.6": ["Style", "Elite", "Elite Plus", "Standart"],
+      "1.6 CRDi": ["Style", "Elite", "Elite Plus", "Standart"],
+      "2.0 N": ["N", "N Performance", "Standart"]
+    },
+    "Tucson": {
+      "1.6": ["Style", "Elite", "Standart"],
+      "1.6 CRDi": ["Style", "Elite", "Elite Plus", "Standart"],
+      "1.6 T-GDI": ["Style", "Elite", "Elite Plus", "N Line", "Standart"],
+      "2.0": ["Style", "Elite", "Standart"],
+      "2.0 CRDi": ["Style", "Elite", "Elite Plus", "Standart"]
+    },
+    "Kona": {
+      "1.0 T-GDI": ["Style", "Elite", "Standart"],
+      "1.6 CRDi": ["Style", "Elite", "Elite Plus", "Standart"],
+      "1.6 T-GDI": ["Style", "Elite", "Elite Plus", "N Line", "Standart"],
+      "Elektrik": ["Style", "Elite", "Elite Plus", "Standart"]
+    }
   },
-  "Honda": {
-    "Civic": ["1.0 VTEC Turbo", "1.5 VTEC Turbo", "1.6 i-DTEC", "2.0 Type R"],
-    "Jazz": ["1.3", "1.5 Hybrid"],
-    "CR-V": ["1.5 VTEC Turbo", "2.0 Hybrid", "2.2 i-DTEC"],
-    "HR-V": ["1.5", "1.5 Hybrid", "1.6 i-DTEC"]
+  "Mercedes-Benz": {
+    "C 180": {
+      "1.6": ["Avantgarde", "AMG Line", "Exclusive", "Standart"]
+    },
+    "C 200": {
+      "1.5": ["Avantgarde", "AMG Line", "Exclusive", "Standart"],
+      "2.0": ["Avantgarde", "AMG Line", "Exclusive", "Standart"]
+    },
+    "C 220": {
+      "2.0 d": ["Avantgarde", "AMG Line", "Exclusive", "Standart"],
+      "2.1 CDI": ["Avantgarde", "AMG Line", "Standart"]
+    },
+    "E 200": {
+      "2.0": ["Avantgarde", "AMG Line", "Exclusive", "Standart"]
+    },
+    "E 220": {
+      "2.0 d": ["Avantgarde", "AMG Line", "Exclusive", "Standart"],
+      "2.1 CDI": ["Avantgarde", "AMG Line", "Standart"]
+    },
+    "A 180": {
+      "1.3": ["Style", "Progressive", "AMG Line", "Standart"],
+      "1.5 d": ["Style", "Progressive", "AMG Line", "Standart"]
+    },
+    "A 200": {
+      "1.3": ["Style", "Progressive", "AMG Line", "Standart"],
+      "2.0": ["AMG Line", "Edition 1", "Standart"]
+    },
+    "GLC 200": {
+      "2.0": ["Avantgarde", "AMG Line", "Exclusive", "Standart"]
+    },
+    "GLC 250": {
+      "2.0": ["Avantgarde", "AMG Line", "Exclusive", "Standart"],
+      "2.0 d": ["Avantgarde", "AMG Line", "Exclusive", "Standart"]
+    }
+  },
+  "BMW": {
+    "320i": {
+      "2.0": ["Sport Line", "Luxury Line", "M Sport", "Standart"]
+    },
+    "320d": {
+      "2.0 d": ["Sport Line", "Luxury Line", "M Sport", "Standart"]
+    },
+    "520i": {
+      "2.0": ["Executive", "Luxury Line", "M Sport", "Standart"]
+    },
+    "520d": {
+      "2.0 d": ["Executive", "Luxury Line", "M Sport", "Standart"]
+    },
+    "X1": {
+      "1.5": ["sDrive16i", "sDrive18i", "Standart"],
+      "2.0": ["sDrive20i", "xDrive20i", "M Sport", "Standart"],
+      "2.0 d": ["sDrive18d", "xDrive20d", "M Sport", "Standart"]
+    },
+    "X3": {
+      "2.0": ["xDrive20i", "M Sport", "Standart"],
+      "2.0 d": ["xDrive20d", "M Sport", "Standart"],
+      "3.0": ["xDrive30i", "M40i", "Standart"]
+    }
   },
   "Ford": {
-    "Focus": ["1.0 EcoBoost", "1.5 EcoBoost", "1.5 TDCi", "2.0 TDCi"],
-    "Fiesta": ["1.0 EcoBoost", "1.1", "1.4 TDCi", "1.5 TDCi"],
-    "Puma": ["1.0 EcoBoost", "1.0 EcoBoost Hybrid", "1.5 EcoBoost"],
-    "Kuga": ["1.5 EcoBoost", "1.5 TDCi", "2.0 EcoBoost", "2.0 TDCi", "2.5 Hybrid"],
-    "Ranger": ["2.0 EcoBlue", "2.2 TDCi", "3.2 TDCi"]
+    "Focus": {
+      "1.0 EcoBoost": ["Trend", "Titanium", "ST-Line", "Standart"],
+      "1.5 EcoBoost": ["Titanium", "ST-Line", "Vignale", "Standart"],
+      "1.5 TDCi": ["Trend", "Titanium", "ST-Line", "Standart"],
+      "2.0 TDCi": ["Titanium", "ST-Line", "Vignale", "Standart"]
+    },
+    "Fiesta": {
+      "1.0 EcoBoost": ["Trend", "Titanium", "ST-Line", "Standart"],
+      "1.1": ["Trend", "Titanium", "Standart"],
+      "1.4 TDCi": ["Trend", "Titanium", "Standart"],
+      "1.5 TDCi": ["Titanium", "ST-Line", "Standart"]
+    },
+    "Puma": {
+      "1.0 EcoBoost": ["Titanium", "ST-Line", "Standart"],
+      "1.0 EcoBoost Hybrid": ["Titanium", "ST-Line", "Vignale", "Standart"],
+      "1.5 EcoBoost": ["ST-Line", "ST", "Standart"]
+    },
+    "Kuga": {
+      "1.5 EcoBoost": ["Titanium", "ST-Line", "Standart"],
+      "1.5 TDCi": ["Trend", "Titanium", "Standart"],
+      "2.0 TDCi": ["Titanium", "ST-Line", "Vignale", "Standart"],
+      "2.5 Hybrid": ["Titanium", "ST-Line", "Vignale", "Standart"]
+    }
+  },
+  "Honda": {
+    "Civic": {
+      "1.0 VTEC Turbo": ["Comfort", "Elegance", "Executive", "Standart"],
+      "1.5 VTEC Turbo": ["Elegance", "Executive", "Sport", "Standart"],
+      "1.6 i-DTEC": ["Comfort", "Elegance", "Executive", "Standart"],
+      "2.0 Type R": ["Type R", "Type R GT", "Standart"]
+    },
+    "Jazz": {
+      "1.3": ["Comfort", "Elegance", "Standart"],
+      "1.5 Hybrid": ["Elegance", "Executive", "Crosstar", "Standart"]
+    },
+    "CR-V": {
+      "1.5 VTEC Turbo": ["Comfort", "Elegance", "Executive", "Lifestyle", "Standart"],
+      "2.0 Hybrid": ["Elegance", "Executive", "Lifestyle", "Standart"],
+      "2.2 i-DTEC": ["Elegance", "Executive", "Lifestyle", "Standart"]
+    }
   },
   "Peugeot": {
-    "208": ["1.0 VTi", "1.2 PureTech", "1.5 BlueHDi", "1.6 BlueHDi", "e-208 Elektrik"],
-    "308": ["1.2 PureTech", "1.5 BlueHDi", "1.6 BlueHDi", "1.6 THP"],
-    "2008": ["1.2 PureTech", "1.5 BlueHDi", "e-2008 Elektrik"],
-    "3008": ["1.2 PureTech", "1.5 BlueHDi", "1.6 THP", "2.0 BlueHDi", "Hybrid"],
-    "5008": ["1.2 PureTech", "1.5 BlueHDi", "2.0 BlueHDi"]
+    "208": {
+      "1.0 VTi": ["Access", "Active", "Standart"],
+      "1.2 PureTech": ["Active", "Allure", "GT Line", "GT", "Standart"],
+      "1.5 BlueHDi": ["Active", "Allure", "GT Line", "Standart"],
+      "e-208 Elektrik": ["Active", "Allure", "GT", "Standart"]
+    },
+    "308": {
+      "1.2 PureTech": ["Active", "Allure", "GT Line", "GT", "Standart"],
+      "1.5 BlueHDi": ["Active", "Allure", "GT Line", "Standart"],
+      "1.6 THP": ["GT Line", "GT", "Standart"]
+    },
+    "3008": {
+      "1.2 PureTech": ["Active", "Allure", "GT Line", "Standart"],
+      "1.5 BlueHDi": ["Active", "Allure", "GT Line", "GT", "Standart"],
+      "1.6 THP": ["Allure", "GT Line", "GT", "Standart"],
+      "2.0 BlueHDi": ["Allure", "GT Line", "GT", "Standart"],
+      "Hybrid": ["Allure", "GT Line", "GT", "Standart"]
+    }
   },
   "Opel": {
-    "Corsa": ["1.0", "1.2", "1.2 Turbo", "1.4", "1.5 D", "e-Corsa Elektrik"],
-    "Astra": ["1.0", "1.2 Turbo", "1.4", "1.4 Turbo", "1.5 D", "1.6 CDTI"],
-    "Mokka": ["1.2 Turbo", "1.4", "1.5 D"],
-    "Crossland": ["1.2", "1.2 Turbo", "1.5 D"],
-    "Grandland": ["1.2 Turbo", "1.5 D", "1.6 Turbo", "Hybrid"]
+    "Corsa": {
+      "1.0": ["Essentia", "Edition", "Standart"],
+      "1.2": ["Edition", "Elegance", "GS Line", "Standart"],
+      "1.2 Turbo": ["Edition", "Elegance", "GS Line", "Ultimate", "Standart"],
+      "1.4": ["Essentia", "Enjoy", "Standart"],
+      "1.5 D": ["Edition", "Elegance", "GS Line", "Standart"],
+      "e-Corsa Elektrik": ["Edition", "Elegance", "GS Line", "Ultimate", "Standart"]
+    },
+    "Astra": {
+      "1.2 Turbo": ["Edition", "Elegance", "GS Line", "Standart"],
+      "1.4": ["Essentia", "Enjoy", "Standart"],
+      "1.4 Turbo": ["Enjoy", "Excellence", "Standart"],
+      "1.5 D": ["Edition", "Elegance", "GS Line", "Standart"],
+      "1.6 CDTI": ["Essentia", "Enjoy", "Excellence", "Standart"]
+    }
   },
   "Skoda": {
-    "Octavia": ["1.0 TSI", "1.4 TSI", "1.5 TSI", "1.6 TDI", "2.0 TDI", "2.0 TSI RS"],
-    "Superb": ["1.4 TSI", "1.5 TSI", "2.0 TDI", "2.0 TSI"],
-    "Kamiq": ["1.0 TSI", "1.5 TSI", "1.6 TDI"],
-    "Karoq": ["1.0 TSI", "1.5 TSI", "1.6 TDI", "2.0 TDI"],
-    "Kodiaq": ["1.4 TSI", "1.5 TSI", "2.0 TDI", "2.0 TSI"]
+    "Octavia": {
+      "1.0 TSI": ["Active", "Ambition", "Standart"],
+      "1.4 TSI": ["Ambition", "Style", "Standart"],
+      "1.5 TSI": ["Ambition", "Style", "Sportline", "Standart"],
+      "1.6 TDI": ["Active", "Ambition", "Style", "Standart"],
+      "2.0 TDI": ["Ambition", "Style", "Sportline", "Scout", "Standart"],
+      "2.0 TSI RS": ["RS", "RS Challenge", "Standart"]
+    },
+    "Superb": {
+      "1.4 TSI": ["Active", "Ambition", "Style", "Standart"],
+      "1.5 TSI": ["Ambition", "Style", "Sportline", "Standart"],
+      "2.0 TDI": ["Ambition", "Style", "Sportline", "L&K", "Standart"],
+      "2.0 TSI": ["Sportline", "L&K", "Standart"]
+    }
   },
   "Audi": {
-    "A3": ["1.0 TFSI", "1.4 TFSI", "1.5 TFSI", "2.0 TDI", "2.0 TFSI"],
-    "A4": ["1.4 TFSI", "2.0 TDI", "2.0 TFSI", "3.0 TDI"],
-    "A6": ["2.0 TDI", "2.0 TFSI", "3.0 TDI", "3.0 TFSI"],
-    "Q3": ["1.4 TFSI", "2.0 TDI", "2.0 TFSI"],
-    "Q5": ["2.0 TDI", "2.0 TFSI", "3.0 TDI"],
-    "Q7": ["3.0 TDI", "3.0 TFSI", "4.0 TDI"]
+    "A3": {
+      "1.0 TFSI": ["Sport", "S Line", "Standart"],
+      "1.4 TFSI": ["Sport", "S Line", "Black Edition", "Standart"],
+      "1.5 TFSI": ["Sport", "S Line", "Black Edition", "Standart"],
+      "2.0 TDI": ["Sport", "S Line", "Black Edition", "Standart"],
+      "2.0 TFSI": ["S Line", "S3", "RS3", "Standart"]
+    },
+    "A4": {
+      "1.4 TFSI": ["Sport", "Design", "Standart"],
+      "2.0 TDI": ["Sport", "S Line", "Design", "Standart"],
+      "2.0 TFSI": ["Sport", "S Line", "Black Edition", "S4", "Standart"],
+      "3.0 TDI": ["S Line", "Black Edition", "Standart"]
+    },
+    "Q3": {
+      "1.4 TFSI": ["Sport", "S Line", "Standart"],
+      "2.0 TDI": ["Sport", "S Line", "Edition One", "Standart"],
+      "2.0 TFSI": ["S Line", "Edition One", "Standart"]
+    }
   },
   "Nissan": {
-    "Qashqai": ["1.2 DIG-T", "1.3 DIG-T", "1.5 dCi", "1.6 DIG-T", "1.7 dCi"],
-    "Juke": ["1.0 DIG-T", "1.2 DIG-T", "1.5 dCi", "1.6"],
-    "X-Trail": ["1.6 dCi", "1.7 dCi", "2.0 dCi", "2.5"]
+    "Qashqai": {
+      "1.2 DIG-T": ["Visia", "Acenta", "N-Connecta", "Standart"],
+      "1.3 DIG-T": ["Visia", "Acenta", "N-Connecta", "Tekna", "Standart"],
+      "1.5 dCi": ["Visia", "Acenta", "N-Connecta", "Standart"],
+      "1.6 DIG-T": ["N-Connecta", "Tekna", "Standart"],
+      "1.7 dCi": ["Acenta", "N-Connecta", "Tekna", "Tekna+", "Standart"]
+    },
+    "Juke": {
+      "1.0 DIG-T": ["Visia", "Acenta", "N-Connecta", "Tekna", "N-Design", "Standart"],
+      "1.5 dCi": ["Visia", "Acenta", "Standart"],
+      "1.6": ["Visia", "Acenta", "Tekna", "Nismo", "Standart"]
+    }
   },
   "Dacia": {
-    "Duster": ["1.0 TCe", "1.3 TCe", "1.5 dCi", "1.6"],
-    "Sandero": ["0.9 TCe", "1.0 TCe", "1.0 SCe", "1.5 dCi"],
-    "Jogger": ["1.0 TCe", "1.0 TCe Hybrid"]
+    "Duster": {
+      "1.0 TCe": ["Essential", "Expression", "Extreme", "Standart"],
+      "1.3 TCe": ["Expression", "Extreme", "Journey", "Standart"],
+      "1.5 dCi": ["Essential", "Expression", "Extreme", "Journey", "Standart"],
+      "1.6": ["Ambiance", "Laureate", "Prestige", "Standart"]
+    },
+    "Sandero": {
+      "0.9 TCe": ["Ambiance", "Stepway", "Standart"],
+      "1.0 TCe": ["Essential", "Expression", "Extreme", "Stepway", "Standart"],
+      "1.0 SCe": ["Essential", "Expression", "Standart"],
+      "1.5 dCi": ["Ambiance", "Stepway", "Laureate", "Standart"]
+    },
+    "Jogger": {
+      "1.0 TCe": ["Essential", "Expression", "Extreme", "Standart"],
+      "1.0 TCe Hybrid": ["Expression", "Extreme", "Standart"]
+    }
   },
   "Kia": {
-    "Sportage": ["1.6", "1.6 CRDi", "1.6 T-GDI", "2.0", "2.0 CRDi"],
-    "Ceed": ["1.0 T-GDI", "1.4", "1.4 CRDi", "1.5 T-GDI", "1.6 CRDi"],
-    "Picanto": ["1.0", "1.2"],
-    "Rio": ["1.0 T-GDI", "1.2", "1.4", "1.4 CRDi"],
-    "Stonic": ["1.0 T-GDI", "1.4"]
+    "Sportage": {
+      "1.6": ["Concept", "Cool", "Standart"],
+      "1.6 CRDi": ["Cool", "Prestige", "GT-Line", "Standart"],
+      "1.6 T-GDI": ["Cool", "Prestige", "GT-Line", "Standart"],
+      "2.0": ["Concept", "Cool", "Standart"],
+      "2.0 CRDi": ["Cool", "Prestige", "GT-Line", "Standart"]
+    },
+    "Ceed": {
+      "1.0 T-GDI": ["Concept", "Cool", "Standart"],
+      "1.4": ["Concept", "Cool", "Standart"],
+      "1.5 T-GDI": ["Cool", "Prestige", "GT-Line", "Standart"],
+      "1.6 CRDi": ["Cool", "Prestige", "GT-Line", "Standart"]
+    },
+    "Picanto": {
+      "1.0": ["Concept", "Cool", "Standart"],
+      "1.2": ["Cool", "Prestige", "GT-Line", "Standart"]
+    }
   },
   "Volvo": {
-    "XC40": ["1.5 T3", "2.0 D3", "2.0 D4", "2.0 T4", "2.0 T5", "Recharge Elektrik"],
-    "XC60": ["2.0 B4", "2.0 B5", "2.0 D4", "2.0 D5", "2.0 T5", "2.0 T6", "2.0 T8 Hybrid"],
-    "XC90": ["2.0 B5", "2.0 D5", "2.0 T5", "2.0 T6", "2.0 T8 Hybrid"],
-    "S60": ["2.0 T4", "2.0 T5", "2.0 D4"],
-    "V60": ["2.0 D3", "2.0 D4", "2.0 T4", "2.0 T5"]
+    "XC40": {
+      "1.5 T3": ["Momentum", "Inscription", "R-Design", "Standart"],
+      "2.0 D3": ["Momentum", "Inscription", "R-Design", "Standart"],
+      "2.0 D4": ["Momentum", "Inscription", "R-Design", "Standart"],
+      "2.0 T4": ["Momentum", "Inscription", "R-Design", "Standart"],
+      "2.0 T5": ["R-Design", "Inscription", "Standart"],
+      "Recharge Elektrik": ["Core", "Plus", "Ultimate", "Standart"]
+    },
+    "XC60": {
+      "2.0 B4": ["Momentum", "Inscription", "R-Design", "Standart"],
+      "2.0 B5": ["Momentum", "Inscription", "R-Design", "Standart"],
+      "2.0 D4": ["Momentum", "Inscription", "R-Design", "Standart"],
+      "2.0 T5": ["Momentum", "Inscription", "R-Design", "Standart"],
+      "2.0 T8 Hybrid": ["Inscription", "R-Design", "Polestar", "Standart"]
+    }
   },
-  "Citroen": {
-    "C3": ["1.2 PureTech", "1.5 BlueHDi"],
-    "C4": ["1.2 PureTech", "1.5 BlueHDi", "e-C4 Elektrik"],
-    "C5 Aircross": ["1.2 PureTech", "1.5 BlueHDi", "1.6 THP", "Hybrid"],
-    "Berlingo": ["1.2 PureTech", "1.5 BlueHDi"]
-  },
-  "Seat": {
-    "Ibiza": ["1.0", "1.0 TSI", "1.6 TDI"],
-    "Leon": ["1.0 TSI", "1.4 TSI", "1.5 TSI", "2.0 TDI", "2.0 TSI"],
-    "Ateca": ["1.0 TSI", "1.5 TSI", "2.0 TDI"],
-    "Arona": ["1.0 TSI", "1.5 TSI", "1.6 TDI"]
-  },
-  "default": ["Belirtilmemiş"]
+  "default": {
+    "default": {
+      "default": ["Standart", "Comfort", "Premium", "Sport", "Full", "Diğer"]
+    }
+  }
 };
 
 const PACKAGE_DATA = {
