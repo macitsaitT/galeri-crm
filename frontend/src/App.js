@@ -501,21 +501,32 @@ const PromoCardModal = ({ isOpen, onClose, inventory, userProfile, showToast }) 
     }, [searchTerm, inventory]);
 
     const handlePrint = async (isPdf = false) => {
-        if (!selectedCar) return;
+        if (!selectedCar) {
+            showToast("Lütfen önce bir araç seçiniz.", "error");
+            return;
+        }
        
         const element = document.getElementById('printable-promo-card');
+        if (!element) {
+            showToast("Yazdırılacak içerik bulunamadı.", "error");
+            return;
+        }
+        
         const safePlate = selectedCar.plate ? selectedCar.plate.replace(/\s+/g, '') : 'Arac';
        
         if (isPdf && window.html2pdf) {
             setIsGenerating(true);
             const opt = {
-                margin: 10,
+                margin: [10, 10, 10, 10],
                 filename: `Tanitim_Karti_${safePlate}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
+                image: { type: 'jpeg', quality: 0.95 },
                 html2canvas: {
                     scale: 2,
                     useCORS: true,
-                    scrollY: 0
+                    scrollY: 0,
+                    logging: false,
+                    windowWidth: element.scrollWidth,
+                    windowHeight: element.scrollHeight
                 },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
@@ -530,13 +541,21 @@ const PromoCardModal = ({ isOpen, onClose, inventory, userProfile, showToast }) 
                 setIsGenerating(false);
             }
         } else {
+            // Yazdırma için element'i hazırla
             const originalTitle = document.title;
             document.title = `Tanitim_Karti_${safePlate}`;
-            setTimeout(() => {
-                window.focus();
+            
+            // Kısa bir bekleme süresi ekle
+            await new Promise(resolve => setTimeout(resolve, 300));
+            
+            try {
                 window.print();
+            } catch (error) {
+                console.error("Print failed", error);
+                showToast("Yazdırma başarısız oldu.", "error");
+            } finally {
                 document.title = originalTitle;
-            }, 500);
+            }
         }
     };
    
