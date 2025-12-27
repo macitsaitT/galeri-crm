@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Test the Galeri CRM application (Car Gallery Management System) with specific features: Persistent Login, Trash Can functionality, Sold Vehicles Section, Income/Expense Deletion, Settings Modal with Logo Upload, Consignment Owner Display, and Reports Modal"
+user_problem_statement: "Test the Galeri CRM application with new features: Phone Number Input (fixed), Customer Edit Feature (new), Interested Car Display on Customer Card, Phone Number Format Display, and Admin Settings Phone functionality"
 
 frontend:
   - task: "Persistent Login (Kalıcı Giriş)"
