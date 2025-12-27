@@ -131,15 +131,18 @@ frontend:
 
   - task: "Sold Vehicles Section (Satılan Araçlar)"
     implemented: true
-    working: true
+    working: false
     file: "/app/frontend/src/App.js"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
     needs_retesting: false
     status_history:
         - working: true
           agent: "testing"
           comment: "Sold Vehicles section is accessible from sidebar and displays properly. Shows empty state when no sold vehicles exist."
+        - working: false
+          agent: "testing"
+          comment: "Updated testing for review request: ✅ Header 'Satılan Araçlar' found, ✅ Empty state message 'Henüz satılan araç yok.' displayed correctly, ❌ 'Kâr/Zarar' column not found - needs implementation, ✅ 'Stok Gün Sayısı' column correctly removed. Main issue: Missing 'Kâr/Zarar' column in table structure."
 
   - task: "Income/Expense Deletion (Gelir & Gider)"
     implemented: true
