@@ -1929,11 +1929,24 @@ export default function App() {
      
       try {
           const path = itemType === 'inventory' ? 'inventory' : 'customers';
+          
+          // Araç geri yükleniyorsa, ilgili işlemleri de geri yükle
+          if (itemType === 'inventory') {
+              const deletedCarTransactions = transactions.filter(t => t.deletedWithCarId === itemId && t.deleted);
+              for (const t of deletedCarTransactions) {
+                  await updateDoc(doc(db, `artifacts/${appId}/users/${user.uid}`, 'transactions', t.id), {
+                      deleted: false,
+                      deletedAt: null,
+                      deletedWithCarId: null
+                  });
+              }
+          }
+          
           await updateDoc(doc(db, `artifacts/${appId}/users/${user.uid}`, path, itemId), {
               deleted: false,
               deletedAt: null
           });
-          showToast("Geri yüklendi.");
+          showToast(itemType === 'inventory' ? "Araç ve ilgili işlemler geri yüklendi." : "Geri yüklendi.");
       } catch (e) {
           console.error("Restore Error:", e);
           showToast("Geri yükleme başarısız.", "error");
