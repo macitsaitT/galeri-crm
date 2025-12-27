@@ -2069,9 +2069,11 @@ export default function App() {
             <SidebarItem id="dashboard" icon={LayoutDashboard} label="Genel Bakış" activeView={activeView} setActiveView={setActiveView} />
             <SidebarItem id="inventory" icon={Car} label="Stok Araçlar" activeView={activeView} setActiveView={setActiveView} />
             <SidebarItem id="consignment" icon={Handshake} label="Konsinye Araçlar" activeView={activeView} setActiveView={setActiveView} />
+            <SidebarItem id="sold" icon={CheckCircle} label="Satılan Araçlar" activeView={activeView} setActiveView={setActiveView} />
             <SidebarItem id="finance" icon={Wallet} label="Gelir & Gider" activeView={activeView} setActiveView={setActiveView} />
             <SidebarItem id="reports" icon={FileText} label="Raporlar" activeView={activeView} setActiveView={() => setModals(m => ({...m, report: true}))} />
             <SidebarItem id="customers" icon={Users} label="Müşteriler" activeView={activeView} setActiveView={setActiveView} />
+            <SidebarItem id="trash" icon={Trash2} label="Çöp Kutusu" activeView={activeView} setActiveView={setActiveView} />
         </div>
         <div className="p-4 border-t border-neutral-800">
             <button onClick={() => setModals({...modals, settings: true})} className="flex items-center gap-3 w-full hover:bg-neutral-800 p-2 rounded transition">
