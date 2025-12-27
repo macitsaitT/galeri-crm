@@ -2183,7 +2183,7 @@ export default function App() {
                     </FinanceGroupRow>
 
                     <h3 className="font-bold text-lg text-black mt-8 mb-2">Araç Bazlı Finans</h3>
-                    {inventory.map(car => {
+                    {inventory.filter(c => !c.deleted).map(car => {
                         const carTrans = transactions.filter(t => t.carId === car.id || t.description.includes(car.plate));
                         const totalCarIncome = carTrans.filter(t => t.type === 'income').reduce((a, c) => a + c.amount, 0);
                         const totalCarExpense = carTrans.filter(t => t.type === 'expense').reduce((a, c) => a + c.amount, 0);
