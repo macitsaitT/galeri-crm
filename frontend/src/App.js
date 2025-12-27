@@ -793,15 +793,58 @@ const LoginScreen = ({ onLogin, onReset, error }) => {
 const SettingsModal = ({ isOpen, onClose, profile, setProfile, onLogout }) => {
   const [formData, setFormData] = useState(profile);
   const [showPassword, setShowPassword] = useState(false);
+  const [isUploadingLogo, setIsUploadingLogo] = useState(false);
   useEffect(() => setFormData(profile), [profile]);
+
+  const handleLogoUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    setIsUploadingLogo(true);
+    try {
+      const base64 = await resizeImage(file);
+      setFormData({...formData, logo: base64});
+    } catch (err) {
+      console.error("Logo upload error:", err);
+    } finally {
+      setIsUploadingLogo(false);
+    }
+  };
  
   if (!isOpen) return null;
  
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden border border-neutral-100">
+      <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden border border-neutral-100 max-h-[90vh] overflow-y-auto">
         <div className="px-6 py-4 border-b border-neutral-100 flex justify-between items-center"><h3 className="font-bold text-lg text-black flex items-center"><Settings size={20} className="mr-2 text-neutral-500"/> Hesap Ayarları</h3><button onClick={onClose} className="text-neutral-400 hover:text-black"><X size={24}/></button></div>
         <form onSubmit={(e)=>{e.preventDefault(); setProfile(formData); onClose();}} className="p-6 space-y-4">
+          {/* Logo Yükleme */}
+          <div className="border-b border-neutral-100 pb-4">
+            <label className="block text-xs font-bold text-neutral-500 uppercase mb-2">Şirket Logosu</label>
+            <div className="flex items-center gap-4">
+              <div className="w-20 h-20 bg-neutral-100 rounded-xl border-2 border-dashed border-neutral-300 flex items-center justify-center overflow-hidden">
+                {formData.logo ? (
+                  <img src={formData.logo} alt="Logo" className="w-full h-full object-contain"/>
+                ) : (
+                  <ImageIcon size={32} className="text-neutral-300"/>
+                )}
+              </div>
+              <div className="flex-1">
+                <label className="cursor-pointer">
+                  <span className="bg-yellow-500 text-black px-4 py-2 rounded-lg font-bold text-sm hover:bg-yellow-600 transition inline-flex items-center gap-2">
+                    {isUploadingLogo ? <Loader2 size={16} className="animate-spin"/> : <Upload size={16}/>}
+                    {isUploadingLogo ? 'Yükleniyor...' : 'Logo Yükle'}
+                  </span>
+                  <input type="file" accept="image/*" className="hidden" onChange={handleLogoUpload} disabled={isUploadingLogo}/>
+                </label>
+                {formData.logo && (
+                  <button type="button" onClick={() => setFormData({...formData, logo: null})} className="text-xs text-red-500 hover:text-red-700 ml-2">Kaldır</button>
+                )}
+                <p className="text-[10px] text-neutral-400 mt-1">Logo raporlarda ve tanıtım kartlarında görünecektir.</p>
+              </div>
+            </div>
+          </div>
+
           <div><label className="block text-xs font-bold text-neutral-500 uppercase mb-1">Ad Soyad</label><div className="relative"><User className="absolute left-3 top-2.5 text-neutral-400" size={18}/><input type="text" className="w-full pl-10 pr-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-yellow-500 outline-none" value={formData.name} onChange={e=>setFormData({...formData, name: e.target.value})}/></div></div>
           <div><label className="block text-xs font-bold text-neutral-500 uppercase mb-1">Ünvan</label><input type="text" className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-yellow-500 outline-none" value={formData.title} onChange={e=>setFormData({...formData, title: e.target.value})}/></div>
           <div><label className="block text-xs font-bold text-neutral-500 uppercase mb-1">Telefon</label><div className="relative"><span className="absolute left-3 top-2.5 text-neutral-400"><Phone size={18}/></span><input type="text" className="w-full pl-10 pr-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-yellow-500 outline-none" value={formData.phone} onChange={e=>setFormData({...formData, phone: e.target.value})}/></div></div>
