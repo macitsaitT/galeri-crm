@@ -1045,7 +1045,10 @@ const ReportModal = ({ isOpen, onClose, transactions, inventory, showToast, user
        
         <div id="report-visible-content" className="flex-1 overflow-y-auto p-8 bg-white print:hidden">
           <div className="border-b-2 border-black pb-4 mb-6 flex justify-between items-end">
-            <div className="flex items-center gap-4"><div><h1 className="text-3xl font-bold text-black tracking-tight">ASLANBAŞ OTO A.Ş.</h1><p className="text-neutral-500 text-sm mt-1">Finansal Durum Raporu</p></div></div>
+            <div className="flex items-center gap-4">
+              {userProfile?.logo && <img src={userProfile.logo} alt="Logo" className="h-12 w-12 object-contain rounded"/>}
+              <div><h1 className="text-3xl font-bold text-black tracking-tight">ASLANBAŞ OTO A.Ş.</h1><p className="text-neutral-500 text-sm mt-1">Finansal Durum Raporu</p></div>
+            </div>
             <div className="text-right">
                 <p className="font-bold text-sm text-black">
                     {selectedCarId === 'all' ? 'Genel Rapor' :
