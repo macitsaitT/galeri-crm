@@ -2117,7 +2117,15 @@ export default function App() {
                                 <tbody className="divide-y divide-neutral-100">
                                     {filteredInventory.map(car => (
                                         <tr key={car.id} className="hover:bg-neutral-50 cursor-pointer" onClick={() => {setActiveCarDetail(car); setModals({...modals, carDetail: true});}}>
-                                            <td className="p-4"><div className="font-bold text-black">{car.brand} {car.model}</div><div className="text-neutral-500 text-xs">{car.year} • {car.km} KM • {car.plate?.toLocaleUpperCase('tr-TR')}</div></td>
+                                            <td className="p-4">
+                                                <div className="font-bold text-black">{car.brand} {car.model}</div>
+                                                <div className="text-neutral-500 text-xs">{car.year} • {car.km} KM • {car.plate?.toLocaleUpperCase('tr-TR')}</div>
+                                                {car.ownership === 'consignment' && car.ownerName && (
+                                                    <div className="text-xs text-purple-600 font-medium mt-1 flex items-center gap-1">
+                                                        <Handshake size={12}/> Sahibi: {car.ownerName}
+                                                    </div>
+                                                )}
+                                            </td>
                                             <td className="p-4 font-bold">{formatCurrency(car.salePrice)}</td>
                                             <td className="p-4">
                                                 <span className={`px-2 py-1 rounded text-xs font-bold ${car.status === 'Satıldı' ? 'bg-neutral-100 text-neutral-500' : car.status === 'Kapora Alındı' ? 'bg-orange-100 text-orange-700' : 'bg-green-100 text-green-700'}`}>
