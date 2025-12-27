@@ -2414,13 +2414,87 @@ export default function App() {
                             profitPercent = ((-operationalExpense / (car.purchasePrice || 1)) * 100).toFixed(1);
                         }
                        
+                        // Konsinye araç için hesaplamalar
+                        const commissionRate = car.commissionRate || 5;
+                        const saleAmount = carTrans.find(t => t.category === 'Araç Satışı')?.amount || car.salePrice || 0;
+                        const ownerShare = car.ownership === 'consignment' ? Math.round(saleAmount * (100 - commissionRate) / 100) : 0;
+                        const galleryCommission = car.ownership === 'consignment' ? saleAmount - ownerShare : 0;
+                        const paidToOwner = carTrans.filter(t => t.category === 'Araç Sahibine Ödeme').reduce((a, c) => a + c.amount, 0);
+                        const remainingToOwner = ownerShare - paidToOwner;
+                        
                         return (
-                        <FinanceGroupRow key={car.id} type="car" title={`${car.brand} ${car.model}`} subtext={car.plate?.toLocaleUpperCase('tr-TR')} amount={netStatus} percentage={profitPercent} defaultExpanded={false}>
+                        <FinanceGroupRow key={car.id} type="car" title={`${car.brand} ${car.model}`} subtext={`${car.plate?.toLocaleUpperCase('tr-TR')} ${car.ownership === 'consignment' ? '(Konsinye)' : ''}`} amount={netStatus} percentage={profitPercent} defaultExpanded={false}>
                             <div className="p-4 bg-neutral-50">
-                            <div className="grid grid-cols-2 gap-4 mb-4">
-                                <div className="bg-white p-3 rounded border border-neutral-200"><p className="text-[10px] text-neutral-500 uppercase">Alış Fiyatı</p><p className="font-bold text-sm">{formatCurrency(car.purchasePrice || 0)}</p></div>
-                                <div className="bg-white p-3 rounded border border-neutral-200"><p className="text-[10px] text-neutral-500 uppercase">Satış Fiyatı (Gerçekleşen/Hedef)</p><p className="font-bold text-sm">{formatCurrency(car.salePrice || 0)}</p></div>
-                            </div>
+                            {/* Stok Araç için Normal Görünüm */}
+                            {car.ownership !== 'consignment' && (
+                                <div className="grid grid-cols-2 gap-4 mb-4">
+                                    <div className="bg-white p-3 rounded border border-neutral-200"><p className="text-[10px] text-neutral-500 uppercase">Alış Fiyatı</p><p className="font-bold text-sm">{formatCurrency(car.purchasePrice || 0)}</p></div>
+                                    <div className="bg-white p-3 rounded border border-neutral-200"><p className="text-[10px] text-neutral-500 uppercase">Satış Fiyatı</p><p className="font-bold text-sm">{formatCurrency(car.salePrice || 0)}</p></div>
+                                </div>
+                            )}
+                            
+                            {/* Konsinye Araç için Detaylı Görünüm */}
+                            {car.ownership === 'consignment' && (
+                                <div className="mb-4">
+                                    <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-4">
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <Handshake size={18} className="text-purple-600"/>
+                                            <h5 className="font-bold text-purple-800">Konsinye Detayları</h5>
+                                            {car.ownerName && <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded ml-auto">Sahibi: {car.ownerName}</span>}
+                                        </div>
+                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                            <div className="bg-white p-3 rounded border border-purple-100">
+                                                <p className="text-[10px] text-neutral-500 uppercase">Satış Fiyatı</p>
+                                                <p className="font-bold text-sm">{formatCurrency(saleAmount)}</p>
+                                            </div>
+                                            <div className="bg-white p-3 rounded border border-purple-100">
+                                                <p className="text-[10px] text-neutral-500 uppercase">Komisyon (%{commissionRate})</p>
+                                                <p className="font-bold text-sm text-green-600">+{formatCurrency(galleryCommission)}</p>
+                                            </div>
+                                            <div className="bg-white p-3 rounded border border-purple-100">
+                                                <p className="text-[10px] text-neutral-500 uppercase">Sahibine Verilecek</p>
+                                                <p className="font-bold text-sm text-purple-700">{formatCurrency(ownerShare)}</p>
+                                            </div>
+                                            <div className="bg-white p-3 rounded border border-purple-100">
+                                                <p className="text-[10px] text-neutral-500 uppercase">Sahibine Ödenen</p>
+                                                <p className="font-bold text-sm text-blue-600">{formatCurrency(paidToOwner)}</p>
+                                            </div>
+                                        </div>
+                                        
+                                        {/* Kalan Borç veya Tamamlandı */}
+                                        {car.status === 'Satıldı' && (
+                                            <div className={`mt-3 p-3 rounded-lg ${remainingToOwner > 0 ? 'bg-red-50 border border-red-200' : 'bg-green-50 border border-green-200'}`}>
+                                                {remainingToOwner > 0 ? (
+                                                    <div className="flex items-center justify-between">
+                                                        <div className="flex items-center gap-2">
+                                                            <AlertCircle size={18} className="text-red-500"/>
+                                                            <span className="text-sm font-bold text-red-700">Sahibine Verilmesi Gereken:</span>
+                                                        </div>
+                                                        <span className="text-lg font-bold text-red-600">{formatCurrency(remainingToOwner)}</span>
+                                                    </div>
+                                                ) : (
+                                                    <div className="flex items-center gap-2">
+                                                        <CheckCircle size={18} className="text-green-500"/>
+                                                        <span className="text-sm font-bold text-green-700">Araç sahibine ödeme tamamlandı!</span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
+                                        
+                                        {/* Kasada Kalan */}
+                                        <div className="mt-3 p-3 rounded-lg bg-yellow-50 border border-yellow-200">
+                                            <div className="flex items-center justify-between">
+                                                <div className="flex items-center gap-2">
+                                                    <Wallet size={18} className="text-yellow-600"/>
+                                                    <span className="text-sm font-bold text-yellow-800">Kasada Kalan (Net Komisyon):</span>
+                                                </div>
+                                                <span className="text-lg font-bold text-yellow-700">{formatCurrency(galleryCommission - totalCarExpense + (car.ownership === 'consignment' ? 0 : totalCarIncome))}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                            
                             <h5 className="text-xs font-bold text-neutral-500 mb-2 uppercase">İşlem Geçmişi</h5>
                             {carTrans.length > 0 ? (<table className="w-full text-left text-xs">
                               <thead className="text-neutral-400 border-b border-neutral-200"><tr><th className="pb-2">Tarih</th><th className="pb-2">İşlem</th><th className="pb-2 text-right">Tutar</th></tr></thead>
