@@ -135,7 +135,7 @@ frontend:
     file: "/app/frontend/src/App.js"
     stuck_count: 1
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         - working: true
           agent: "testing"
@@ -143,6 +143,57 @@ frontend:
         - working: false
           agent: "testing"
           comment: "Updated testing for review request: ✅ Header 'Satılan Araçlar' found, ✅ Empty state message 'Henüz satılan araç yok.' displayed correctly, ❌ 'Kâr/Zarar' column not found - needs implementation, ✅ 'Stok Gün Sayısı' column correctly removed. Main issue: Missing 'Kâr/Zarar' column in table structure."
+        - working: "NA"
+          agent: "main"
+          comment: "Added new features: Customer selection during sale, Cancel Sale button, Change Sale Price button, and display buyer name in sold vehicles list. Needs testing."
+
+  - task: "Sale Customer Linking"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Implemented customer dropdown in SaleModal to select buyer during sale process. Customer ID and name are saved to vehicle document in Firebase."
+
+  - task: "Cancel Sale Feature"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Added 'Satışı İptal Et' button in dropdown menu for sold vehicles. Returns vehicle to 'Stokta' status and soft-deletes related sale transactions."
+
+  - task: "Change Sale Price Feature"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Added 'Fiyat Değiştir' button in dropdown menu for sold vehicles. Opens prompt to enter new sale price and updates both vehicle and transaction records."
+
+  - task: "Display Buyer Name in Sold Vehicles"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Sold vehicles table now shows buyer name (Alıcı: X) below vehicle info with blue user icon. Also displays sale date."
 
   - task: "Income/Expense Deletion (Gelir & Gider)"
     implemented: true
