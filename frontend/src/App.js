@@ -1763,17 +1763,13 @@ const CarDetailModal = ({ car, isOpen, onClose, showToast }) => {
                         <div className="grid grid-cols-2 gap-4">
                             <div className="bg-neutral-50 p-3 rounded-lg border border-neutral-100"><p className="text-[10px] text-neutral-400 font-bold uppercase">Marka / Model</p><p className="font-bold">{car.brand} {car.model}</p></div>
                             <div className="bg-neutral-50 p-3 rounded-lg border border-neutral-100"><p className="text-[10px] text-neutral-400 font-bold uppercase">Yıl / KM</p><p className="font-bold">{car.year} / {car.km}</p></div>
+                            <div className="bg-neutral-50 p-3 rounded-lg border border-neutral-100"><p className="text-[10px] text-neutral-400 font-bold uppercase">Motor</p><p className="font-bold">{car.engineType || '-'}</p></div>
                             <div className="bg-neutral-50 p-3 rounded-lg border border-neutral-100"><p className="text-[10px] text-neutral-400 font-bold uppercase">Yakıt</p><p className="font-bold">{car.fuelType || 'Dizel'}</p></div>
                             <div className="bg-neutral-50 p-3 rounded-lg border border-neutral-100"><p className="text-[10px] text-neutral-400 font-bold uppercase">Vites</p><p className="font-bold">{car.gear || 'Otomatik'}</p></div>
+                            {car.packageInfo && (
+                                <div className="bg-neutral-50 p-3 rounded-lg border border-neutral-100"><p className="text-[10px] text-neutral-400 font-bold uppercase">Paket</p><p className="font-bold">{car.packageInfo}</p></div>
+                            )}
                         </div>
-                        {car.packageInfo && (
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="bg-neutral-50 p-3 rounded-lg border border-neutral-100 col-span-2">
-                                    <p className="text-[10px] text-neutral-400 font-bold uppercase">Araç Paketi/Versiyonu</p>
-                                    <p className="font-bold">{car.packageInfo}</p>
-                                </div>
-                            </div>
-                        )}
                         <div className="border-t border-neutral-100 pt-4"><p className="text-[10px] text-neutral-400 font-bold uppercase mb-2">Açıklama</p><p className="text-sm text-neutral-600 leading-relaxed bg-neutral-50 p-4 rounded-xl border border-neutral-100">{car.description || 'Açıklama girilmemiş.'}</p></div>
                         {car.expertise?.body && (
                             <div className="border-t border-neutral-100 pt-4">
