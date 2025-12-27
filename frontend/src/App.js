@@ -272,12 +272,12 @@ const PACKAGE_DATA = {
     "Tourneo Courier": ["Trend", "Titanium", "Standart"]
   },
   "Honda": {
-    "Jazz": ["Elegance", "Executive", "Crosstar", "Standart"],
-    "Civic": ["Elegance", "Executive", "Sport", "Type R", "Standart"],
+    "Jazz": ["Comfort", "Elegance", "Executive", "Crosstar", "Standart"],
+    "Civic": ["Eco Elegance", "Elegance", "Executive", "Sport", "Type R", "Standart"],
     "Accord": ["Elegance", "Executive", "Standart"],
-    "City": ["Elegance", "Executive", "Standart"],
-    "HR-V": ["Elegance", "Executive", "Sport", "Advance", "Standart"],
-    "CR-V": ["Elegance", "Executive", "Sport", "Lifestyle", "Standart"],
+    "City": ["Comfort", "Elegance", "Executive", "Standart"],
+    "HR-V": ["Comfort", "Elegance", "Executive", "Sport", "Advance", "Standart"],
+    "CR-V": ["Comfort", "Elegance", "Executive", "Lifestyle", "Standart"],
     "e": ["Base", "Advance", "Standart"]
   },
   "Hyundai": {
