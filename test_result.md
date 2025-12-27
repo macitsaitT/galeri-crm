@@ -205,3 +205,5 @@ test_plan:
 agent_communication:
     - agent: "testing"
       message: "Comprehensive testing completed for Galeri CRM application. All major features are working correctly. Login with password '1' works, persistent login functions properly, all sidebar navigation sections are accessible, trash can functionality exists, settings modal with logo upload works, and financial management sections are operational. Minor issue with Reports modal interaction due to overlay, but section is accessible."
+    - agent: "testing"
+      message: "Updated feature testing completed for review request. RESULTS: 1) Sold Vehicles Section: ✅ Header and empty state working, ❌ 'Kâr/Zarar' column missing (needs implementation). 2) Print/PDF Promo Card: ❌ TANITIM KARTI button not accessible via text selectors (may be icon-based). 3) Car Entry: ❌ ARAÇ GİRİŞİ button not accessible via text selectors (may be icon-based). 4) Trash functionality: ✅ Working correctly with proper empty states. The yellow and blue buttons are visible in sidebar but not accessible via text-based selectors in Playwright."
