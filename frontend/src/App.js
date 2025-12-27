@@ -239,18 +239,18 @@ const PACKAGE_DATA = {
     "Zoe": ["Life", "Zen", "Intens", "Standart"]
   },
   "Toyota": {
-    "Yaris": ["Active", "Style", "Elegant", "Premiere", "Standart"],
-    "Corolla": ["Vision", "Dream", "Flame", "Passion", "Standart"],
-    "Camry": ["Vision", "Passion", "Executive", "Standart"],
+    "Yaris": ["Dream", "Dream X-Pack", "Flame", "Vision", "Standart"],
+    "Corolla": ["Dream", "Dream X-Pack", "Flame", "Flame X-Pack", "Passion", "Passion X-Pack", "Vision", "Vision Plus", "Standart"],
+    "Camry": ["Passion", "Passion Advanced", "Executive", "Standart"],
     "Avensis": ["Active", "Elegant", "Executive", "Standart"],
-    "C-HR": ["Active", "Dynamic", "Elegant", "Style", "Standart"],
-    "RAV4": ["Active", "Dynamic", "Elegant", "Style", "Adventure", "Standart"],
+    "C-HR": ["Dream", "Flame", "Passion", "Passion X-Pack", "Standart"],
+    "RAV4": ["Dream", "Flame", "Passion", "Adventure", "Standart"],
     "Highlander": ["Elegant", "Premium", "Standart"],
     "Land Cruiser": ["Active", "Elegant", "Premium", "Standart"],
-    "Hilux": ["Base", "Comfort", "Executive", "Invincible", "Standart"],
+    "Hilux": ["Life", "Style", "Adventure", "Invincible", "Standart"],
     "Proace": ["Base", "Comfort", "Executive", "Standart"],
     "Proace City": ["Base", "Comfort", "Standart"],
-    "Corolla Cross": ["Active", "Dynamic", "Elegant", "Standart"],
+    "Corolla Cross": ["Dream", "Flame", "Passion", "Adventure", "Standart"],
     "bZ4X": ["Base", "Premium", "Standart"]
   },
   "Ford": {
