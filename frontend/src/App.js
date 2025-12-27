@@ -1872,6 +1872,19 @@ export default function App() {
      
       try {
           const path = activeItemType === 'inventory' ? 'inventory' : 'customers';
+          
+          // Araç siliniyor ise, ilgili tüm işlemleri de soft-delete yap
+          if (activeItemType === 'inventory') {
+              const carTransactions = transactions.filter(t => t.carId === activeItem && !t.deleted);
+              for (const t of carTransactions) {
+                  await updateDoc(doc(db, `artifacts/${appId}/users/${user.uid}`, 'transactions', t.id), {
+                      deleted: true,
+                      deletedAt: new Date().toISOString(),
+                      deletedWithCarId: activeItem // Hangi araçla birlikte silindiğini kaydet
+                  });
+              }
+          }
+          
           // Soft delete - deleted: true yap
           await updateDoc(doc(db, `artifacts/${appId}/users/${user.uid}`, path, activeItem), {
               deleted: true,
@@ -1881,7 +1894,7 @@ export default function App() {
           setModals(m => ({...m, delete: false}));
           setActiveItem(null);
           setActiveItemType(null);
-          showToast(activeItemType === 'inventory' ? "Araç çöp kutusuna taşındı." : "Müşteri çöp kutusuna taşındı.");
+          showToast(activeItemType === 'inventory' ? "Araç ve ilgili işlemler çöp kutusuna taşındı." : "Müşteri çöp kutusuna taşındı.");
       } catch (e) {
           console.error("Soft Delete Error:", e);
           showToast("Silme işlemi başarısız oldu.", "error");
