@@ -1609,6 +1609,20 @@ const AddCarModal = ({ isOpen, onClose, newCar, setNewCar, onSave, isEditing, sh
                         <div><label className="label-sm">Giriş Tarihi</label><input required type="date" className="input-std" value={newCar.entryDate} onChange={e => setNewCar({...newCar, entryDate: e.target.value})} /></div>
                     </div>
                     <div>
+                        <label className="label-sm">Motor</label>
+                        <select
+                            className="input-std"
+                            value={newCar.engineType || ''}
+                            onChange={e => setNewCar({...newCar, engineType: e.target.value})}
+                            disabled={!newCar.brand || !newCar.model}
+                        >
+                            <option value="">Seçiniz</option>
+                            {(ENGINE_DATA[newCar.brand]?.[newCar.model] || ENGINE_DATA.default).map(eng => (
+                                <option key={eng} value={eng}>{eng}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div>
                         <label className="label-sm">Araç Paketi/Versiyonu</label>
                         <select
                             required
