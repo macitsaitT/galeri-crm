@@ -2231,7 +2231,8 @@ export default function App() {
           commissionRate: parseInt(newCar.commissionRate) || (newCar.ownership === 'consignment' ? 5 : 0),
           // Ensure expertise is correctly structured
           expertise: newCar.expertise || {},
-          packageInfo: newCar.packageInfo || '', // Yeni alan
+          packageInfo: newCar.packageInfo || '',
+          engineType: newCar.engineType || '',
       };
      
       const basePath = `artifacts/${appId}/users/${user.uid}`;
