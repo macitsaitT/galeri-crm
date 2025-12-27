@@ -3251,6 +3251,9 @@ export default function App() {
             employeeShare={saleModal.employeeShare}
             setEmployeeShare={(val) => setSaleModal({ ...saleModal, employeeShare: val })}
             car={inventory.find(c => c.id === saleModal.carId)}
+            customers={customers}
+            selectedCustomerId={saleModal.customerId}
+            setSelectedCustomerId={(val) => setSaleModal({ ...saleModal, customerId: val })}
         />
         <PromoCardModal
             isOpen={modals.promoCard}
