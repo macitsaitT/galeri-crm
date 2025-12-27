@@ -2287,8 +2287,8 @@ export default function App() {
                                 </thead>
                                 <tbody className="divide-y divide-neutral-100">
                                     {filteredInventory.map(car => {
-                                        // Satılan araçlar için kâr/zarar hesapla
-                                        const carTrans = transactions.filter(t => t.carId === car.id);
+                                        // Satılan araçlar için kâr/zarar hesapla (silinen işlemleri dahil etme)
+                                        const carTrans = transactions.filter(t => !t.deleted && t.carId === car.id);
                                         const totalIncome = carTrans.filter(t => t.type === 'income').reduce((a, c) => a + c.amount, 0);
                                         const totalExpense = carTrans.filter(t => t.type === 'expense').reduce((a, c) => a + c.amount, 0);
                                         const profit = totalIncome - totalExpense;
