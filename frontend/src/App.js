@@ -2105,6 +2105,8 @@ export default function App() {
     ? inventory.filter(c => c.ownership !== 'consignment' && c.status !== 'Satıldı' && !c.deleted)
     : activeView === 'trash'
     ? inventory.filter(c => c.deleted)
+    : activeView === 'sold'
+    ? inventory.filter(c => c.status === 'Satıldı' && !c.deleted)
     : inventory.filter(c => !c.deleted);
 
   if (isAuthLoading) return <div className="min-h-screen bg-black flex items-center justify-center text-white"><Loader2 className="animate-spin mr-2"/> Uygulama Yükleniyor...</div>;
