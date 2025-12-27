@@ -1047,19 +1047,36 @@ const PromoCardModal = ({ isOpen, onClose, inventory, userProfile, showToast }) 
     );
 };
 
-const SaleModal = ({ isOpen, onClose, onConfirm, price, setPrice, employeeShare, setEmployeeShare, car }) => {
+const SaleModal = ({ isOpen, onClose, onConfirm, price, setPrice, employeeShare, setEmployeeShare, car, customers, selectedCustomerId, setSelectedCustomerId }) => {
   if (!isOpen) return null;
   const isConsignment = car?.ownership === 'consignment';
   const salePrice = parseFormattedNumber(price) || 0;
   const ownerAmount = car?.purchasePrice || 0;
   const employeeAmount = parseFormattedNumber(employeeShare) || 0;
   const galleryProfit = isConsignment ? (salePrice - ownerAmount - employeeAmount) : (salePrice - (car?.purchasePrice || 0) - employeeAmount);
+  const activeCustomers = customers?.filter(c => !c.deleted) || [];
   
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
       <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden border border-neutral-100">
         <div className="px-6 py-4 border-b border-neutral-100 bg-green-50 flex justify-between items-center"><h3 className="font-bold text-lg text-green-800 flex items-center gap-2"><CheckCircle size={20}/> Satışı Tamamla</h3><button onClick={onClose}><X size={20}/></button></div>
         <form onSubmit={onConfirm} className="p-6 space-y-4">
+            {/* Müşteri Seçimi */}
+            <div>
+                <label className="block text-sm font-bold text-neutral-700 mb-1">Alıcı Müşteri</label>
+                <select
+                    className="w-full px-4 py-3 border-2 border-blue-100 rounded-xl focus:border-blue-500 focus:ring-0 outline-none text-sm font-medium"
+                    value={selectedCustomerId}
+                    onChange={(e) => setSelectedCustomerId(e.target.value)}
+                >
+                    <option value="">-- Müşteri Seç (Opsiyonel) --</option>
+                    {activeCustomers.map(c => (
+                        <option key={c.id} value={c.id}>{c.name} {c.phone ? `(${c.phone})` : ''}</option>
+                    ))}
+                </select>
+                <p className="text-xs text-neutral-400 mt-1">Aracı satın alan müşteriyi seçin</p>
+            </div>
+
             <div>
                 <label className="block text-sm font-bold text-neutral-700 mb-1">Gerçekleşen Satış Fiyatı (TL)</label>
                 <input
