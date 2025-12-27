@@ -101,19 +101,154 @@ const PACKAGE_DATA = {
     "C 200": ["AMG", "Exclusive", "Avantgarde"],
     "E 200": ["AMG", "Exclusive", "Standart"],
     "A 180": ["Style", "Progressive", "AMG Line"],
+    "S 400": ["AMG", "Exclusive", "Maybach"],
+    "Vito": ["Base", "Select", "Premium"],
+    "GLA 200": ["Style", "Progressive", "AMG Line"],
+    "GLC 250": ["AMG", "Exclusive", "Avantgarde"]
   },
   "BMW": {
     "320i": ["Sport Line", "Luxury Line", "M Sport"],
-    "520i": ["Executive", "M Sport"],
-    "X5": ["xLine", "M Sport"],
+    "520i": ["Executive", "M Sport", "Luxury Line"],
+    "118i": ["Sport Line", "M Sport"],
+    "X1": ["sDrive", "xDrive", "M Sport"],
+    "X3": ["xLine", "M Sport"],
+    "X5": ["xLine", "M Sport", "Executive"],
+    "418i": ["Sport Line", "Luxury Line"],
+    "iX": ["xDrive40", "xDrive50", "M Sport"],
+    "i4": ["eDrive40", "M50"]
+  },
+  "Audi": {
+    "A3": ["Sport", "S Line", "Black Edition"],
+    "A4": ["Sport", "S Line", "Black Edition"],
+    "A6": ["Sport", "S Line", "Black Edition"],
+    "Q3": ["Sport", "S Line", "Edition One"],
+    "Q5": ["Sport", "S Line", "Edition One"],
+    "Q7": ["Sport", "S Line", "Vorsprung"],
+    "A5": ["Sport", "S Line", "Black Edition"],
+    "Q2": ["Sport", "S Line"]
   },
   "Volkswagen": {
-      "Passat": ["Trendline", "Comfortline", "Highline"],
-      "Golf": ["Comfortline", "Highline", "R-Line"],
+    "Passat": ["Trendline", "Comfortline", "Highline", "R-Line"],
+    "Golf": ["Trendline", "Comfortline", "Highline", "R-Line", "GTI"],
+    "Polo": ["Trendline", "Comfortline", "Highline", "GTI"],
+    "Tiguan": ["Trendline", "Comfortline", "Highline", "R-Line"],
+    "T-Roc": ["Sport", "Style", "R-Line"],
+    "Caddy": ["Base", "Comfortline", "Highline"],
+    "Transporter": ["Base", "Comfortline", "Highline"],
+    "Amarok": ["Base", "Highline", "Aventura"],
+    "Taigo": ["Sport", "Style", "R-Line"]
+  },
+  "Fiat": {
+    "Egea": ["Easy", "Urban", "Lounge"],
+    "Doblo": ["Easy", "Lounge", "Trekking"],
+    "Fiorino": ["Base", "Combi"],
+    "500": ["Pop", "Lounge", "Sport"],
+    "Panda": ["Pop", "Easy", "Lounge"],
+    "Ducato": ["Base", "Maxi", "Combi"]
   },
   "Renault": {
-      "Clio": ["Joy", "Touch", "Icon"],
-      "Megane": ["Touch", "Icon", "GT Line"],
+    "Clio": ["Joy", "Touch", "Icon", "GT Line"],
+    "Megane": ["Joy", "Touch", "Icon", "GT Line"],
+    "Taliant": ["Expression", "Equilibre", "Intense"],
+    "Austral": ["Techno", "Esprit Alpine", "Iconic"],
+    "Captur": ["Expression", "Intense", "Initiale"],
+    "Kangoo": ["Essential", "Expression", "Extreme"],
+    "Kadjar": ["Life", "Zen", "Intense"]
+  },
+  "Toyota": {
+    "Corolla": ["Terra", "Life", "Elegant", "Style"],
+    "Yaris": ["Active", "Style", "Elegant"],
+    "C-HR": ["Active", "Dynamic", "Elegant"],
+    "RAV4": ["Active", "Dynamic", "Elegant", "Style"],
+    "Hilux": ["Base", "Comfort", "Executive"],
+    "Proace": ["Base", "Comfort", "Executive"],
+    "Corolla Cross": ["Active", "Dynamic", "Elegant"]
+  },
+  "Ford": {
+    "Focus": ["Trend", "Titanium", "ST-Line", "Vignale"],
+    "Fiesta": ["Trend", "Titanium", "ST-Line"],
+    "Puma": ["Titanium", "ST-Line", "Vignale"],
+    "Kuga": ["Trend", "Titanium", "ST-Line", "Vignale"],
+    "Ranger": ["XL", "XLT", "Wildtrak", "Raptor"],
+    "Tourneo Courier": ["Trend", "Titanium"],
+    "Transit": ["Base", "Trend", "Custom"]
+  },
+  "Honda": {
+    "Civic": ["Elegance", "Executive", "Sport"],
+    "City": ["Elegance", "Executive"],
+    "Jazz": ["Elegance", "Executive"],
+    "HR-V": ["Elegance", "Executive", "Sport"],
+    "CR-V": ["Elegance", "Executive", "Sport"]
+  },
+  "Hyundai": {
+    "i20": ["Style", "Elite", "Platinum"],
+    "i10": ["Style", "Elite"],
+    "Elantra": ["Style", "Elite", "Platinum"],
+    "Bayon": ["Style", "Elite", "Platinum"],
+    "Tucson": ["Style", "Elite", "Platinum", "N Line"],
+    "Santa Fe": ["Style", "Elite", "Platinum"],
+    "Kona": ["Style", "Elite", "Platinum", "N Line"]
+  },
+  "Peugeot": {
+    "208": ["Active", "Allure", "GT Line"],
+    "308": ["Active", "Allure", "GT Line"],
+    "2008": ["Active", "Allure", "GT Line"],
+    "3008": ["Active", "Allure", "GT Line"],
+    "408": ["Allure", "GT", "GT Pack"],
+    "5008": ["Active", "Allure", "GT Line"],
+    "Rifter": ["Active", "Allure", "GT Line"]
+  },
+  "Opel": {
+    "Corsa": ["Edition", "Elegance", "GS Line"],
+    "Astra": ["Edition", "Elegance", "GS Line"],
+    "Mokka": ["Edition", "Elegance", "GS Line"],
+    "Crossland": ["Edition", "Elegance", "GS Line"],
+    "Grandland": ["Edition", "Elegance", "GS Line"],
+    "Insignia": ["Edition", "Elegance", "GSi"]
+  },
+  "Citroen": {
+    "C3": ["Feel", "Shine", "Shine Pack"],
+    "C4": ["Feel", "Shine", "Shine Pack"],
+    "C5 Aircross": ["Feel", "Shine", "Shine Pack"],
+    "C-Elysee": ["Feel", "Shine"],
+    "Berlingo": ["Feel", "Shine", "XTR"]
+  },
+  "Skoda": {
+    "Octavia": ["Active", "Ambition", "Style", "RS"],
+    "Superb": ["Active", "Ambition", "Style", "Sportline"],
+    "Kamiq": ["Active", "Ambition", "Style"],
+    "Karoq": ["Active", "Ambition", "Style", "Sportline"],
+    "Kodiaq": ["Active", "Ambition", "Style", "Sportline"],
+    "Scala": ["Active", "Ambition", "Style"]
+  },
+  "Nissan": {
+    "Qashqai": ["Visia", "Acenta", "Tekna"],
+    "Juke": ["Visia", "Acenta", "Tekna"],
+    "X-Trail": ["Visia", "Acenta", "Tekna"],
+    "Micra": ["Visia", "Acenta", "Tekna"]
+  },
+  "Dacia": {
+    "Duster": ["Essential", "Expression", "Extreme"],
+    "Sandero": ["Essential", "Expression", "Extreme"],
+    "Jogger": ["Essential", "Expression", "Extreme"],
+    "Spring": ["Cargo", "Comfort", "Comfort Plus"],
+    "Lodgy": ["Essential", "Stepway"]
+  },
+  "Kia": {
+    "Sportage": ["Comfort", "Dream", "Prestige", "GT-Line"],
+    "Picanto": ["Comfort", "Dream", "GT-Line"],
+    "Rio": ["Comfort", "Dream", "GT-Line"],
+    "Ceed": ["Comfort", "Dream", "GT-Line"],
+    "Stonic": ["Comfort", "Dream", "GT-Line"],
+    "Sorento": ["Comfort", "Dream", "Prestige", "GT-Line"]
+  },
+  "Volvo": {
+    "XC90": ["Momentum", "Inscription", "R-Design"],
+    "XC60": ["Momentum", "Inscription", "R-Design"],
+    "XC40": ["Momentum", "Inscription", "R-Design"],
+    "S60": ["Momentum", "Inscription", "R-Design"],
+    "S90": ["Momentum", "Inscription", "R-Design"],
+    "V40": ["Momentum", "Inscription", "R-Design"]
   },
   "default": ["Standart", "Dolu Paket", "Boş Paket", "Diğer/Belirtilmemiş"]
 };
