@@ -2181,16 +2181,30 @@ export default function App() {
       if(!user) return;
      
       try {
-          await addDoc(collection(db, `artifacts/${appId}/users/${user.uid}`, 'customers'), {
-              ...newCustomer,
-              createdAt: new Date().toISOString()
-          });
+          const basePath = `artifacts/${appId}/users/${user.uid}`;
+          
+          if (editingCustomerId) {
+              // Güncelleme
+              await updateDoc(doc(db, basePath, 'customers', editingCustomerId), {
+                  ...newCustomer,
+                  updatedAt: new Date().toISOString()
+              });
+              showToast("Müşteri güncellendi.");
+          } else {
+              // Yeni ekleme
+              await addDoc(collection(db, basePath, 'customers'), {
+                  ...newCustomer,
+                  createdAt: new Date().toISOString()
+              });
+              showToast("Müşteri eklendi.");
+          }
+          
           setModals({...modals, addCustomer: false});
-          setNewCustomer({ name: '', phone: '', type: 'Potansiyel', notes: '' });
-          showToast("Müşteri eklendi.");
+          setNewCustomer({ name: '', phone: '', type: 'Potansiyel', notes: '', interestedCarId: '' });
+          setEditingCustomerId(null);
       } catch (e) {
-          console.error("Customer addition error:", e);
-          showToast("Müşteri eklenemedi.", "error");
+          console.error("Customer operation error:", e);
+          showToast(editingCustomerId ? "Müşteri güncellenemedi." : "Müşteri eklenemedi.", "error");
       }
   };
 
