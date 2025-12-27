@@ -1543,9 +1543,9 @@ const AddCarModal = ({ isOpen, onClose, newCar, setNewCar, onSave, isEditing, sh
 
   if (!isOpen) return null;
  
-  const handleBrandChange = (e) => setNewCar({ ...newCar, brand: e.target.value, model: '', packageInfo: '' });
+  const handleBrandChange = (e) => setNewCar({ ...newCar, brand: e.target.value, model: '', packageInfo: '', engineType: '' });
  
-  const handleModelChange = (e) => setNewCar({ ...newCar, model: e.target.value, packageInfo: '' });
+  const handleModelChange = (e) => setNewCar({ ...newCar, model: e.target.value, packageInfo: '', engineType: '' });
 
   const handleNumberChange = (e, field) => setNewCar({ ...newCar, [field]: formatNumberInput(e.target.value) });
  
