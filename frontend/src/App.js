@@ -1351,7 +1351,34 @@ const ReportModal = ({ isOpen, onClose, transactions, inventory, showToast, user
           <div className="flex justify-between mt-20 pt-8 border-t border-black"><div className="text-center"><p className="font-bold text-sm">Muhasebe / Onay</p><div className="h-16"></div><p className="text-xs text-neutral-400">İmza / Kaşe</p></div><div className="text-center"><p className="font-bold text-sm">Aslanbaş Oto A.Ş. Yetkilisi</p><div className="h-16"></div><p className="text-xs text-neutral-400">İmza</p></div></div>
         </div>
       </div>
-      <style>{`@media print { body * { visibility: hidden; } .print\\:block, .print\\:block * { visibility: visible; } .print\\:block { position: absolute; left: 0; top: 0; width: 100%; height: 100%; margin: 0; padding: 20px; background: white; z-index: 9999; } }`}</style>
+      <style>{`
+        @media print {
+          @page { size: A4 portrait; margin: 15mm; }
+          html, body { 
+            margin: 0 !important; 
+            padding: 0 !important; 
+            background: white !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          body > * { visibility: hidden !important; }
+          #report-visible-content, 
+          #report-visible-content * { 
+            visibility: visible !important; 
+          }
+          #report-visible-content {
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 15mm !important;
+            background: white !important;
+            z-index: 99999 !important;
+          }
+          .print\\:hidden { display: none !important; }
+        }
+      `}</style>
     </div>
   );
 };
