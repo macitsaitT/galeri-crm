@@ -2190,13 +2190,15 @@ export default function App() {
                activeView === 'inventory' ? 'Stok Araçlar' :
                activeView === 'dashboard' ? 'Genel Bakış' :
                activeView === 'finance' ? 'Finans Yönetimi' :
-               activeView === 'customers' ? 'Müşteriler' : 'Raporlar'}
+               activeView === 'customers' ? 'Müşteriler' :
+               activeView === 'sold' ? 'Satılan Araçlar' :
+               activeView === 'trash' ? 'Çöp Kutusu' : 'Raporlar'}
             </h2>
           </div>
         </header>
        
         <main className="flex-1 overflow-y-auto p-6 bg-neutral-50">
-            {(activeView === 'inventory' || activeView === 'consignment') && (
+            {(activeView === 'inventory' || activeView === 'consignment' || activeView === 'sold') && (
                 <div className="space-y-6">
                     <div className="bg-white rounded-xl shadow-sm border border-neutral-100 overflow-visible">
                         <div className="p-4 border-b border-neutral-100 flex gap-4">
