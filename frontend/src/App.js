@@ -2174,12 +2174,12 @@ export default function App() {
                    
                     {/* Genel İşletme Giderleri/Gelirleri */}
                     <FinanceGroupRow title="Genel İşletme (Net)" subtext="Kira, Fatura, Maaş vb. İşlemleri" amount={transactions.filter(t=>!t.carId && t.category!=='Araç Alımı').reduce((acc,t)=>acc+(t.type==='income'?t.amount:-t.amount),0)} type='capital'>
-                        <div className="space-y-2 p-2">{transactions.filter(t=>!t.carId && t.category!=='Araç Alımı').map(t=>(<div key={t.id} className="flex justify-between text-sm p-2 border-b"><span className="text-neutral-500">{formatDate(t.date)} - {t.category} ({t.description})</span><span className={t.type==='income'?'text-green-600':'text-red-600'}>{t.type==='income'?'+':'-'}{formatCurrency(t.amount)}</span></div>))}</div>
+                        <div className="space-y-2 p-2">{transactions.filter(t=>!t.carId && t.category!=='Araç Alımı').map(t=>(<div key={t.id} className="flex justify-between items-center text-sm p-2 border-b hover:bg-neutral-100"><span className="text-neutral-500 flex-1">{formatDate(t.date)} - {t.category} ({t.description})</span><span className={`mr-3 font-bold ${t.type==='income'?'text-green-600':'text-red-600'}`}>{t.type==='income'?'+':'-'}{formatCurrency(t.amount)}</span><button onClick={()=>handleDeleteTransaction(t.id)} className="text-red-400 hover:text-red-600 p-1 rounded hover:bg-red-50"><Trash2 size={14}/></button></div>))}</div>
                     </FinanceGroupRow>
                    
                     {/* Tüm Araç İşlemleri Net Durumu */}
                     <FinanceGroupRow title="Araç Portföyü (Net)" subtext="Tüm Araçların Alım, Satım ve Masraf Durumu" amount={transactions.filter(t=>!!t.carId).reduce((acc,t)=>acc+(t.type==='income'?t.amount:-t.amount),0)} type='car'>
-                          <div className="space-y-2 p-2">{transactions.filter(t=>!!t.carId).map(t=>(<div key={t.id} className="flex justify-between text-sm p-2 border-b"><span className="text-neutral-500">{formatDate(t.date)} - {t.description}</span><span className={t.type==='income'?'text-green-600':'text-red-600'}>{t.type==='income'?'+':'-'}{formatCurrency(t.amount)}</span></div>))}</div>
+                          <div className="space-y-2 p-2">{transactions.filter(t=>!!t.carId).map(t=>(<div key={t.id} className="flex justify-between items-center text-sm p-2 border-b hover:bg-neutral-100"><span className="text-neutral-500 flex-1">{formatDate(t.date)} - {t.description}</span><span className={`mr-3 font-bold ${t.type==='income'?'text-green-600':'text-red-600'}`}>{t.type==='income'?'+':'-'}{formatCurrency(t.amount)}</span><button onClick={()=>handleDeleteTransaction(t.id)} className="text-red-400 hover:text-red-600 p-1 rounded hover:bg-red-50"><Trash2 size={14}/></button></div>))}</div>
                     </FinanceGroupRow>
 
                     <h3 className="font-bold text-lg text-black mt-8 mb-2">Araç Bazlı Finans</h3>
