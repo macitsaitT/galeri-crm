@@ -1642,13 +1642,18 @@ export default function App() {
   const handleLocalLogin = (pw) => {
       if (pw === userProfile.password) {
           setIsAuthenticated(true);
+          localStorage.setItem('isAuthenticated', 'true');
           setLoginError('');
       } else {
           setLoginError('Hatalı şifre.');
       }
   };
  
-  const handleLocalLogout = () => { setIsAuthenticated(false); setModals({...modals, settings: false}); };
+  const handleLocalLogout = () => { 
+      setIsAuthenticated(false); 
+      localStorage.removeItem('isAuthenticated');
+      setModals({...modals, settings: false}); 
+  };
  
   const handlePasswordReset = async (code) => {
       if (code === '123456' && user) {
