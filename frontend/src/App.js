@@ -324,6 +324,34 @@ const formatDate = (dateString) => {
     return dateString;
 };
 
+// Telefon numarası formatlama: 0(530)8487836
+const formatPhoneNumber = (value) => {
+    if (!value) return '';
+    // Sadece rakamları al
+    const digits = value.toString().replace(/\D/g, '');
+    if (!digits) return '';
+    
+    // Türk telefon formatı: 0(5XX)XXXXXXX
+    if (digits.length >= 11) {
+        return `0(${digits.slice(1, 4)})${digits.slice(4, 11)}`;
+    } else if (digits.length >= 10) {
+        // 5XX ile başlıyorsa
+        if (digits.startsWith('5')) {
+            return `0(${digits.slice(0, 3)})${digits.slice(3, 10)}`;
+        }
+        return `0(${digits.slice(1, 4)})${digits.slice(4, 11)}`;
+    } else if (digits.length >= 4) {
+        return `0(${digits.slice(0, 3)})${digits.slice(3)}`;
+    }
+    return digits;
+};
+
+// Telefon input için anlık formatlama
+const handlePhoneInput = (value) => {
+    const digits = value.replace(/\D/g, '');
+    return formatPhoneNumber(digits);
+};
+
 const resizeImage = (file) => {
   return new Promise((resolve) => {
     const reader = new FileReader();
