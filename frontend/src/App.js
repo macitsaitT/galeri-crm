@@ -2384,7 +2384,7 @@ export default function App() {
   };
 
   const initiateSale = (car) => {
-      setSaleModal({ isOpen: true, carId: car.id, price: formatNumberInput(car.salePrice), employeeShare: '' });
+      setSaleModal({ isOpen: true, carId: car.id, price: formatNumberInput(car.salePrice), employeeShare: '', customerId: '' });
       setActiveMenuId(null);
   };
 
@@ -2398,14 +2398,21 @@ export default function App() {
       const finalPrice = parseFormattedNumber(saleModal.price);
       const employeeShareAmount = parseFormattedNumber(saleModal.employeeShare) || 0;
       const basePath = `artifacts/${appId}/users/${user.uid}`;
+      
+      // Müşteri bilgilerini al
+      const selectedCustomer = customers.find(c => c.id === saleModal.customerId);
+      const customerName = selectedCustomer?.name || '';
+      const customerId = saleModal.customerId || '';
 
       try {
-          // 1. Update Car Status & Final Sale Price & Employee Share
+          // 1. Update Car Status & Final Sale Price & Employee Share & Customer
           await updateDoc(doc(db, basePath, 'inventory', car.id), { 
               status: 'Satıldı', 
               salePrice: finalPrice, 
               soldDate: new Date().toISOString().split('T')[0],
-              employeeShare: employeeShareAmount
+              employeeShare: employeeShareAmount,
+              customerId: customerId,
+              customerName: customerName
           });
          
           const deposit = car.depositAmount || 0;
