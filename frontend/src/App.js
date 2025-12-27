@@ -1821,8 +1821,17 @@ export default function App() {
      
       try {
           const path = itemType === 'inventory' ? 'inventory' : 'customers';
+          
+          // Eğer araç siliniyor ise, ilgili tüm işlemleri de sil
+          if (itemType === 'inventory') {
+              const carTransactions = transactions.filter(t => t.carId === itemId);
+              for (const t of carTransactions) {
+                  await deleteDoc(doc(db, `artifacts/${appId}/users/${user.uid}`, 'transactions', t.id));
+              }
+          }
+          
           await deleteDoc(doc(db, `artifacts/${appId}/users/${user.uid}`, path, itemId));
-          showToast("Kalıcı olarak silindi.");
+          showToast(itemType === 'inventory' ? "Araç ve ilgili işlemler kalıcı olarak silindi." : "Kalıcı olarak silindi.");
       } catch (e) {
           console.error("Permanent Delete Error:", e);
           showToast("Kalıcı silme başarısız.", "error");
