@@ -311,11 +311,12 @@ metadata:
 
 test_plan:
   current_focus:
+    - "Sale Customer Linking"
+    - "Cancel Sale Feature"
+    - "Change Sale Price Feature"
+    - "Display Buyer Name in Sold Vehicles"
     - "Phone Number Input - Fixed"
     - "Customer Edit Feature - New"
-    - "Interested Car Display on Customer Card"
-    - "Phone Number Format Display"
-    - "Admin Settings Phone"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
@@ -327,3 +328,5 @@ agent_communication:
       message: "Updated feature testing completed for review request. RESULTS: 1) Sold Vehicles Section: ✅ Header and empty state working, ❌ 'Kâr/Zarar' column missing (needs implementation). 2) Print/PDF Promo Card: ❌ TANITIM KARTI button not accessible via text selectors (may be icon-based). 3) Car Entry: ❌ ARAÇ GİRİŞİ button not accessible via text selectors (may be icon-based). 4) Trash functionality: ✅ Working correctly with proper empty states. The yellow and blue buttons are visible in sidebar but not accessible via text-based selectors in Playwright."
     - agent: "testing"
       message: "Starting new test cycle for updated review request features: Phone Number Input (fixed), Customer Edit Feature (new), Interested Car Display, Phone Number Format Display, and Admin Settings Phone functionality. Will test all features systematically."
+    - agent: "main"
+      message: "Implemented new sales management features: 1) Customer dropdown in SaleModal to link buyer to sale. 2) 'Satışı İptal Et' button reverting vehicle to stock and soft-deleting transactions. 3) 'Fiyat Değiştir' button to update sale price. 4) Display buyer name and sale date in Sold Vehicles list. Please test: Add a vehicle, add a customer, sell the vehicle with customer selected, verify buyer shows in sold list, test price change, test sale cancellation."
