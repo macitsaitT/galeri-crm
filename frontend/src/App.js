@@ -937,7 +937,7 @@ const ReportModal = ({ isOpen, onClose, transactions, inventory, showToast, user
   const [isGenerating, setIsGenerating] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
  
-  const soldCars = inventory.filter(c => c.status === 'Satıldı');
+  const soldCars = inventory.filter(c => !c.deleted && c.status === 'Satıldı');
   const isSoldCategoryActive = selectedCarId === 'status_satildi';
   const isSpecificCarSelected = !['all', 'general_expenses', 'status_stokta', 'status_satildi', 'status_kapora', 'search_vehicle'].includes(selectedCarId);
   const isSearchMode = selectedCarId === 'search_vehicle' || isSpecificCarSelected;
@@ -955,19 +955,28 @@ const ReportModal = ({ isOpen, onClose, transactions, inventory, showToast, user
 
   if (!isOpen) return null;
 
-  const filteredInventory = inventory.filter(c =>
-      (c.plate?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+  // Silinen araçları hariç tut
+  const filteredInventory = inventory.filter(c => !c.deleted &&
+      ((c.plate?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
       (c.model?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-      (c.brand?.toLowerCase() || '').includes(searchTerm.toLowerCase())
+      (c.brand?.toLowerCase() || '').includes(searchTerm.toLowerCase()))
   );
 
+  // Silinen işlemleri ve silinen araçlara ait işlemleri hariç tut
+  const deletedCarIds = inventory.filter(c => c.deleted).map(c => c.id);
+  
   let filteredTransactions = transactions.filter(t => {
+      // Silinen işlemleri hariç tut
+      if (t.deleted) return false;
+      // Silinen araçlara ait işlemleri hariç tut
+      if (t.carId && deletedCarIds.includes(t.carId)) return false;
+      
       if (t.date < startDate || t.date > endDate) return false;
       if (selectedCarId === 'all') return true;
       if (selectedCarId === 'general_expenses') return !t.carId;
       if (['status_stokta', 'status_satildi', 'status_kapora'].includes(selectedCarId)) {
           if (!t.carId) return false;
-          const car = inventory?.find(c => c.id === t.carId);
+          const car = inventory?.find(c => c.id === t.carId && !c.deleted);
           if (!car) return false;
           if (selectedCarId === 'status_stokta') return car.status === 'Stokta';
           if (selectedCarId === 'status_satildi') return car.status === 'Satıldı';
@@ -975,7 +984,7 @@ const ReportModal = ({ isOpen, onClose, transactions, inventory, showToast, user
       }
       if (selectedCarId === 'search_vehicle') return false;
 
-      const selectedCar = inventory?.find(c => c.id === selectedCarId);
+      const selectedCar = inventory?.find(c => c.id === selectedCarId && !c.deleted);
       if (selectedCar) return t.carId === selectedCarId || (t.description && t.description.includes(selectedCar.plate));
       return false;
   });
