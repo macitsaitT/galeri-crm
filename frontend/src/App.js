@@ -331,25 +331,20 @@ const formatPhoneNumber = (value) => {
     const digits = value.toString().replace(/\D/g, '');
     if (!digits) return '';
     
-    // Türk telefon formatı: 0(5XX)XXXXXXX
-    if (digits.length >= 11) {
+    // Sadece gösterim için format (11 haneli tam numara)
+    if (digits.length === 11 && digits.startsWith('0')) {
         return `0(${digits.slice(1, 4)})${digits.slice(4, 11)}`;
-    } else if (digits.length >= 10) {
-        // 5XX ile başlıyorsa
-        if (digits.startsWith('5')) {
-            return `0(${digits.slice(0, 3)})${digits.slice(3, 10)}`;
-        }
-        return `0(${digits.slice(1, 4)})${digits.slice(4, 11)}`;
-    } else if (digits.length >= 4) {
-        return `0(${digits.slice(0, 3)})${digits.slice(3)}`;
+    } else if (digits.length === 10 && digits.startsWith('5')) {
+        return `0(${digits.slice(0, 3)})${digits.slice(3, 10)}`;
     }
-    return digits;
+    return value; // Tam değilse olduğu gibi döndür
 };
 
-// Telefon input için anlık formatlama
+// Telefon input için - kullanıcı yazarken sadece rakam kabul et
 const handlePhoneInput = (value) => {
+    // Sadece rakamları kabul et, maksimum 11 karakter
     const digits = value.replace(/\D/g, '');
-    return formatPhoneNumber(digits);
+    return digits.slice(0, 11);
 };
 
 const resizeImage = (file) => {
