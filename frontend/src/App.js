@@ -2273,7 +2273,10 @@ export default function App() {
                                                 <div className="font-bold text-black">{car.brand} {car.model}</div>
                                                 <div className="text-neutral-500 text-xs">{car.year} • {car.km} KM • {car.plate?.toLocaleUpperCase('tr-TR')}</div>
                                                 {car.ownership === 'consignment' && car.ownerName && (
-                                                    <div className="text-xs text-purple-600 font-medium mt-1 flex items-center gap-1">
+                                                    <div 
+                                                        className="text-xs text-purple-600 font-medium mt-1 flex items-center gap-1 cursor-pointer hover:text-purple-800 hover:underline"
+                                                        onClick={(e) => {e.stopPropagation(); setActiveCarDetail(car); setModals({...modals, carDetail: true});}}
+                                                    >
                                                         <Handshake size={12}/> Sahibi: {car.ownerName}
                                                     </div>
                                                 )}
