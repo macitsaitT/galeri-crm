@@ -264,7 +264,7 @@ const PACKAGE_DATA = {
 };
 
 
-const EXPENSE_CATEGORIES = ["Yol / Yakıt", "Ekspertiz", "Noter", "Bakım / Onarım", "Yıkama / Kuaför", "Komisyon", "Vergi / Sigorta", "Diğer"];
+const EXPENSE_CATEGORIES = ["Yol / Yakıt", "Ekspertiz", "Noter", "Bakım / Onarım", "Yıkama / Kuaför", "Komisyon", "Vergi / Sigorta", "Araç Sahibine Ödeme", "Diğer"];
 const GENERAL_EXPENSE_CATEGORIES = ["Dükkan Kirası", "Personel Maaşı", "Elektrik Faturası", "Su Faturası", "İnternet/Telefon", "Yemek Giderleri", "Ofis Malzemeleri", "Vergi Ödemesi", "Diğer"];
 const DEFAULT_PROFILE = { name: 'Admin', title: 'Galeri Sahibi', phone: '0555 555 55 55', password: '1' };
 
