@@ -2082,7 +2082,7 @@ export default function App() {
   const [activeMenuId, setActiveMenuId] = useState(null);
   const [depositAmount, setDepositAmount] = useState('');
   const [depositModal, setDepositModal] = useState({ isOpen: false, carId: null, currentAmount: 0 });
-  const [saleModal, setSaleModal] = useState({ isOpen: false, carId: null, price: '' });
+  const [saleModal, setSaleModal] = useState({ isOpen: false, carId: null, price: '', employeeShare: '' });
 
   // Load html2pdf script
   useEffect(() => {
