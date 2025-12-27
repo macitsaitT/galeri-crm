@@ -2379,11 +2379,17 @@ export default function App() {
       if (!car) return;
      
       const finalPrice = parseFormattedNumber(saleModal.price);
+      const employeeShareAmount = parseFormattedNumber(saleModal.employeeShare) || 0;
       const basePath = `artifacts/${appId}/users/${user.uid}`;
 
       try {
-          // 1. Update Car Status & Final Sale Price
-          await updateDoc(doc(db, basePath, 'inventory', car.id), { status: 'Satıldı', salePrice: finalPrice, soldDate: new Date().toISOString().split('T')[0] });
+          // 1. Update Car Status & Final Sale Price & Employee Share
+          await updateDoc(doc(db, basePath, 'inventory', car.id), { 
+              status: 'Satıldı', 
+              salePrice: finalPrice, 
+              soldDate: new Date().toISOString().split('T')[0],
+              employeeShare: employeeShareAmount
+          });
          
           const deposit = car.depositAmount || 0;
           const finalIncome = finalPrice - deposit;
@@ -2401,36 +2407,39 @@ export default function App() {
               });
           }
 
-          // 3. For consignment cars, register the commission as income.
+          // 3. Çalışan payını gider olarak kaydet
+          if (employeeShareAmount > 0) {
+              await addDoc(collection(db, basePath, 'transactions'), {
+                  type: 'expense',
+                  category: 'Çalışan Payı',
+                  description: `Çalışan Payı - ${car.plate?.toLocaleUpperCase('tr-TR')} ${car.brand} ${car.model}`,
+                  amount: employeeShareAmount,
+                  carId: car.id,
+                  date: new Date().toISOString().split('T')[0],
+                  createdAt: new Date().toISOString()
+              });
+          }
+
+          // 4. For consignment cars, register owner payment as expense
           if (car.ownership === 'consignment') {
-             const commission = finalPrice * (car.commissionRate / 100);
-             const netPayout = finalPrice - commission;
+             const ownerAmount = car.purchasePrice || 0;
 
-             // Commission Income
-             await addDoc(collection(db, basePath, 'transactions'), {
-               type: 'income',
-               category: 'Konsinye Komisyon',
-               description: `Komisyon - ${car.plate?.toLocaleUpperCase('tr-TR')} - Satış: ${formatCurrency(finalPrice)}`,
-               amount: commission,
-               carId: car.id,
-               date: new Date().toISOString().split('T')[0],
-               createdAt: new Date().toISOString()
-             });
-
-             // Owner Payout Expense (Note: This is treated as an expense/outflow from the gallery's perspective)
-             await addDoc(collection(db, basePath, 'transactions'), {
-               type: 'expense',
-               category: 'Konsinye Ödeme',
-               description: `Konsinye Ödeme - ${car.plate?.toLocaleUpperCase('tr-TR')} - Net Ödenen: ${formatCurrency(netPayout)}`,
-               amount: netPayout,
-               carId: car.id,
-               date: new Date().toISOString().split('T')[0],
-               createdAt: new Date().toISOString()
-             });
+             // Owner Payout Expense
+             if (ownerAmount > 0) {
+                 await addDoc(collection(db, basePath, 'transactions'), {
+                   type: 'expense',
+                   category: 'Araç Sahibine Ödeme',
+                   description: `Araç Sahibine Ödeme - ${car.plate?.toLocaleUpperCase('tr-TR')} - ${car.ownerName || 'Konsinye'}`,
+                   amount: ownerAmount,
+                   carId: car.id,
+                   date: new Date().toISOString().split('T')[0],
+                   createdAt: new Date().toISOString()
+                 });
+             }
           }
 
           showToast(`Araç satışı ${formatCurrency(finalPrice)} bedelle tamamlandı.`);
-          setSaleModal({ isOpen: false, carId: null, price: '' });
+          setSaleModal({ isOpen: false, carId: null, price: '', employeeShare: '' });
       } catch (err) {
           console.error(err);
           showToast("Satış işlemi kaydedilemedi.", "error");
