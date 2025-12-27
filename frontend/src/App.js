@@ -874,7 +874,7 @@ const DeleteConfirmationModal = ({ isOpen, onClose, onConfirm }) => {
   );
 };
 
-const ReportModal = ({ isOpen, onClose, transactions, inventory, showToast }) => {
+const ReportModal = ({ isOpen, onClose, transactions, inventory, showToast, userProfile }) => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [selectedCarId, setSelectedCarId] = useState('all');
