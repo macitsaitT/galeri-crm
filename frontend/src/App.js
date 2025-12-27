@@ -60,13 +60,13 @@ import {
 
 // --- CONFIGURATION ---
 const firebaseConfig = {
-  apiKey: "AIzaSyAvxB9a_HDEBdwfhFMnDSPws-dn1QhIdnA",
-  authDomain: "galeri-crm-new.firebaseapp.com",
-  projectId: "galeri-crm-new",
-  storageBucket: "galeri-crm-new.firebasestorage.app",
-  messagingSenderId: "178683262312",
-  appId: "1:178683262312:web:6628bb4bb6ef69955dd2dd",
-  measurementId: "G-P8ZL4N765E"
+  apiKey: "AIzaSyDN8QAByePOI29p6sK9kr3NvuNHNbMDY5w",
+  authDomain: "galeri-crm-2.firebaseapp.com",
+  projectId: "galeri-crm-2",
+  storageBucket: "galeri-crm-2.firebasestorage.app",
+  messagingSenderId: "117548179118",
+  appId: "1:117548179118:web:ed9fcb4c6fe11dd4b4573f",
+  measurementId: "G-1TNEYN9NCX"
 };
 
 const app = initializeApp(firebaseConfig);
