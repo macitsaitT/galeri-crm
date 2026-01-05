@@ -64,7 +64,10 @@ export default function ReportModal({
       .filter(t => t.type === 'expense')
       .reduce((acc, t) => acc + t.amount, 0);
 
-    return { income, expense, net: income - expense };
+    const net = income - expense;
+    const percentage = income > 0 ? ((net / income) * 100).toFixed(1) : 0;
+
+    return { income, expense, net, percentage };
   }, [filteredTransactions]);
 
   const getReportTitle = () => {
@@ -104,48 +107,74 @@ export default function ReportModal({
           <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
             body { font-family: Arial, sans-serif; padding: 15px; color: #000; font-size: 11px; }
-            img { max-height: 30px !important; max-width: 80px !important; width: auto !important; height: auto !important; object-fit: contain !important; }
+            img, .report-logo { height: 32px !important; max-height: 32px !important; max-width: 80px !important; width: auto !important; object-fit: contain !important; display: inline-block !important; }
             .flex { display: flex; }
+            .flex-1 { flex: 1; }
             .items-center { align-items: center; }
             .items-start { align-items: flex-start; }
             .justify-between { justify-content: space-between; }
+            .justify-end { justify-content: flex-end; }
             .gap-2 { gap: 8px; }
             .gap-3 { gap: 12px; }
             .text-right { text-align: right; }
             .text-center { text-align: center; }
+            .text-left { text-align: left; }
             .font-bold { font-weight: bold; }
             .font-black { font-weight: 900; }
             .border-b-2 { border-bottom: 2px solid #000; }
             .border-b { border-bottom: 1px solid #eee; }
             .border { border: 1px solid #ddd; }
+            .border-t { border-top: 1px solid #ddd; }
+            .border-black { border-color: #000; }
             .rounded { border-radius: 4px; }
             .p-2 { padding: 8px; }
             .p-4 { padding: 16px; }
-            .mb-4 { margin-bottom: 16px; }
-            .mb-3 { margin-bottom: 12px; }
-            .pb-3 { padding-bottom: 12px; }
+            .py-0\\.5 { padding-top: 2px; padding-bottom: 2px; }
             .py-1 { padding-top: 4px; padding-bottom: 4px; }
+            .py-1\\.5 { padding-top: 6px; padding-bottom: 6px; }
             .px-1 { padding-left: 4px; padding-right: 4px; }
+            .mb-0\\.5 { margin-bottom: 2px; }
+            .mb-2 { margin-bottom: 8px; }
+            .mb-3 { margin-bottom: 12px; }
+            .mb-4 { margin-bottom: 16px; }
+            .mb-8 { margin-bottom: 32px; }
+            .mt-0\\.5 { margin-top: 2px; }
+            .mt-1 { margin-top: 4px; }
             .mt-10 { margin-top: 40px; }
+            .pb-1 { padding-bottom: 4px; }
+            .pb-3 { padding-bottom: 12px; }
+            .pt-1 { padding-top: 4px; }
+            .pt-2 { padding-top: 8px; }
             .pt-3 { padding-top: 12px; }
             .w-32 { width: 128px; }
             .w-48 { width: 192px; }
-            .mb-8 { margin-bottom: 32px; }
-            .text-base { font-size: 16px; }
-            .text-sm { font-size: 14px; }
-            .text-xs { font-size: 12px; }
+            .max-w-3xl { max-width: 768px; margin: 0 auto; }
+            .text-base { font-size: 14px; }
+            .text-sm { font-size: 12px; }
+            .text-xs { font-size: 10px; }
+            .text-\\[9px\\] { font-size: 9px; }
+            .text-\\[10px\\] { font-size: 10px; }
+            .uppercase { text-transform: uppercase; }
+            .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+            .max-w-\\[150px\\] { max-width: 150px; }
+            .text-black { color: #000; }
+            .text-neutral-400 { color: #a3a3a3; }
             .text-neutral-500 { color: #737373; }
             .text-neutral-600 { color: #525252; }
             .text-neutral-700 { color: #404040; }
             .text-green-600 { color: #16a34a; }
             .text-red-600 { color: #dc2626; }
             .bg-neutral-50 { background: #fafafa; }
+            .border-neutral-100 { border-color: #f5f5f5; }
             .border-neutral-200 { border-color: #e5e5e5; }
             .border-neutral-300 { border-color: #d4d4d4; }
             table { width: 100%; border-collapse: collapse; font-size: 10px; }
             th { background: #fafafa; padding: 6px 4px; text-align: left; font-weight: bold; border-bottom: 2px solid #d4d4d4; }
             td { padding: 5px 4px; border-bottom: 1px solid #eee; }
-            @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+            @media print { 
+              body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } 
+              img, .report-logo { height: 32px !important; max-height: 32px !important; max-width: 80px !important; }
+            }
           </style>
         </head>
         <body>${printContent.innerHTML}</body>
@@ -300,7 +329,7 @@ export default function ReportModal({
                   )}
                 </div>
                 {userProfile?.logo && (
-                  <img src={userProfile.logo} alt="Logo" className="h-8 w-auto object-contain"/>
+                  <img src={userProfile.logo} alt="Logo" className="report-logo" style={{height: '32px', maxWidth: '80px', width: 'auto', objectFit: 'contain'}}/>
                 )}
               </div>
             </div>
@@ -319,6 +348,9 @@ export default function ReportModal({
                 <p className="text-[9px] text-neutral-500 uppercase mb-0.5">Net Kâr</p>
                 <p className={`text-sm font-bold ${totals.net >= 0 ? 'text-black' : 'text-red-600'}`}>
                   {formatCurrency(totals.net)}
+                </p>
+                <p className={`text-[10px] font-bold ${totals.net >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  %{totals.percentage}
                 </p>
               </div>
             </div>
@@ -367,7 +399,7 @@ export default function ReportModal({
             {/* Totals */}
             <div className="border-t border-neutral-300 pt-2">
               <div className="flex justify-end">
-                <div className="w-48 text-[10px]">
+                <div className="w-52 text-[10px]">
                   <div className="flex justify-between py-0.5">
                     <span className="text-neutral-600">Toplam Gelir:</span>
                     <span className="font-bold text-green-600">{formatCurrency(totals.income)}</span>
@@ -379,7 +411,7 @@ export default function ReportModal({
                   <div className="flex justify-between py-1.5 border-t border-neutral-300 mt-1 text-xs">
                     <span className="font-bold">NET SONUÇ:</span>
                     <span className={`font-black ${totals.net >= 0 ? 'text-black' : 'text-red-600'}`}>
-                      {formatCurrency(totals.net)}
+                      {formatCurrency(totals.net)} <span className="text-[10px]">(%{totals.percentage})</span>
                     </span>
                   </div>
                 </div>
