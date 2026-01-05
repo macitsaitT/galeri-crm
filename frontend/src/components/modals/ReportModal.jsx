@@ -27,7 +27,17 @@ export default function ReportModal({
   });
   const [reportScope, setReportScope] = useState('general');
   const [selectedCarId, setSelectedCarId] = useState('');
+  const [plateSearch, setPlateSearch] = useState('');
   const reportRef = useRef(null);
+
+  // Filter cars by plate search
+  const filteredCars = useMemo(() => {
+    if (!plateSearch.trim()) return inventory.filter(c => !c.deleted);
+    const search = plateSearch.toLowerCase().replace(/\s/g, '');
+    return inventory.filter(c => 
+      !c.deleted && c.plate?.toLowerCase().replace(/\s/g, '').includes(search)
+    );
+  }, [inventory, plateSearch]);
 
   // Filter transactions by date range
   const filteredTransactions = useMemo(() => {
@@ -291,19 +301,35 @@ export default function ReportModal({
           </div>
           
           {reportScope === 'car' && (
-            <div className="mt-3">
-              <select
-                value={selectedCarId}
-                onChange={e => setSelectedCarId(e.target.value)}
-                className="border border-neutral-300 rounded px-2 py-1 text-xs bg-white min-w-[250px]"
-              >
-                <option value="">-- Araç Seçiniz --</option>
-                {inventory.filter(c => !c.deleted).map(car => (
-                  <option key={car.id} value={car.id}>
-                    {car.plate?.toLocaleUpperCase('tr-TR')} - {car.brand} {car.model}
-                  </option>
-                ))}
-              </select>
+            <div className="mt-3 flex gap-2 items-end">
+              <div>
+                <label className="block text-[10px] font-bold text-neutral-500 uppercase mb-1">Plaka Ara</label>
+                <input
+                  type="text"
+                  value={plateSearch}
+                  onChange={e => {
+                    setPlateSearch(e.target.value);
+                    setSelectedCarId('');
+                  }}
+                  placeholder="34 ABC 123"
+                  className="border border-neutral-300 rounded px-2 py-1 text-xs bg-white w-32"
+                />
+              </div>
+              <div className="flex-1">
+                <label className="block text-[10px] font-bold text-neutral-500 uppercase mb-1">Araç Seç</label>
+                <select
+                  value={selectedCarId}
+                  onChange={e => setSelectedCarId(e.target.value)}
+                  className="border border-neutral-300 rounded px-2 py-1 text-xs bg-white w-full min-w-[250px]"
+                >
+                  <option value="">-- Araç Seçiniz ({filteredCars.length} araç) --</option>
+                  {filteredCars.map(car => (
+                    <option key={car.id} value={car.id}>
+                      {car.plate?.toLocaleUpperCase('tr-TR')} - {car.brand} {car.model} ({car.year})
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
           )}
         </div>
