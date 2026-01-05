@@ -16,12 +16,13 @@ export default function SettingsModal({
   isOpen, 
   onClose, 
   profile, 
-  setProfile, 
+  onSaveProfile, 
   onLogout 
 }) {
   const [formData, setFormData] = useState(profile);
   const [showPassword, setShowPassword] = useState(false);
   const [isUploadingLogo, setIsUploadingLogo] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   
   useEffect(() => setFormData(profile), [profile]);
 
@@ -37,6 +38,19 @@ export default function SettingsModal({
       console.error("Logo upload error:", err);
     } finally {
       setIsUploadingLogo(false);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSaving(true);
+    try {
+      await onSaveProfile(formData);
+      onClose();
+    } catch (error) {
+      console.error("Save error:", error);
+    } finally {
+      setIsSaving(false);
     }
   };
   
