@@ -125,7 +125,7 @@ export default function CarDetailModal({ car, isOpen, onClose, showToast }) {
                       Motor: {car.expertise?.Motor || '-'}
                     </span>
                     <span className="px-2 py-1 rounded bg-blue-100 text-blue-700 font-bold border border-blue-200">
-                      Şanzıman: {car.expertise?Şanzıman || '-'}
+                      Şanzıman: {car.expertise?.['Şanzıman'] || '-'}
                     </span>
                     <span className="px-2 py-1 rounded bg-orange-100 text-orange-700 font-bold border border-orange-200">
                       Puan: {car.expertise?.score || '-'}
