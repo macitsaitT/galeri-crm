@@ -436,65 +436,71 @@ function App() {
     setDepositAmount(existingDeposit > 0 ? formatNumberInput(existingDeposit.toString()) : '');
   };
 
-  const confirmDeposit = (e) => {
+  const confirmDeposit = async (e) => {
     e.preventDefault();
     if (!depositModal.carId) return;
+    
+    const userId = getUserId();
+    if (!userId) return;
     
     const amt = parseFormattedNumber(depositAmount);
     const car = inventory.find(c => c.id === depositModal.carId);
     const diff = amt - (depositModal.currentAmount || 0);
     
-    // Aracı güncelle
-    setInventory(prev => prev.map(c => 
-      c.id === depositModal.carId ? { ...c, status: 'Kapora Alındı', depositAmount: amt } : c
-    ));
-    
-    // İşlem ekle
-    if (diff !== 0) {
-      const depositTransaction = {
-        id: generateId(),
-        type: diff > 0 ? 'income' : 'expense',
-        category: diff > 0 ? (depositModal.currentAmount === 0 ? 'Kapora' : 'Kapora Eklemesi') : 'Kapora İadesi',
-        description: `Kapora - ${car.plate?.toLocaleUpperCase('tr-TR')}`,
-        amount: Math.abs(diff),
-        carId: car.id,
-        date: new Date().toISOString().split('T')[0],
-        createdAt: new Date().toISOString()
-      };
-      setTransactions(prev => [depositTransaction, ...prev]);
+    try {
+      // Aracı güncelle
+      await updateCar(userId, depositModal.carId, { status: 'Kapora Alındı', depositAmount: amt });
+      
+      // İşlem ekle
+      if (diff !== 0) {
+        await addTransaction(userId, {
+          type: diff > 0 ? 'income' : 'expense',
+          category: diff > 0 ? (depositModal.currentAmount === 0 ? 'Kapora' : 'Kapora Eklemesi') : 'Kapora İadesi',
+          description: `Kapora - ${car.plate?.toLocaleUpperCase('tr-TR')}`,
+          amount: Math.abs(diff),
+          carId: car.id,
+          date: new Date().toISOString().split('T')[0]
+        });
+      }
+      
+      setDepositModal({ isOpen: false, carId: null, currentAmount: 0 });
+      showToast("Kapora işlemi kaydedildi.");
+    } catch (error) {
+      console.error("Deposit error:", error);
+      showToast("Kapora işlemi sırasında hata oluştu.", "error");
     }
-    
-    setDepositModal({ isOpen: false, carId: null, currentAmount: 0 });
-    showToast("Kapora işlemi kaydedildi.");
   };
 
-  const cancelDeposit = () => {
+  const cancelDeposit = async () => {
     if (!depositModal.carId) return;
+    
+    const userId = getUserId();
+    if (!userId) return;
     
     const car = inventory.find(c => c.id === depositModal.carId);
     
-    // Aracı stoka al
-    setInventory(prev => prev.map(c => 
-      c.id === depositModal.carId ? { ...c, status: 'Stokta', depositAmount: 0 } : c
-    ));
-    
-    // İade işlemi
-    if (car?.depositAmount > 0) {
-      const refundTransaction = {
-        id: generateId(),
-        type: 'expense',
-        category: 'Kapora İadesi',
-        description: `İade - ${car.plate?.toLocaleUpperCase('tr-TR')}`,
-        amount: car.depositAmount,
-        carId: car.id,
-        date: new Date().toISOString().split('T')[0],
-        createdAt: new Date().toISOString()
-      };
-      setTransactions(prev => [refundTransaction, ...prev]);
+    try {
+      // Aracı stoka al
+      await updateCar(userId, depositModal.carId, { status: 'Stokta', depositAmount: 0 });
+      
+      // İade işlemi
+      if (car?.depositAmount > 0) {
+        await addTransaction(userId, {
+          type: 'expense',
+          category: 'Kapora İadesi',
+          description: `İade - ${car.plate?.toLocaleUpperCase('tr-TR')}`,
+          amount: car.depositAmount,
+          carId: car.id,
+          date: new Date().toISOString().split('T')[0]
+        });
+      }
+      
+      setDepositModal({ isOpen: false, carId: null, currentAmount: 0 });
+      showToast("Kapora iade edildi.");
+    } catch (error) {
+      console.error("Cancel deposit error:", error);
+      showToast("Kapora iadesi sırasında hata oluştu.", "error");
     }
-    
-    setDepositModal({ isOpen: false, carId: null, currentAmount: 0 });
-    showToast("Kapora iade edildi.");
   };
 
   // =============== DELETE OPERATIONS ===============
