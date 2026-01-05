@@ -3,12 +3,7 @@ import {
   X,
   FileText,
   Download,
-  Phone,
-  Car,
-  Fuel,
-  Settings,
-  Calendar,
-  ClipboardCheck
+  Phone
 } from 'lucide-react';
 import { formatCurrency } from '../../utils/helpers';
 import { ExpertiseVisualMap } from './AddCarModal';
@@ -106,133 +101,122 @@ export default function PromoCardModal({
           {selectedCar ? (
             <div 
               ref={cardRef}
-              className="bg-white rounded-xl shadow-xl overflow-hidden max-w-xl mx-auto"
+              className="bg-white shadow-xl overflow-hidden max-w-xl mx-auto"
+              style={{ fontFamily: 'Arial, sans-serif' }}
             >
-              {/* Header */}
-              <div className="bg-black text-white p-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    {userProfile?.logo && (
-                      <img 
-                        src={userProfile.logo} 
-                        alt="Logo" 
-                        className="h-10 w-auto object-contain bg-white rounded p-0.5" 
-                      />
-                    )}
-                    <div>
-                      <h1 className="text-base font-black">
-                        {userProfile?.name?.toLocaleUpperCase('tr-TR') || 'GALERİ ADI'}
-                      </h1>
-                      <p className="text-[10px] text-neutral-400">{userProfile?.title || 'Oto Galeri'}</p>
-                    </div>
-                  </div>
-                  <div className="text-right text-[10px]">
-                    <p className="flex items-center gap-1 justify-end">
-                      <Phone size={10}/> {userProfile?.phone || '0555 555 55 55'}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Price Badge - moved to top */}
-              <div className="bg-amber-500 text-black px-4 py-2 text-center">
-                <p className="text-xl font-black">{formatCurrency(selectedCar.salePrice)}</p>
-              </div>
-              
-              {/* Car Info */}
-              <div className="p-4">
-                <h2 className="text-xl font-black text-black mb-0.5">
-                  {selectedCar.brand} {selectedCar.model}
-                </h2>
-                <p className="text-neutral-500 text-xs mb-3">
-                  {selectedCar.plate?.toLocaleUpperCase('tr-TR')} • {selectedCar.packageInfo || 'Standart'}
+              {/* Header - Black */}
+              <div className="bg-black text-white py-4 px-6 text-center">
+                <h1 className="text-xl font-black tracking-wide">
+                  {userProfile?.name?.toLocaleUpperCase('tr-TR') || 'GALERİ ADI'}
+                </h1>
+                <p className="text-[10px] text-amber-400 tracking-widest mt-1">
+                  {userProfile?.title?.toLocaleUpperCase('tr-TR') || 'GÜVENİLİR 2. EL ARAÇ MERKEZİ'}
                 </p>
-                
-                {/* Specs Grid */}
-                <div className="grid grid-cols-4 gap-2 mb-3">
-                  <div className="flex items-center gap-1.5 bg-neutral-50 p-2 rounded">
-                    <Calendar size={14} className="text-neutral-400"/>
-                    <div>
-                      <p className="text-[8px] text-neutral-400 uppercase">Yıl</p>
-                      <p className="font-bold text-xs">{selectedCar.year}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1.5 bg-neutral-50 p-2 rounded">
-                    <Car size={14} className="text-neutral-400"/>
-                    <div>
-                      <p className="text-[8px] text-neutral-400 uppercase">KM</p>
-                      <p className="font-bold text-xs">{selectedCar.km || '0'}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1.5 bg-neutral-50 p-2 rounded">
-                    <Fuel size={14} className="text-neutral-400"/>
-                    <div>
-                      <p className="text-[8px] text-neutral-400 uppercase">Yakıt</p>
-                      <p className="font-bold text-xs">{selectedCar.fuelType || 'Dizel'}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1.5 bg-neutral-50 p-2 rounded">
-                    <Settings size={14} className="text-neutral-400"/>
-                    <div>
-                      <p className="text-[8px] text-neutral-400 uppercase">Vites</p>
-                      <p className="font-bold text-xs">{selectedCar.gear || 'Otomatik'}</p>
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Expertise Section */}
-                {selectedCar.expertise && (
-                  <div className="mb-3 border border-neutral-200 rounded-lg overflow-hidden">
-                    <div className="bg-neutral-100 px-3 py-1.5 flex items-center gap-2">
-                      <ClipboardCheck size={14} className="text-green-600"/>
-                      <span className="font-bold text-xs">Ekspertiz Raporu</span>
-                      {selectedCar.expertise.score && (
-                        <span className="ml-auto bg-green-100 text-green-700 px-2 py-0.5 rounded text-[10px] font-bold">
-                          Puan: {selectedCar.expertise.score}/100
-                        </span>
-                      )}
-                    </div>
-                    {/* Expertise Visual Map */}
-                    {selectedCar.expertise.body && Object.keys(selectedCar.expertise.body).length > 0 && (
-                      <div className="p-3 flex justify-center bg-white">
-                        <div className="transform scale-75 origin-top">
-                          <ExpertiseVisualMap value={selectedCar.expertise.body} readonly={true} />
-                        </div>
-                      </div>
-                    )}
-                    {/* Expertise Notes */}
-                    {selectedCar.expertise.notes && (
-                      <div className="px-3 pb-2 text-[10px] text-neutral-600">
-                        <span className="font-bold">Not:</span> {selectedCar.expertise.notes}
-                      </div>
-                    )}
-                  </div>
-                )}
-                
-                {/* Description */}
-                {selectedCar.description && (
-                  <div className="bg-neutral-50 p-3 rounded-lg mb-3">
-                    <p className="text-xs text-neutral-600 leading-relaxed">
-                      {selectedCar.description}
-                    </p>
-                  </div>
-                )}
               </div>
               
-              {/* Footer */}
-              <div className="bg-neutral-100 p-3 border-t border-neutral-200">
-                <div className="flex items-center justify-center gap-2">
-                  {userProfile?.logo && (
-                    <img 
-                      src={userProfile.logo} 
-                      alt="Logo" 
-                      className="h-6 w-auto object-contain opacity-50" 
-                    />
-                  )}
-                  <p className="text-[10px] text-neutral-500">
-                    {userProfile?.name || 'Galeri Adı'} • {userProfile?.phone || '0555 555 55 55'}
+              {/* Car Info - Yellow Band */}
+              <div className="bg-amber-400 py-4 px-6 flex justify-between items-end">
+                <div>
+                  <h2 className="text-2xl font-black text-black leading-tight">
+                    {selectedCar.brand?.toLocaleUpperCase('tr-TR')}
+                  </h2>
+                  <p className="text-lg font-bold text-black">
+                    {selectedCar.model?.toLocaleUpperCase('tr-TR')}
                   </p>
+                  <p className="text-sm font-bold text-black">{selectedCar.year}</p>
                 </div>
+                <div className="text-right">
+                  <p className="text-[10px] text-black/70 font-bold">FİYAT</p>
+                  <p className="text-2xl font-black text-black">₺{Number(selectedCar.salePrice).toLocaleString('tr-TR')}</p>
+                </div>
+              </div>
+              
+              {/* Specs Row */}
+              <div className="grid grid-cols-5 border-b border-neutral-200">
+                <div className="py-3 px-2 text-center border-r border-neutral-200">
+                  <p className="text-[9px] text-neutral-500 font-bold uppercase">Kilometre</p>
+                  <p className="text-sm font-black">{selectedCar.km || '0'} KM</p>
+                </div>
+                <div className="py-3 px-2 text-center border-r border-neutral-200">
+                  <p className="text-[9px] text-neutral-500 font-bold uppercase">Yakıt</p>
+                  <p className="text-sm font-black">{selectedCar.fuelType || 'Benzin'}</p>
+                </div>
+                <div className="py-3 px-2 text-center border-r border-neutral-200">
+                  <p className="text-[9px] text-neutral-500 font-bold uppercase">Vites</p>
+                  <p className="text-sm font-black">{selectedCar.gear || 'Manuel'}</p>
+                </div>
+                <div className="py-3 px-2 text-center border-r border-neutral-200">
+                  <p className="text-[9px] text-neutral-500 font-bold uppercase">Kasa Tipi</p>
+                  <p className="text-sm font-black">{selectedCar.bodyType || 'Sedan'}</p>
+                </div>
+                <div className="py-3 px-2 text-center">
+                  <p className="text-[9px] text-neutral-500 font-bold uppercase">Muayene</p>
+                  <p className="text-sm font-black">{selectedCar.inspectionDate || '-'}</p>
+                </div>
+              </div>
+              
+              {/* Two Column Section */}
+              <div className="grid grid-cols-2 border-b border-neutral-200">
+                {/* Left - Description & Mechanical */}
+                <div className="border-r border-neutral-200 p-4">
+                  {/* Description */}
+                  <div className="mb-4">
+                    <p className="text-[9px] text-neutral-500 font-bold uppercase mb-2 border-b border-neutral-200 pb-1">
+                      Araç Açıklaması
+                    </p>
+                    <p className="text-[10px] text-neutral-600 leading-relaxed">
+                      {selectedCar.description || 'Araç hakkında detaylı bilgi için lütfen satış temsilcimiz ile iletişime geçiniz. Araçlarımız ekspertiz garantilidir.'}
+                    </p>
+                  </div>
+                  
+                  {/* Mechanical Status */}
+                  <div>
+                    <p className="text-[9px] text-neutral-500 font-bold uppercase mb-2 border-b border-neutral-200 pb-1">
+                      Mekanik Durum
+                    </p>
+                    <div className="space-y-1">
+                      <div className="flex justify-between items-center py-1 border-b border-neutral-100">
+                        <span className="text-[10px] text-neutral-600">MOTOR DURUMU</span>
+                        <span className="text-[10px] font-bold">{selectedCar.expertise?.mechanical?.motor || 'Orijinal'}</span>
+                      </div>
+                      <div className="flex justify-between items-center py-1 border-b border-neutral-100">
+                        <span className="text-[10px] text-neutral-600">ŞANZIMAN DURUMU</span>
+                        <span className="text-[10px] font-bold">{selectedCar.expertise?.mechanical?.transmission || 'Orijinal'}</span>
+                      </div>
+                      <div className="flex justify-between items-center py-1">
+                        <span className="text-[10px] text-neutral-600">YÜRÜYEN DURUMU</span>
+                        <span className="text-[10px] font-bold">{selectedCar.expertise?.mechanical?.suspension || 'Orijinal'}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Right - Expertise Map */}
+                <div className="p-4">
+                  <p className="text-[9px] text-neutral-500 font-bold uppercase mb-2 border-b border-neutral-200 pb-1">
+                    Kaporta Durum Özeti
+                  </p>
+                  <div className="flex justify-center items-center">
+                    {selectedCar.expertise?.body && Object.keys(selectedCar.expertise.body).length > 0 ? (
+                      <div className="transform scale-[0.65] origin-top">
+                        <ExpertiseVisualMap value={selectedCar.expertise.body} readonly={true} />
+                      </div>
+                    ) : (
+                      <div className="py-8 text-center text-neutral-400 text-xs">
+                        <p>Ekspertiz verisi girilmemiş</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+              
+              {/* Footer - Contact */}
+              <div className="py-4 px-6 text-center border-t border-neutral-200">
+                <p className="text-[10px] text-neutral-500 font-bold uppercase mb-1">İletişim</p>
+                <p className="text-base font-black flex items-center justify-center gap-2">
+                  <Phone size={14} className="text-amber-500"/>
+                  {userProfile?.phone || '0555 555 55 55'}
+                </p>
               </div>
             </div>
           ) : (
