@@ -631,8 +631,11 @@ function App() {
   };
 
   // =============== TRANSACTION OPERATIONS ===============
-  const handleAddTransaction = (e) => {
+  const handleAddTransaction = async (e) => {
     e.preventDefault();
+    
+    const userId = getUserId();
+    if (!userId) return;
     
     const amount = parseFormattedNumber(newTransaction.amount);
     if (amount <= 0) {
@@ -640,58 +643,79 @@ function App() {
       return;
     }
     
-    const transactionWithId = {
-      ...newTransaction,
-      id: generateId(),
-      amount,
-      createdAt: new Date().toISOString()
-    };
-    setTransactions(prev => [transactionWithId, ...prev]);
+    try {
+      await addTransaction(userId, {
+        ...newTransaction,
+        amount
+      });
+      
+      setModals({ ...modals, addTransaction: false });
+      setNewTransaction({ 
+        type: 'expense', category: '', description: '', amount: '', 
+        date: new Date().toISOString().split('T')[0] 
+      });
+      showToast("İşlem eklendi.");
+    } catch (error) {
+      console.error("Transaction error:", error);
+      showToast("İşlem eklenirken hata oluştu.", "error");
+    }
+  };
+
+  const handleAddGeneralExpense = async (formData) => {
+    const userId = getUserId();
+    if (!userId) return;
     
-    setModals({ ...modals, addTransaction: false });
-    setNewTransaction({ 
-      type: 'expense', category: '', description: '', amount: '', 
-      date: new Date().toISOString().split('T')[0] 
-    });
-    showToast("İşlem eklendi.");
+    try {
+      await addTransaction(userId, {
+        type: 'expense',
+        category: formData.category,
+        description: formData.description,
+        amount: parseFormattedNumber(formData.amount),
+        date: formData.date
+      });
+      setModals({ ...modals, addGeneralExpense: false });
+      showToast("Genel gider kaydedildi.");
+    } catch (error) {
+      console.error("General expense error:", error);
+      showToast("Gider kaydedilirken hata oluştu.", "error");
+    }
   };
 
-  const handleAddGeneralExpense = (formData) => {
-    const expenseTransaction = {
-      id: generateId(),
-      type: 'expense',
-      category: formData.category,
-      description: formData.description,
-      amount: parseFormattedNumber(formData.amount),
-      date: formData.date,
-      createdAt: new Date().toISOString()
-    };
-    setTransactions(prev => [expenseTransaction, ...prev]);
-    setModals({ ...modals, addGeneralExpense: false });
-    showToast("Genel gider kaydedildi.");
-  };
-
-  const handleAddCarExpense = (expenseData) => {
+  const handleAddCarExpense = async (expenseData) => {
     if (!activeExpenseCar) return;
     
-    const expenseTransaction = {
-      id: generateId(),
-      type: 'expense',
-      category: expenseData.category,
-      description: `${expenseData.category} - ${activeExpenseCar.plate?.toLocaleUpperCase('tr-TR')} ${expenseData.description ? `(${expenseData.description})` : ''}`,
-      amount: expenseData.amount,
-      carId: activeExpenseCar.id,
-      date: expenseData.date || new Date().toISOString().split('T')[0],
-      createdAt: new Date().toISOString()
-    };
-    setTransactions(prev => [expenseTransaction, ...prev]);
-    showToast("Araç masrafı eklendi.");
+    const userId = getUserId();
+    if (!userId) return;
+    
+    try {
+      await addTransaction(userId, {
+        type: 'expense',
+        category: expenseData.category,
+        description: `${expenseData.category} - ${activeExpenseCar.plate?.toLocaleUpperCase('tr-TR')} ${expenseData.description ? `(${expenseData.description})` : ''}`,
+        amount: expenseData.amount,
+        carId: activeExpenseCar.id,
+        date: expenseData.date || new Date().toISOString().split('T')[0]
+      });
+      showToast("Araç masrafı eklendi.");
+    } catch (error) {
+      console.error("Car expense error:", error);
+      showToast("Masraf eklenirken hata oluştu.", "error");
+    }
   };
 
-  const handleDeleteTransaction = (transactionId) => {
+  const handleDeleteTransaction = async (transactionId) => {
     if (!window.confirm("Bu işlem kaydını silmek istediğinize emin misiniz?")) return;
-    setTransactions(prev => prev.filter(t => t.id !== transactionId));
-    showToast("İşlem kaydı silindi.");
+    
+    const userId = getUserId();
+    if (!userId) return;
+    
+    try {
+      await deleteTransaction(userId, transactionId, true);
+      showToast("İşlem kaydı silindi.");
+    } catch (error) {
+      console.error("Delete transaction error:", error);
+      showToast("İşlem silinirken hata oluştu.", "error");
+    }
   };
 
   // =============== VIEW DETAIL ===============
