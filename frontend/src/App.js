@@ -23,6 +23,8 @@ import CarExpensesModal from './components/modals/CarExpensesModal';
 import SettingsModal from './components/modals/SettingsModal';
 import DeleteConfirmationModal from './components/modals/DeleteConfirmationModal';
 import CarDetailModal from './components/modals/CarDetailModal';
+import ReportModal from './components/modals/ReportModal';
+import PromoCardModal from './components/modals/PromoCardModal';
 
 // Firebase Services
 import {
@@ -117,7 +119,9 @@ function App() {
     addGeneralExpense: false,
     carDetail: false,
     deposit: false,
-    sale: false
+    sale: false,
+    report: false,
+    promoCard: false
   });
 
   // Form states
@@ -760,11 +764,11 @@ function App() {
           setEditingCarId(null);
           setModals({ ...modals, addCar: true });
         }}
-        onOpenPromoCard={() => showToast("Tanıtım kartı özelliği yakında aktif olacak!", "info")}
+        onOpenPromoCard={() => setModals({ ...modals, promoCard: true })}
         onOpenGeneralExpense={() => setModals({ ...modals, addGeneralExpense: true })}
         onOpenTransaction={() => setModals({ ...modals, addTransaction: true })}
         onOpenSettings={() => setModals({ ...modals, settings: true })}
-        onOpenReport={() => showToast("Rapor özelliği yakında aktif olacak!", "info")}
+        onOpenReport={() => setModals({ ...modals, report: true })}
       />
       
       {/* Main Content */}
@@ -948,6 +952,23 @@ function App() {
         isOpen={modals.delete}
         onClose={() => setModals({ ...modals, delete: false })}
         onConfirm={confirmDelete}
+      />
+      
+      <ReportModal
+        isOpen={modals.report}
+        onClose={() => setModals({ ...modals, report: false })}
+        inventory={inventory}
+        transactions={transactions}
+        customers={customers}
+        userProfile={userProfile}
+      />
+      
+      <PromoCardModal
+        isOpen={modals.promoCard}
+        onClose={() => setModals({ ...modals, promoCard: false })}
+        inventory={inventory}
+        userProfile={userProfile}
+        showToast={showToast}
       />
     </div>
   );
