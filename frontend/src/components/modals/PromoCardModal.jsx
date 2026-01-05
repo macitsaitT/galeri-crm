@@ -218,10 +218,19 @@ export default function PromoCardModal({
               </div>
               
               {/* Footer */}
-              <div className="bg-neutral-50 p-4 border-t border-neutral-200 text-center">
-                <p className="text-xs text-neutral-500">
-                  {userProfile.name || 'Galeri Adı'} • {userProfile.phone || '0555 555 55 55'}
-                </p>
+              <div className="bg-neutral-50 p-4 border-t border-neutral-200">
+                <div className="flex items-center justify-center gap-3">
+                  {userProfile?.logo && (
+                    <img 
+                      src={userProfile.logo} 
+                      alt="Logo" 
+                      className="h-8 w-auto object-contain opacity-60" 
+                    />
+                  )}
+                  <p className="text-xs text-neutral-500">
+                    {userProfile?.name || 'Galeri Adı'} • {userProfile?.phone || '0555 555 55 55'}
+                  </p>
+                </div>
               </div>
             </div>
           ) : (
