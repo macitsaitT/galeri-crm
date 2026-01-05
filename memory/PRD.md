@@ -23,6 +23,9 @@ Araç galerisi yönetim sistemi (CRM). Araç envanteri, müşteri yönetimi, fin
 - Araç durumu takibi (Stokta, Kapora Alındı, Satıldı)
 - Ekspertiz bilgileri ve görsel harita
 - Fotoğraf yükleme
+- **Kapsamlı marka/model veritabanı** (30+ marka, 500+ model)
+- **Motor tipi seçimi** (markaya ve modele göre)
+- **Araç paketi/versiyonu seçimi** (motora göre)
 
 ### 3. Müşteri Yönetimi
 - Müşteri ekleme/düzenleme/silme
