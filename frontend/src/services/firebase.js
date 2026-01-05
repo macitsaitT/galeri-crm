@@ -31,12 +31,7 @@ const appId = 'galeri-crm-app';
 
 // Get or create a persistent user ID from localStorage
 const getLocalUserId = () => {
-  let userId = localStorage.getItem('galericrm_user_id');
-  if (!userId) {
-    userId = 'user_' + Math.random().toString(36).substring(2, 15);
-    localStorage.setItem('galericrm_user_id', userId);
-  }
-  return userId;
+  return 'aslanbasoto';
 };
 
 // Helper to get user data path
