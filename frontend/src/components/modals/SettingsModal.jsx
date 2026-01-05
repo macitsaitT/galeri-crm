@@ -167,9 +167,11 @@ export default function SettingsModal({
           <div className="pt-4 flex flex-col gap-3">
             <button 
               type="submit" 
-              className="w-full bg-black text-white font-bold py-3 rounded-xl hover:bg-neutral-800 transition flex items-center justify-center"
+              disabled={isSaving}
+              className="w-full bg-black text-white font-bold py-3 rounded-xl hover:bg-neutral-800 transition flex items-center justify-center disabled:opacity-50"
             >
-              <Save size={18} className="mr-2"/> Kaydet
+              {isSaving ? <Loader2 size={18} className="mr-2 animate-spin"/> : <Save size={18} className="mr-2"/>}
+              {isSaving ? 'Kaydediliyor...' : 'Kaydet'}
             </button>
             <button 
               type="button" 
