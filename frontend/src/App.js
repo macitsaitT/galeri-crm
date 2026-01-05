@@ -938,7 +938,18 @@ function App() {
         isOpen={modals.settings}
         onClose={() => setModals({ ...modals, settings: false })}
         profile={userProfile}
-        setProfile={setUserProfile}
+        onSaveProfile={async (newProfile) => {
+          const userId = getUserId();
+          if (userId) {
+            try {
+              await saveProfile(userId, newProfile);
+              showToast("Ayarlar kaydedildi.");
+            } catch (error) {
+              console.error("Save profile error:", error);
+              showToast("Ayarlar kaydedilirken hata oluştu.", "error");
+            }
+          }
+        }}
         onLogout={handleLogout}
       />
       
