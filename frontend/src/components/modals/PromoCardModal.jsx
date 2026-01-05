@@ -12,6 +12,7 @@ import {
   ClipboardCheck
 } from 'lucide-react';
 import { formatCurrency } from '../../utils/helpers';
+import { ExpertiseVisualMap } from './AddCarModal';
 
 export default function PromoCardModal({ 
   isOpen, 
@@ -206,26 +207,18 @@ export default function PromoCardModal({
                         </span>
                       )}
                     </div>
-                    {/* Expertise Photo */}
-                    {selectedCar.expertise.photo ? (
-                      <div className="p-2">
-                        <img 
-                          src={selectedCar.expertise.photo} 
-                          alt="Ekspertiz" 
-                          className="w-full h-auto rounded"
-                        />
+                    {/* Expertise Visual Map */}
+                    {selectedCar.expertise.body && Object.keys(selectedCar.expertise.body).length > 0 && (
+                      <div className="p-3 flex justify-center bg-white">
+                        <div className="transform scale-75 origin-top">
+                          <ExpertiseVisualMap value={selectedCar.expertise.body} readonly={true} />
+                        </div>
                       </div>
-                    ) : selectedCar.expertiseImage ? (
-                      <div className="p-2">
-                        <img 
-                          src={selectedCar.expertiseImage} 
-                          alt="Ekspertiz" 
-                          className="w-full h-auto rounded"
-                        />
-                      </div>
-                    ) : (
-                      <div className="p-3 text-center text-neutral-400 text-xs">
-                        Ekspertiz fotoğrafı yok
+                    )}
+                    {/* Expertise Notes */}
+                    {selectedCar.expertise.notes && (
+                      <div className="px-3 pb-2 text-[10px] text-neutral-600">
+                        <span className="font-bold">Not:</span> {selectedCar.expertise.notes}
                       </div>
                     )}
                   </div>
