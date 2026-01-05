@@ -115,17 +115,24 @@ export default function PromoCardModal({
               {/* Logo & Header */}
               <div className="bg-black text-white p-6">
                 <div className="flex items-center justify-between">
-                  <div>
-                    {userProfile.logo ? (
-                      <img src={userProfile.logo} alt="Logo" className="h-12 object-contain" />
-                    ) : (
-                      <h1 className="text-2xl font-black">ASLANBAŞ OTO</h1>
+                  <div className="flex items-center gap-3">
+                    {userProfile?.logo && (
+                      <img 
+                        src={userProfile.logo} 
+                        alt="Logo" 
+                        className="h-14 w-auto object-contain bg-white rounded-lg p-1" 
+                      />
                     )}
-                    <p className="text-xs text-neutral-400 mt-1">YÖNETİM PANELİ</p>
+                    <div>
+                      <h1 className="text-xl font-black">
+                        {userProfile?.name?.toLocaleUpperCase('tr-TR') || 'GALERİ ADI'}
+                      </h1>
+                      <p className="text-xs text-neutral-400 mt-0.5">{userProfile?.title || 'Oto Galeri'}</p>
+                    </div>
                   </div>
                   <div className="text-right text-xs">
                     <p className="flex items-center gap-1 justify-end">
-                      <Phone size={12}/> {userProfile.phone || '0555 555 55 55'}
+                      <Phone size={12}/> {userProfile?.phone || '0555 555 55 55'}
                     </p>
                   </div>
                 </div>
