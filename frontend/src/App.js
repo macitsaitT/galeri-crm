@@ -54,6 +54,10 @@ import {
 } from './utils/helpers';
 
 function App() {
+  // Firebase user state
+  const [firebaseUser, setFirebaseUser] = useState(null);
+  const [isFirebaseLoading, setIsFirebaseLoading] = useState(true);
+
   // Authentication state
   const [isAuthenticated, setIsAuthenticated] = useState(
     localStorage.getItem('galericrm_auth') === 'true'
@@ -65,11 +69,58 @@ function App() {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [toast, setToast] = useState({ message: '', type: '' });
 
-  // Data state (using mock data)
-  const [inventory, setInventory] = useState(mockInventory);
-  const [customers, setCustomers] = useState(mockCustomers);
-  const [transactions, setTransactions] = useState(mockTransactions);
+  // Data state (from Firebase)
+  const [inventory, setInventory] = useState([]);
+  const [customers, setCustomers] = useState([]);
+  const [transactions, setTransactions] = useState([]);
   const [userProfile, setUserProfile] = useState(DEFAULT_PROFILE);
+  const [dataLoading, setDataLoading] = useState(true);
+
+  // Initialize Firebase Auth
+  useEffect(() => {
+    initAuth();
+    const unsubscribe = subscribeToAuth((user) => {
+      setFirebaseUser(user);
+      setIsFirebaseLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // Subscribe to Firestore data when user is authenticated
+  useEffect(() => {
+    if (!firebaseUser) {
+      setDataLoading(false);
+      return;
+    }
+
+    const userId = firebaseUser.uid;
+    setDataLoading(true);
+
+    // Subscribe to all collections
+    const unsubInventory = subscribeToInventory(userId, (data) => {
+      setInventory(data);
+      setDataLoading(false);
+    });
+
+    const unsubCustomers = subscribeToCustomers(userId, (data) => {
+      setCustomers(data);
+    });
+
+    const unsubTransactions = subscribeToTransactions(userId, (data) => {
+      setTransactions(data);
+    });
+
+    const unsubProfile = subscribeToProfile(userId, (data) => {
+      setUserProfile(data);
+    }, DEFAULT_PROFILE);
+
+    return () => {
+      unsubInventory();
+      unsubCustomers();
+      unsubTransactions();
+      unsubProfile();
+    };
+  }, [firebaseUser]);
 
   // Modal states
   const [modals, setModals] = useState({
