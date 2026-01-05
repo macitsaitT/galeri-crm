@@ -48,10 +48,11 @@ Araç galerisi yönetim sistemi (CRM). Araç envanteri, müşteri yönetimi, fin
 - Son işlemler listesi
 
 ### 6. Raporlar Modülü (05 Ocak 2026)
-- **Özet Rapor**: Toplam gelir/gider, net durum, araç işlemleri, genel işletme
-- **İşlemler Raporu**: Tarih filtrelemeli tüm işlem listesi
-- **Envanter Raporu**: Araç stok durumu, toplam değer
-- PDF/Yazdır özelliği
+- Özet rapor (gelir/gider/net durum)
+- İşlem detay raporu
+- Envanter raporu
+- Tarih aralığı filtreleme
+- Yazdır/PDF dışa aktarım
 
 ### 7. Tanıtım Kartı (05 Ocak 2026)
 - Araç seçerek tanıtım kartı oluşturma
