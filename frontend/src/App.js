@@ -89,7 +89,6 @@ function App() {
   // Subscribe to Firestore data when user is authenticated
   useEffect(() => {
     if (!firebaseUser) {
-      setDataLoading(false);
       return;
     }
 
