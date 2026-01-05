@@ -1,11 +1,6 @@
 // Firebase Configuration & Services
 import { initializeApp } from 'firebase/app';
 import {
-  getAuth,
-  signInAnonymously,
-  onAuthStateChanged
-} from 'firebase/auth';
-import {
   getFirestore,
   collection,
   doc,
@@ -13,9 +8,7 @@ import {
   addDoc,
   updateDoc,
   deleteDoc,
-  onSnapshot,
-  query,
-  orderBy
+  onSnapshot
 } from 'firebase/firestore';
 
 // Firebase Config
@@ -31,32 +24,26 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
 const db = getFirestore(app);
 
-// App ID for data path
+// App ID for data path - using a fixed user ID since we're not using auth
 const appId = 'galeri-crm-app';
+
+// Get or create a persistent user ID from localStorage
+const getLocalUserId = () => {
+  let userId = localStorage.getItem('galericrm_user_id');
+  if (!userId) {
+    userId = 'user_' + Math.random().toString(36).substring(2, 15);
+    localStorage.setItem('galericrm_user_id', userId);
+  }
+  return userId;
+};
 
 // Helper to get user data path
 const getUserPath = (userId) => `artifacts/${appId}/users/${userId}`;
 
 // Export Firebase instances
-export { auth, db, appId };
-
-// Auth helpers
-export const initAuth = async () => {
-  try {
-    await signInAnonymously(auth);
-    return true;
-  } catch (error) {
-    console.error("Firebase Auth Error:", error);
-    return false;
-  }
-};
-
-export const subscribeToAuth = (callback) => {
-  return onAuthStateChanged(auth, callback);
-};
+export { db, appId, getLocalUserId };
 
 // Firestore helpers
 export const subscribeToInventory = (userId, callback) => {
@@ -113,7 +100,7 @@ export const subscribeToProfile = (userId, callback, defaultProfile) => {
       callback(docSnap.data());
     } else {
       // Create default profile
-      setDoc(profileRef, defaultProfile);
+      setDoc(profileRef, defaultProfile).catch(err => console.error("Error creating profile:", err));
       callback(defaultProfile);
     }
   }, (error) => {
@@ -223,19 +210,4 @@ export const updateTransaction = async (userId, transactionId, transactionData) 
 export const saveProfile = async (userId, profileData) => {
   const path = getUserPath(userId);
   await setDoc(doc(db, path, 'settings', 'profile'), profileData, { merge: true });
-};
-
-// Batch delete transactions by carId
-export const softDeleteTransactionsByCarId = async (userId, carId) => {
-  const path = getUserPath(userId);
-  // Note: In a real app, you'd use a batch or transaction
-  // For simplicity, we'll handle this in the component
-};
-
-export const restoreTransactionsByCarId = async (userId, carId) => {
-  // Handle in component
-};
-
-export const permanentDeleteTransactionsByCarId = async (userId, carId) => {
-  // Handle in component
 };
