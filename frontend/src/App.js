@@ -510,55 +510,84 @@ function App() {
     setModals({ ...modals, delete: true });
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (!activeItem || !activeItemType) return;
     
-    if (activeItemType === 'inventory') {
-      setInventory(prev => prev.map(c => 
-        c.id === activeItem ? { ...c, deleted: true, deletedAt: new Date().toISOString() } : c
-      ));
-      // İlgili işlemleri de soft-delete yap
-      setTransactions(prev => prev.map(t => 
-        t.carId === activeItem ? { ...t, deleted: true, deletedAt: new Date().toISOString() } : t
-      ));
-    } else {
-      setCustomers(prev => prev.map(c => 
-        c.id === activeItem ? { ...c, deleted: true, deletedAt: new Date().toISOString() } : c
-      ));
-    }
+    const userId = getUserId();
+    if (!userId) return;
     
-    setModals({ ...modals, delete: false });
-    setActiveItem(null);
-    setActiveItemType(null);
-    showToast("Çöp kutusuna taşındı.");
-  };
-
-  const handleRestore = (id, type) => {
-    if (type === 'inventory') {
-      setInventory(prev => prev.map(c => 
-        c.id === id ? { ...c, deleted: false, deletedAt: null } : c
-      ));
-      setTransactions(prev => prev.map(t => 
-        t.carId === id ? { ...t, deleted: false, deletedAt: null } : t
-      ));
-    } else {
-      setCustomers(prev => prev.map(c => 
-        c.id === id ? { ...c, deleted: false, deletedAt: null } : c
-      ));
+    try {
+      if (activeItemType === 'inventory') {
+        await deleteCar(userId, activeItem, false);
+        // İlgili işlemleri de soft-delete yap
+        const relatedTx = transactions.filter(t => t.carId === activeItem && !t.deleted);
+        for (const t of relatedTx) {
+          await updateTransaction(userId, t.id, {
+            deleted: true,
+            deletedAt: new Date().toISOString()
+          });
+        }
+      } else {
+        await deleteCustomer(userId, activeItem, false);
+      }
+      
+      setModals({ ...modals, delete: false });
+      setActiveItem(null);
+      setActiveItemType(null);
+      showToast("Çöp kutusuna taşındı.");
+    } catch (error) {
+      console.error("Delete error:", error);
+      showToast("Silme işlemi sırasında hata oluştu.", "error");
     }
-    showToast("Geri yüklendi.");
   };
 
-  const handlePermanentDelete = (id, type) => {
+  const handleRestore = async (id, type) => {
+    const userId = getUserId();
+    if (!userId) return;
+    
+    try {
+      if (type === 'inventory') {
+        await restoreCar(userId, id);
+        // İlgili işlemleri de geri yükle
+        const relatedTx = transactions.filter(t => t.carId === id && t.deleted);
+        for (const t of relatedTx) {
+          await updateTransaction(userId, t.id, {
+            deleted: false,
+            deletedAt: null
+          });
+        }
+      } else {
+        await restoreCustomer(userId, id);
+      }
+      showToast("Geri yüklendi.");
+    } catch (error) {
+      console.error("Restore error:", error);
+      showToast("Geri yükleme sırasında hata oluştu.", "error");
+    }
+  };
+
+  const handlePermanentDelete = async (id, type) => {
     if (!window.confirm("Kalıcı olarak silmek istediğinize emin misiniz?")) return;
     
-    if (type === 'inventory') {
-      setInventory(prev => prev.filter(c => c.id !== id));
-      setTransactions(prev => prev.filter(t => t.carId !== id));
-    } else {
-      setCustomers(prev => prev.filter(c => c.id !== id));
+    const userId = getUserId();
+    if (!userId) return;
+    
+    try {
+      if (type === 'inventory') {
+        await deleteCar(userId, id, true);
+        // İlgili işlemleri de kalıcı sil
+        const relatedTx = transactions.filter(t => t.carId === id);
+        for (const t of relatedTx) {
+          await deleteTransaction(userId, t.id, true);
+        }
+      } else {
+        await deleteCustomer(userId, id, true);
+      }
+      showToast("Kalıcı olarak silindi.");
+    } catch (error) {
+      console.error("Permanent delete error:", error);
+      showToast("Kalıcı silme sırasında hata oluştu.", "error");
     }
-    showToast("Kalıcı olarak silindi.");
   };
 
   // =============== CUSTOMER OPERATIONS ===============
