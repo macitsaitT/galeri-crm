@@ -197,13 +197,16 @@ export default function PromoCardModal({
                     Kaporta Durum Özeti
                   </p>
                   <div className="flex justify-center items-center">
-                    {selectedCar.expertise?.body && Object.keys(selectedCar.expertise.body).length > 0 ? (
+                    {selectedCar.expertise?.body && Object.keys(selectedCar.expertise.body).some(key => selectedCar.expertise.body[key] !== 'original') ? (
                       <div className="transform scale-[0.65] origin-top">
                         <ExpertiseVisualMap value={selectedCar.expertise.body} readonly={true} />
                       </div>
                     ) : (
-                      <div className="py-8 text-center text-neutral-400 text-xs">
-                        <p>Ekspertiz verisi girilmemiş</p>
+                      <div className="py-6 text-center">
+                        <div className="transform scale-[0.65] origin-top">
+                          <ExpertiseVisualMap value={{}} readonly={true} />
+                        </div>
+                        <p className="text-green-600 font-bold text-xs mt-2">✓ TAMAMI ORİJİNAL</p>
                       </div>
                     )}
                   </div>
