@@ -23,6 +23,8 @@ import CarExpensesModal from './components/modals/CarExpensesModal';
 import SettingsModal from './components/modals/SettingsModal';
 import DeleteConfirmationModal from './components/modals/DeleteConfirmationModal';
 import CarDetailModal from './components/modals/CarDetailModal';
+import ReportModal from './components/modals/ReportModal';
+import PromoCardModal from './components/modals/PromoCardModal';
 
 // Firebase Services
 import {
