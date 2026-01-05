@@ -953,6 +953,22 @@ function App() {
         onClose={() => setModals({ ...modals, delete: false })}
         onConfirm={confirmDelete}
       />
+      
+      <ReportModal
+        isOpen={modals.report}
+        onClose={() => setModals({ ...modals, report: false })}
+        inventory={inventory}
+        transactions={transactions}
+        customers={customers}
+      />
+      
+      <PromoCardModal
+        isOpen={modals.promoCard}
+        onClose={() => setModals({ ...modals, promoCard: false })}
+        inventory={inventory}
+        userProfile={userProfile}
+        showToast={showToast}
+      />
     </div>
   );
 }
