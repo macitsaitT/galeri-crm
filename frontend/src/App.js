@@ -295,9 +295,12 @@ function App() {
     });
   };
 
-  const handleConfirmSale = (e) => {
+  const handleConfirmSale = async (e) => {
     e.preventDefault();
     if (!saleModal.carId) return;
+    
+    const userId = getUserId();
+    if (!userId) return;
     
     const car = inventory.find(c => c.id === saleModal.carId);
     if (!car) return;
@@ -306,97 +309,101 @@ function App() {
     const employeeShareAmount = parseFormattedNumber(saleModal.employeeShare) || 0;
     const selectedCustomer = customers.find(c => c.id === saleModal.customerId);
     
-    // Aracı güncelle
-    setInventory(prev => prev.map(c => 
-      c.id === car.id ? {
-        ...c,
+    try {
+      // Aracı güncelle
+      await updateCar(userId, car.id, {
         status: 'Satıldı',
         salePrice: finalPrice,
         soldDate: new Date().toISOString().split('T')[0],
         employeeShare: employeeShareAmount,
         customerId: saleModal.customerId || '',
         customerName: selectedCustomer?.name || ''
-      } : c
-    ));
-    
-    const deposit = car.depositAmount || 0;
-    const finalIncome = finalPrice - deposit;
-    
-    // Satış geliri ekle
-    if (finalIncome > 0) {
-      const saleTransaction = {
-        id: generateId(),
-        type: 'income',
-        category: 'Araç Satışı',
-        description: `Satış - ${car.plate?.toLocaleUpperCase('tr-TR')} ${car.brand} ${car.model} ${deposit > 0 ? '(Kalan Tutar)' : ''}`,
-        amount: finalIncome,
-        carId: car.id,
-        date: new Date().toISOString().split('T')[0],
-        createdAt: new Date().toISOString()
-      };
-      setTransactions(prev => [saleTransaction, ...prev]);
+      });
+      
+      const deposit = car.depositAmount || 0;
+      const finalIncome = finalPrice - deposit;
+      
+      // Satış geliri ekle
+      if (finalIncome > 0) {
+        await addTransaction(userId, {
+          type: 'income',
+          category: 'Araç Satışı',
+          description: `Satış - ${car.plate?.toLocaleUpperCase('tr-TR')} ${car.brand} ${car.model} ${deposit > 0 ? '(Kalan Tutar)' : ''}`,
+          amount: finalIncome,
+          carId: car.id,
+          date: new Date().toISOString().split('T')[0]
+        });
+      }
+      
+      // Çalışan payı gideri
+      if (employeeShareAmount > 0) {
+        await addTransaction(userId, {
+          type: 'expense',
+          category: 'Çalışan Payı',
+          description: `Çalışan Payı - ${car.plate?.toLocaleUpperCase('tr-TR')} ${car.brand} ${car.model}`,
+          amount: employeeShareAmount,
+          carId: car.id,
+          date: new Date().toISOString().split('T')[0]
+        });
+      }
+      
+      // Konsinye için araç sahibine ödeme
+      if (car.ownership === 'consignment' && car.purchasePrice > 0) {
+        await addTransaction(userId, {
+          type: 'expense',
+          category: 'Araç Sahibine Ödeme',
+          description: `Araç Sahibine Ödeme - ${car.plate?.toLocaleUpperCase('tr-TR')} - ${car.ownerName || 'Konsinye'}`,
+          amount: car.purchasePrice,
+          carId: car.id,
+          date: new Date().toISOString().split('T')[0]
+        });
+      }
+      
+      showToast(`Araç satışı ${formatNumberInput(finalPrice)} TL bedelle tamamlandı.`);
+      setSaleModal({ isOpen: false, carId: null, price: '', employeeShare: '', customerId: '' });
+    } catch (error) {
+      console.error("Sale error:", error);
+      showToast("Satış işlemi sırasında hata oluştu.", "error");
     }
-    
-    // Çalışan payı gideri
-    if (employeeShareAmount > 0) {
-      const employeeTransaction = {
-        id: generateId(),
-        type: 'expense',
-        category: 'Çalışan Payı',
-        description: `Çalışan Payı - ${car.plate?.toLocaleUpperCase('tr-TR')} ${car.brand} ${car.model}`,
-        amount: employeeShareAmount,
-        carId: car.id,
-        date: new Date().toISOString().split('T')[0],
-        createdAt: new Date().toISOString()
-      };
-      setTransactions(prev => [employeeTransaction, ...prev]);
-    }
-    
-    // Konsinye için araç sahibine ödeme
-    if (car.ownership === 'consignment' && car.purchasePrice > 0) {
-      const ownerTransaction = {
-        id: generateId(),
-        type: 'expense',
-        category: 'Araç Sahibine Ödeme',
-        description: `Araç Sahibine Ödeme - ${car.plate?.toLocaleUpperCase('tr-TR')} - ${car.ownerName || 'Konsinye'}`,
-        amount: car.purchasePrice,
-        carId: car.id,
-        date: new Date().toISOString().split('T')[0],
-        createdAt: new Date().toISOString()
-      };
-      setTransactions(prev => [ownerTransaction, ...prev]);
-    }
-    
-    showToast(`Araç satışı ${formatNumberInput(finalPrice)} TL bedelle tamamlandı.`);
-    setSaleModal({ isOpen: false, carId: null, price: '', employeeShare: '', customerId: '' });
   };
 
-  const handleCancelSale = (car) => {
+  const handleCancelSale = async (car) => {
     if (!window.confirm(`${car.brand} ${car.model} satışını iptal etmek istediğinize emin misiniz?`)) return;
     
-    // Aracı stoka al
-    setInventory(prev => prev.map(c => 
-      c.id === car.id ? {
-        ...c,
+    const userId = getUserId();
+    if (!userId) return;
+    
+    try {
+      // Aracı stoka al
+      await updateCar(userId, car.id, {
         status: 'Stokta',
         soldDate: null,
         customerId: null,
         customerName: null,
         employeeShare: null
-      } : c
-    ));
-    
-    // Satış işlemlerini sil
-    setTransactions(prev => prev.map(t => 
-      (t.carId === car.id && ['Araç Satışı', 'Çalışan Payı', 'Araç Sahibine Ödeme'].includes(t.category))
-        ? { ...t, deleted: true, deletedAt: new Date().toISOString() }
-        : t
-    ));
-    
-    showToast(`${car.brand} ${car.model} satışı iptal edildi.`);
+      });
+      
+      // Satış işlemlerini soft-delete yap
+      const saleCategories = ['Araç Satışı', 'Çalışan Payı', 'Araç Sahibine Ödeme'];
+      const relatedTransactions = transactions.filter(
+        t => t.carId === car.id && saleCategories.includes(t.category) && !t.deleted
+      );
+      
+      for (const t of relatedTransactions) {
+        await updateTransaction(userId, t.id, {
+          deleted: true,
+          deletedAt: new Date().toISOString()
+        });
+      }
+      
+      showToast(`${car.brand} ${car.model} satışı iptal edildi.`);
+    } catch (error) {
+      console.error("Cancel sale error:", error);
+      showToast("Satış iptal edilirken hata oluştu.", "error");
+    }
   };
 
-  const handleChangeSalePrice = (car) => {
+  const handleChangeSalePrice = async (car) => {
     const newPriceStr = window.prompt(
       `Yeni satış fiyatını girin:\nMevcut: ${formatNumberInput(car.salePrice)} TL`,
       car.salePrice.toString()
@@ -409,11 +416,16 @@ function App() {
       return;
     }
     
-    setInventory(prev => prev.map(c => 
-      c.id === car.id ? { ...c, salePrice: newPrice } : c
-    ));
+    const userId = getUserId();
+    if (!userId) return;
     
-    showToast(`Satış fiyatı güncellendi.`);
+    try {
+      await updateCar(userId, car.id, { salePrice: newPrice });
+      showToast(`Satış fiyatı güncellendi.`);
+    } catch (error) {
+      console.error("Price update error:", error);
+      showToast("Fiyat güncellenirken hata oluştu.", "error");
+    }
   };
 
   // =============== DEPOSIT OPERATIONS ===============
