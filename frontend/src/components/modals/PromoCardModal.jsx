@@ -5,11 +5,11 @@ import {
   Download,
   Camera,
   Phone,
-  MapPin,
   Car,
   Fuel,
   Settings,
-  Calendar
+  Calendar,
+  ClipboardCheck
 } from 'lucide-react';
 import { formatCurrency } from '../../utils/helpers';
 
@@ -26,12 +26,10 @@ export default function PromoCardModal({
   const selectedCar = inventory.find(c => c.id === selectedCarId);
   const availableCars = inventory.filter(c => !c.deleted && c.status !== 'Satıldı');
 
-  const handlePrint = () => {
-    if (!selectedCar) {
-      showToast('Lütfen bir araç seçin.', 'error');
-      return;
-    }
-    window.print();
+  const getFileName = () => {
+    if (!selectedCar) return 'tanitim_karti';
+    const plate = selectedCar.plate?.replace(/\s/g, '_') || 'arac';
+    return `Tanitim_Karti_${plate}_${selectedCar.brand}_${selectedCar.model}`;
   };
 
   const handleDownloadPDF = async () => {
@@ -40,7 +38,6 @@ export default function PromoCardModal({
       return;
     }
 
-    // Using html2pdf.js via CDN
     if (typeof window.html2pdf === 'undefined') {
       const script = document.createElement('script');
       script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
@@ -54,10 +51,10 @@ export default function PromoCardModal({
   const generatePDF = () => {
     const element = cardRef.current;
     const opt = {
-      margin: 10,
-      filename: `${selectedCar.brand}_${selectedCar.model}_${selectedCar.plate}.pdf`,
+      margin: 5,
+      filename: `${getFileName()}.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2 },
+      html2canvas: { scale: 2, useCORS: true },
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
     window.html2pdf().set(opt).from(element).save();
@@ -70,69 +67,68 @@ export default function PromoCardModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
       <div className="bg-white rounded-2xl w-full max-w-4xl shadow-2xl overflow-hidden border border-neutral-100 max-h-[90vh] flex flex-col">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-neutral-100 flex justify-between items-center bg-neutral-50">
-          <h3 className="font-bold text-lg text-black flex items-center gap-2">
-            <FileText size={20} className="text-blue-600"/> Tanıtım Kartı Oluştur
+        <div className="px-4 py-3 border-b border-neutral-100 flex justify-between items-center bg-neutral-900">
+          <h3 className="font-bold text-sm text-white flex items-center gap-2">
+            <FileText size={18}/> Tanıtım Kartı Oluştur
           </h3>
           <div className="flex items-center gap-2">
             <button 
               onClick={handleDownloadPDF}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-blue-700 transition flex items-center gap-2"
+              className="bg-amber-500 text-black px-3 py-1.5 rounded-lg font-bold text-xs hover:bg-amber-400 transition flex items-center gap-1"
             >
-              <Download size={16}/> PDF İndir
+              <Download size={14}/> PDF İndir
             </button>
-            <button onClick={onClose} className="text-neutral-400 hover:text-black">
-              <X size={24}/>
+            <button onClick={onClose} className="text-neutral-400 hover:text-white ml-2">
+              <X size={20}/>
             </button>
           </div>
         </div>
         
         {/* Car Selector */}
-        <div className="px-6 py-4 border-b border-neutral-100">
-          <label className="block text-xs font-bold text-neutral-500 uppercase mb-2">Araç Seçin</label>
+        <div className="px-4 py-3 border-b border-neutral-100 bg-neutral-50">
+          <label className="block text-[10px] font-bold text-neutral-500 uppercase mb-1">Araç Seçin</label>
           <select
             value={selectedCarId}
             onChange={e => setSelectedCarId(e.target.value)}
-            className="w-full p-3 border border-neutral-200 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 outline-none bg-white"
+            className="w-full p-2 border border-neutral-200 rounded text-xs focus:ring-2 focus:ring-amber-500 outline-none bg-white"
           >
             <option value="">-- Araç Seçiniz --</option>
             {availableCars.map(car => (
               <option key={car.id} value={car.id}>
-                {car.brand} {car.model} - {car.plate?.toLocaleUpperCase('tr-TR')} ({car.year})
+                {car.plate?.toLocaleUpperCase('tr-TR')} - {car.brand} {car.model} ({car.year})
               </option>
             ))}
           </select>
         </div>
         
         {/* Card Preview */}
-        <div className="flex-1 overflow-y-auto p-6 bg-neutral-100">
+        <div className="flex-1 overflow-y-auto p-4 bg-neutral-100">
           {selectedCar ? (
             <div 
               ref={cardRef}
-              className="bg-white rounded-2xl shadow-xl overflow-hidden max-w-2xl mx-auto"
-              style={{ aspectRatio: '3/4' }}
+              className="bg-white rounded-xl shadow-xl overflow-hidden max-w-xl mx-auto"
             >
-              {/* Logo & Header */}
-              <div className="bg-black text-white p-6">
+              {/* Header */}
+              <div className="bg-black text-white p-4">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2">
                     {userProfile?.logo && (
                       <img 
                         src={userProfile.logo} 
                         alt="Logo" 
-                        className="h-14 w-auto object-contain bg-white rounded-lg p-1" 
+                        className="h-10 w-auto object-contain bg-white rounded p-0.5" 
                       />
                     )}
                     <div>
-                      <h1 className="text-xl font-black">
+                      <h1 className="text-base font-black">
                         {userProfile?.name?.toLocaleUpperCase('tr-TR') || 'GALERİ ADI'}
                       </h1>
-                      <p className="text-xs text-neutral-400 mt-0.5">{userProfile?.title || 'Oto Galeri'}</p>
+                      <p className="text-[10px] text-neutral-400">{userProfile?.title || 'Oto Galeri'}</p>
                     </div>
                   </div>
-                  <div className="text-right text-xs">
+                  <div className="text-right text-[10px]">
                     <p className="flex items-center gap-1 justify-end">
-                      <Phone size={12}/> {userProfile?.phone || '0555 555 55 55'}
+                      <Phone size={10}/> {userProfile?.phone || '0555 555 55 55'}
                     </p>
                   </div>
                 </div>
@@ -148,95 +144,123 @@ export default function PromoCardModal({
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-neutral-300">
-                    <Camera size={64}/>
+                    <Camera size={48}/>
                   </div>
                 )}
                 {/* Price Badge */}
-                <div className="absolute bottom-4 right-4 bg-amber-500 text-black px-4 py-2 rounded-lg shadow-lg">
-                  <p className="text-2xl font-black">{formatCurrency(selectedCar.salePrice)}</p>
+                <div className="absolute bottom-3 right-3 bg-amber-500 text-black px-3 py-1.5 rounded shadow-lg">
+                  <p className="text-lg font-black">{formatCurrency(selectedCar.salePrice)}</p>
                 </div>
               </div>
               
               {/* Car Info */}
-              <div className="p-6">
-                <h2 className="text-2xl font-black text-black mb-1">
+              <div className="p-4">
+                <h2 className="text-xl font-black text-black mb-0.5">
                   {selectedCar.brand} {selectedCar.model}
                 </h2>
-                <p className="text-neutral-500 text-sm mb-4">
+                <p className="text-neutral-500 text-xs mb-3">
                   {selectedCar.plate?.toLocaleUpperCase('tr-TR')} • {selectedCar.packageInfo || 'Standart'}
                 </p>
                 
                 {/* Specs Grid */}
-                <div className="grid grid-cols-2 gap-3 mb-4">
-                  <div className="flex items-center gap-2 bg-neutral-50 p-3 rounded-lg">
-                    <Calendar size={18} className="text-neutral-400"/>
+                <div className="grid grid-cols-4 gap-2 mb-3">
+                  <div className="flex items-center gap-1.5 bg-neutral-50 p-2 rounded">
+                    <Calendar size={14} className="text-neutral-400"/>
                     <div>
-                      <p className="text-[10px] text-neutral-400 uppercase">Model Yılı</p>
-                      <p className="font-bold">{selectedCar.year}</p>
+                      <p className="text-[8px] text-neutral-400 uppercase">Yıl</p>
+                      <p className="font-bold text-xs">{selectedCar.year}</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 bg-neutral-50 p-3 rounded-lg">
-                    <Car size={18} className="text-neutral-400"/>
+                  <div className="flex items-center gap-1.5 bg-neutral-50 p-2 rounded">
+                    <Car size={14} className="text-neutral-400"/>
                     <div>
-                      <p className="text-[10px] text-neutral-400 uppercase">Kilometre</p>
-                      <p className="font-bold">{selectedCar.km || '0'} KM</p>
+                      <p className="text-[8px] text-neutral-400 uppercase">KM</p>
+                      <p className="font-bold text-xs">{selectedCar.km || '0'}</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 bg-neutral-50 p-3 rounded-lg">
-                    <Fuel size={18} className="text-neutral-400"/>
+                  <div className="flex items-center gap-1.5 bg-neutral-50 p-2 rounded">
+                    <Fuel size={14} className="text-neutral-400"/>
                     <div>
-                      <p className="text-[10px] text-neutral-400 uppercase">Yakıt</p>
-                      <p className="font-bold">{selectedCar.fuelType || 'Dizel'}</p>
+                      <p className="text-[8px] text-neutral-400 uppercase">Yakıt</p>
+                      <p className="font-bold text-xs">{selectedCar.fuelType || 'Dizel'}</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 bg-neutral-50 p-3 rounded-lg">
-                    <Settings size={18} className="text-neutral-400"/>
+                  <div className="flex items-center gap-1.5 bg-neutral-50 p-2 rounded">
+                    <Settings size={14} className="text-neutral-400"/>
                     <div>
-                      <p className="text-[10px] text-neutral-400 uppercase">Vites</p>
-                      <p className="font-bold">{selectedCar.gear || 'Otomatik'}</p>
+                      <p className="text-[8px] text-neutral-400 uppercase">Vites</p>
+                      <p className="font-bold text-xs">{selectedCar.gear || 'Otomatik'}</p>
                     </div>
                   </div>
                 </div>
                 
-                {/* Description */}
-                {selectedCar.description && (
-                  <div className="bg-neutral-50 p-4 rounded-lg">
-                    <p className="text-sm text-neutral-600 leading-relaxed">
-                      {selectedCar.description}
-                    </p>
+                {/* Expertise Section */}
+                {selectedCar.expertise && (
+                  <div className="mb-3 border border-neutral-200 rounded-lg overflow-hidden">
+                    <div className="bg-neutral-100 px-3 py-1.5 flex items-center gap-2">
+                      <ClipboardCheck size={14} className="text-green-600"/>
+                      <span className="font-bold text-xs">Ekspertiz Raporu</span>
+                      {selectedCar.expertise.score && (
+                        <span className="ml-auto bg-green-100 text-green-700 px-2 py-0.5 rounded text-[10px] font-bold">
+                          Puan: {selectedCar.expertise.score}/100
+                        </span>
+                      )}
+                    </div>
+                    {/* Expertise Photo */}
+                    {selectedCar.expertise.photo ? (
+                      <div className="p-2">
+                        <img 
+                          src={selectedCar.expertise.photo} 
+                          alt="Ekspertiz" 
+                          className="w-full h-auto rounded"
+                        />
+                      </div>
+                    ) : selectedCar.expertiseImage ? (
+                      <div className="p-2">
+                        <img 
+                          src={selectedCar.expertiseImage} 
+                          alt="Ekspertiz" 
+                          className="w-full h-auto rounded"
+                        />
+                      </div>
+                    ) : (
+                      <div className="p-3 text-center text-neutral-400 text-xs">
+                        Ekspertiz fotoğrafı yok
+                      </div>
+                    )}
                   </div>
                 )}
                 
-                {/* Expertise Score */}
-                {selectedCar.expertise?.score && (
-                  <div className="mt-4 flex items-center justify-center">
-                    <div className="bg-green-100 text-green-700 px-4 py-2 rounded-full font-bold text-sm">
-                      Ekspertiz Puanı: {selectedCar.expertise.score}/100
-                    </div>
+                {/* Description */}
+                {selectedCar.description && (
+                  <div className="bg-neutral-50 p-3 rounded-lg mb-3">
+                    <p className="text-xs text-neutral-600 leading-relaxed">
+                      {selectedCar.description}
+                    </p>
                   </div>
                 )}
               </div>
               
               {/* Footer */}
-              <div className="bg-neutral-50 p-4 border-t border-neutral-200">
-                <div className="flex items-center justify-center gap-3">
+              <div className="bg-neutral-100 p-3 border-t border-neutral-200">
+                <div className="flex items-center justify-center gap-2">
                   {userProfile?.logo && (
                     <img 
                       src={userProfile.logo} 
                       alt="Logo" 
-                      className="h-8 w-auto object-contain opacity-60" 
+                      className="h-6 w-auto object-contain opacity-50" 
                     />
                   )}
-                  <p className="text-xs text-neutral-500">
+                  <p className="text-[10px] text-neutral-500">
                     {userProfile?.name || 'Galeri Adı'} • {userProfile?.phone || '0555 555 55 55'}
                   </p>
                 </div>
               </div>
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center h-64 text-neutral-400">
-              <FileText size={48} className="mb-4"/>
-              <p className="font-bold">Tanıtım kartı önizlemesi için araç seçin</p>
+            <div className="flex flex-col items-center justify-center h-48 text-neutral-400">
+              <FileText size={40} className="mb-3"/>
+              <p className="font-bold text-sm">Tanıtım kartı önizlemesi için araç seçin</p>
             </div>
           )}
         </div>
