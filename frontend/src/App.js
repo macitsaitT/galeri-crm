@@ -960,6 +960,7 @@ function App() {
         inventory={inventory}
         transactions={transactions}
         customers={customers}
+        userProfile={userProfile}
       />
       
       <PromoCardModal
