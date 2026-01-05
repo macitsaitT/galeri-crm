@@ -166,8 +166,8 @@ function App() {
 
   // Helper to get userId
   const getUserId = useCallback(() => {
-    return firebaseUser?.uid || null;
-  }, [firebaseUser]);
+    return userId;
+  }, [userId]);
 
   // =============== AUTHENTICATION ===============
   const handleLogin = (password) => {
