@@ -591,27 +591,31 @@ function App() {
   };
 
   // =============== CUSTOMER OPERATIONS ===============
-  const handleSaveCustomer = (e) => {
+  const handleSaveCustomer = async (e) => {
     e.preventDefault();
     
-    if (editingCustomerId) {
-      setCustomers(prev => prev.map(c => 
-        c.id === editingCustomerId ? { ...c, ...newCustomer, updatedAt: new Date().toISOString() } : c
-      ));
-      showToast("Müşteri güncellendi.");
-    } else {
-      const newCustomerWithId = {
-        ...newCustomer,
-        id: generateId(),
-        createdAt: new Date().toISOString()
-      };
-      setCustomers(prev => [newCustomerWithId, ...prev]);
-      showToast("Müşteri eklendi.");
+    const userId = getUserId();
+    if (!userId) {
+      showToast("Oturum hatası. Lütfen sayfayı yenileyin.", "error");
+      return;
     }
     
-    setModals({ ...modals, addCustomer: false });
-    setNewCustomer({ name: '', phone: '', type: 'Potansiyel', notes: '', interestedCarId: '' });
-    setEditingCustomerId(null);
+    try {
+      if (editingCustomerId) {
+        await updateCustomer(userId, editingCustomerId, newCustomer);
+        showToast("Müşteri güncellendi.");
+      } else {
+        await addCustomer(userId, newCustomer);
+        showToast("Müşteri eklendi.");
+      }
+      
+      setModals({ ...modals, addCustomer: false });
+      setNewCustomer({ name: '', phone: '', type: 'Potansiyel', notes: '', interestedCarId: '' });
+      setEditingCustomerId(null);
+    } catch (error) {
+      console.error("Customer save error:", error);
+      showToast("Müşteri kaydedilirken hata oluştu.", "error");
+    }
   };
 
   const handleEditCustomer = (customer) => {
