@@ -1,15 +1,15 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import {
   X,
   FileText,
   Download,
-  Calendar,
-  TrendingUp,
-  TrendingDown,
+  Printer,
+  Building2,
   Car,
   Wallet,
-  Users,
-  PieChart
+  ShoppingCart,
+  CreditCard,
+  Search
 } from 'lucide-react';
 import { formatCurrency, formatDate } from '../../utils/helpers';
 
@@ -18,25 +18,46 @@ export default function ReportModal({
   onClose, 
   inventory, 
   transactions, 
-  customers 
+  customers,
+  userProfile 
 }) {
-  const [reportType, setReportType] = useState('summary');
   const [dateRange, setDateRange] = useState({
     start: new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0],
     end: new Date().toISOString().split('T')[0]
   });
+  const [reportScope, setReportScope] = useState('general'); // general, business, stock, sold, deposit, car
+  const [selectedCarId, setSelectedCarId] = useState('');
+  const reportRef = useRef(null);
 
   // Filter transactions by date range
   const filteredTransactions = useMemo(() => {
-    return transactions.filter(t => {
+    let txs = transactions.filter(t => {
       if (t.deleted) return false;
       const tDate = new Date(t.date);
       return tDate >= new Date(dateRange.start) && tDate <= new Date(dateRange.end);
     });
-  }, [transactions, dateRange]);
 
-  // Calculate summaries
-  const summary = useMemo(() => {
+    // Filter by scope
+    if (reportScope === 'business') {
+      txs = txs.filter(t => !t.carId);
+    } else if (reportScope === 'stock') {
+      const stockCarIds = inventory.filter(c => c.ownership === 'stock' && !c.deleted).map(c => c.id);
+      txs = txs.filter(t => t.carId && stockCarIds.includes(t.carId));
+    } else if (reportScope === 'sold') {
+      const soldCarIds = inventory.filter(c => c.status === 'Satıldı' && !c.deleted).map(c => c.id);
+      txs = txs.filter(t => t.carId && soldCarIds.includes(t.carId));
+    } else if (reportScope === 'deposit') {
+      const depositCarIds = inventory.filter(c => c.status === 'Kapora Alındı' && !c.deleted).map(c => c.id);
+      txs = txs.filter(t => t.carId && depositCarIds.includes(t.carId));
+    } else if (reportScope === 'car' && selectedCarId) {
+      txs = txs.filter(t => t.carId === selectedCarId);
+    }
+
+    return txs.sort((a, b) => new Date(a.date) - new Date(b.date));
+  }, [transactions, dateRange, reportScope, selectedCarId, inventory]);
+
+  // Calculate totals
+  const totals = useMemo(() => {
     const income = filteredTransactions
       .filter(t => t.type === 'income')
       .reduce((acc, t) => acc + t.amount, 0);
@@ -44,70 +65,103 @@ export default function ReportModal({
     const expense = filteredTransactions
       .filter(t => t.type === 'expense')
       .reduce((acc, t) => acc + t.amount, 0);
-    
-    const carSales = filteredTransactions
-      .filter(t => t.category === 'Araç Satışı')
-      .reduce((acc, t) => acc + t.amount, 0);
-    
-    const carPurchases = filteredTransactions
-      .filter(t => t.category === 'Araç Alımı')
-      .reduce((acc, t) => acc + t.amount, 0);
-    
-    const generalExpenses = filteredTransactions
-      .filter(t => t.type === 'expense' && !t.carId)
-      .reduce((acc, t) => acc + t.amount, 0);
-
-    const carExpenses = filteredTransactions
-      .filter(t => t.type === 'expense' && t.carId && t.category !== 'Araç Alımı')
-      .reduce((acc, t) => acc + t.amount, 0);
 
     return {
       income,
       expense,
-      net: income - expense,
-      carSales,
-      carPurchases,
-      generalExpenses,
-      carExpenses,
-      transactionCount: filteredTransactions.length
+      net: income - expense
     };
   }, [filteredTransactions]);
 
-  // Category breakdown
-  const categoryBreakdown = useMemo(() => {
-    const breakdown = {};
-    filteredTransactions.forEach(t => {
-      if (!breakdown[t.category]) {
-        breakdown[t.category] = { income: 0, expense: 0 };
-      }
-      if (t.type === 'income') {
-        breakdown[t.category].income += t.amount;
-      } else {
-        breakdown[t.category].expense += t.amount;
-      }
-    });
-    return Object.entries(breakdown).sort((a, b) => 
-      (b[1].income + b[1].expense) - (a[1].income + a[1].expense)
-    );
-  }, [filteredTransactions]);
-
-  // Inventory stats
-  const inventoryStats = useMemo(() => {
-    const active = inventory.filter(c => !c.deleted);
-    return {
-      total: active.length,
-      stock: active.filter(c => c.ownership === 'stock' && c.status !== 'Satıldı').length,
-      consignment: active.filter(c => c.ownership === 'consignment' && c.status !== 'Satıldı').length,
-      sold: active.filter(c => c.status === 'Satıldı').length,
-      deposit: active.filter(c => c.status === 'Kapora Alındı').length,
-      totalValue: active.filter(c => c.status !== 'Satıldı').reduce((acc, c) => acc + (c.salePrice || 0), 0)
-    };
-  }, [inventory]);
-
-  // Print report
-  const handlePrint = () => {
-    window.print();
+  // Get report title based on scope
+  const getReportTitle = () => {
+    switch (reportScope) {
+      case 'business': return 'İşletme Giderleri Raporu';
+      case 'stock': return 'Stok Araçlar Raporu';
+      case 'sold': return 'Satılan Araçlar Raporu';
+      case 'deposit': return 'Kapora Alınan Araçlar Raporu';
+      case 'car': 
+        const car = inventory.find(c => c.id === selectedCarId);
+        return car ? `${car.plate?.toLocaleUpperCase('tr-TR')} - ${car.brand} ${car.model} Raporu` : 'Araç Raporu';
+      default: return 'Finansal Durum Raporu';
+    }
   };
+
+  const getScopeLabel = () => {
+    switch (reportScope) {
+      case 'business': return 'İşletme Raporu';
+      case 'stock': return 'Stok Raporu';
+      case 'sold': return 'Satış Raporu';
+      case 'deposit': return 'Kapora Raporu';
+      case 'car': return 'Araç Raporu';
+      default: return 'Genel Rapor';
+    }
+  };
+
+  // Print function
+  const handlePrint = () => {
+    const printContent = reportRef.current;
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Rapor - ${userProfile?.name || 'Galeri CRM'}</title>
+          <style>
+            body { font-family: Arial, sans-serif; padding: 20px; color: #000; }
+            table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+            th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
+            th { font-weight: bold; }
+            .text-right { text-align: right; }
+            .text-green { color: #16a34a; }
+            .text-red { color: #dc2626; }
+            .summary-box { display: inline-block; padding: 15px 30px; margin-right: 20px; border: 1px solid #ddd; }
+            .signature-area { display: flex; justify-content: space-between; margin-top: 60px; padding-top: 20px; }
+            .signature-box { text-align: center; width: 200px; }
+            .signature-line { border-top: 1px solid #000; margin-top: 50px; padding-top: 5px; }
+            @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+          </style>
+        </head>
+        <body>
+          ${printContent.innerHTML}
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.print();
+  };
+
+  // PDF download
+  const handleDownloadPDF = () => {
+    if (typeof window.html2pdf === 'undefined') {
+      const script = document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+      script.onload = () => generatePDF();
+      document.head.appendChild(script);
+    } else {
+      generatePDF();
+    }
+  };
+
+  const generatePDF = () => {
+    const element = reportRef.current;
+    const opt = {
+      margin: 10,
+      filename: `rapor_${dateRange.start}_${dateRange.end}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+    window.html2pdf().set(opt).from(element).save();
+  };
+
+  const scopeButtons = [
+    { id: 'general', label: 'Genel', icon: Building2 },
+    { id: 'business', label: 'İşletme', icon: Wallet },
+    { id: 'stock', label: 'Stok', icon: Car },
+    { id: 'sold', label: 'Satılan', icon: ShoppingCart },
+    { id: 'deposit', label: 'Kapora', icon: CreditCard },
+    { id: 'car', label: 'Araç', icon: Search },
+  ];
 
   if (!isOpen) return null;
 
@@ -115,274 +169,212 @@ export default function ReportModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
       <div className="bg-white rounded-2xl w-full max-w-5xl shadow-2xl overflow-hidden border border-neutral-100 max-h-[90vh] flex flex-col">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-neutral-100 flex justify-between items-center bg-neutral-50">
-          <h3 className="font-bold text-lg text-black flex items-center gap-2">
-            <FileText size={20} className="text-blue-600"/> Raporlar
+        <div className="px-6 py-4 border-b border-neutral-100 flex justify-between items-center bg-neutral-900">
+          <h3 className="font-bold text-lg text-white flex items-center gap-2">
+            <FileText size={20}/> Rapor Oluşturucu
           </h3>
           <div className="flex items-center gap-2">
             <button 
-              onClick={handlePrint}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-blue-700 transition flex items-center gap-2"
+              onClick={handleDownloadPDF}
+              className="bg-red-600 text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-red-700 transition flex items-center gap-2"
             >
-              <Download size={16}/> Yazdır / PDF
+              <Download size={16}/> PDF İndir
             </button>
-            <button onClick={onClose} className="text-neutral-400 hover:text-black">
+            <button 
+              onClick={handlePrint}
+              className="bg-amber-500 text-black px-4 py-2 rounded-lg font-bold text-sm hover:bg-amber-400 transition flex items-center gap-2"
+            >
+              <Printer size={16}/> Yazdır
+            </button>
+            <button onClick={onClose} className="text-neutral-400 hover:text-white ml-2">
               <X size={24}/>
             </button>
           </div>
         </div>
         
         {/* Controls */}
-        <div className="px-6 py-4 border-b border-neutral-100 flex flex-wrap gap-4 items-center">
-          {/* Report Type */}
-          <div className="flex gap-2">
-            {[
-              { id: 'summary', label: 'Özet', icon: PieChart },
-              { id: 'transactions', label: 'İşlemler', icon: Wallet },
-              { id: 'inventory', label: 'Envanter', icon: Car },
-            ].map(type => (
-              <button
-                key={type.id}
-                onClick={() => setReportType(type.id)}
-                className={`px-4 py-2 rounded-lg font-bold text-sm flex items-center gap-2 transition ${
-                  reportType === type.id 
-                    ? 'bg-black text-white' 
-                    : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
-                }`}
-              >
-                <type.icon size={16}/> {type.label}
-              </button>
-            ))}
+        <div className="px-6 py-4 border-b border-neutral-200 bg-neutral-50">
+          <div className="flex flex-wrap gap-6 items-end">
+            {/* Date Range */}
+            <div>
+              <label className="block text-xs font-bold text-neutral-500 uppercase mb-2">Tarih Aralığı</label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="date"
+                  value={dateRange.start}
+                  onChange={e => setDateRange({...dateRange, start: e.target.value})}
+                  className="border border-neutral-300 rounded-lg px-3 py-2 text-sm bg-white"
+                />
+                <span className="text-neutral-400">-</span>
+                <input
+                  type="date"
+                  value={dateRange.end}
+                  onChange={e => setDateRange({...dateRange, end: e.target.value})}
+                  className="border border-neutral-300 rounded-lg px-3 py-2 text-sm bg-white"
+                />
+              </div>
+            </div>
+            
+            {/* Report Scope */}
+            <div>
+              <label className="block text-xs font-bold text-neutral-500 uppercase mb-2">Rapor Kapsamı</label>
+              <div className="flex gap-1">
+                {scopeButtons.map(btn => (
+                  <button
+                    key={btn.id}
+                    onClick={() => {
+                      setReportScope(btn.id);
+                      if (btn.id !== 'car') setSelectedCarId('');
+                    }}
+                    className={`px-3 py-2 rounded-lg font-bold text-xs flex items-center gap-1.5 transition border ${
+                      reportScope === btn.id 
+                        ? 'bg-amber-500 text-black border-amber-500' 
+                        : 'bg-white text-neutral-600 border-neutral-300 hover:bg-neutral-100'
+                    }`}
+                  >
+                    <btn.icon size={14}/> {btn.label}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
           
-          {/* Date Range */}
-          <div className="flex items-center gap-2 ml-auto">
-            <Calendar size={16} className="text-neutral-400"/>
-            <input
-              type="date"
-              value={dateRange.start}
-              onChange={e => setDateRange({...dateRange, start: e.target.value})}
-              className="border border-neutral-200 rounded-lg px-3 py-2 text-sm"
-            />
-            <span className="text-neutral-400">-</span>
-            <input
-              type="date"
-              value={dateRange.end}
-              onChange={e => setDateRange({...dateRange, end: e.target.value})}
-              className="border border-neutral-200 rounded-lg px-3 py-2 text-sm"
-            />
-          </div>
+          {/* Car selector for 'car' scope */}
+          {reportScope === 'car' && (
+            <div className="mt-4">
+              <label className="block text-xs font-bold text-neutral-500 uppercase mb-2">Araç Seçin</label>
+              <select
+                value={selectedCarId}
+                onChange={e => setSelectedCarId(e.target.value)}
+                className="border border-neutral-300 rounded-lg px-3 py-2 text-sm bg-white min-w-[300px]"
+              >
+                <option value="">-- Araç Seçiniz --</option>
+                {inventory.filter(c => !c.deleted).map(car => (
+                  <option key={car.id} value={car.id}>
+                    {car.plate?.toLocaleUpperCase('tr-TR')} - {car.brand} {car.model} ({car.year})
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
         </div>
         
-        {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6 print:p-0" id="report-content">
-          {/* Summary Report */}
-          {reportType === 'summary' && (
-            <div className="space-y-6">
-              {/* Summary Cards */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-green-50 border border-green-200 rounded-xl p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <TrendingUp size={18} className="text-green-600"/>
-                    <span className="text-xs font-bold text-green-600 uppercase">Toplam Gelir</span>
-                  </div>
-                  <p className="text-2xl font-black text-green-700">{formatCurrency(summary.income)}</p>
-                </div>
-                <div className="bg-red-50 border border-red-200 rounded-xl p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <TrendingDown size={18} className="text-red-600"/>
-                    <span className="text-xs font-bold text-red-600 uppercase">Toplam Gider</span>
-                  </div>
-                  <p className="text-2xl font-black text-red-700">{formatCurrency(summary.expense)}</p>
-                </div>
-                <div className={`border rounded-xl p-4 ${summary.net >= 0 ? 'bg-blue-50 border-blue-200' : 'bg-orange-50 border-orange-200'}`}>
-                  <div className="flex items-center gap-2 mb-2">
-                    <Wallet size={18} className={summary.net >= 0 ? 'text-blue-600' : 'text-orange-600'}/>
-                    <span className={`text-xs font-bold uppercase ${summary.net >= 0 ? 'text-blue-600' : 'text-orange-600'}`}>Net Durum</span>
-                  </div>
-                  <p className={`text-2xl font-black ${summary.net >= 0 ? 'text-blue-700' : 'text-orange-700'}`}>
-                    {formatCurrency(summary.net)}
-                  </p>
-                </div>
-                <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <FileText size={18} className="text-neutral-600"/>
-                    <span className="text-xs font-bold text-neutral-600 uppercase">İşlem Sayısı</span>
-                  </div>
-                  <p className="text-2xl font-black text-neutral-700">{summary.transactionCount}</p>
-                </div>
+        {/* Report Content */}
+        <div className="flex-1 overflow-y-auto p-6 bg-white">
+          <div ref={reportRef} className="max-w-4xl mx-auto">
+            {/* Report Header */}
+            <div className="flex justify-between items-start mb-6 pb-4 border-b-2 border-black">
+              <div>
+                <h1 className="text-3xl font-black text-black tracking-tight">
+                  {userProfile?.name?.toLocaleUpperCase('tr-TR') || 'GALERİ ADI'}
+                </h1>
+                <p className="text-neutral-500 mt-1">{getReportTitle()}</p>
               </div>
-              
-              {/* Detail Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-white border border-neutral-200 rounded-xl p-4">
-                  <h4 className="font-bold text-sm mb-3 text-neutral-600 uppercase">Araç İşlemleri</h4>
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-sm text-neutral-500">Araç Satışları</span>
-                      <span className="font-bold text-green-600">+{formatCurrency(summary.carSales)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-sm text-neutral-500">Araç Alımları</span>
-                      <span className="font-bold text-red-600">-{formatCurrency(summary.carPurchases)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-sm text-neutral-500">Araç Masrafları</span>
-                      <span className="font-bold text-red-600">-{formatCurrency(summary.carExpenses)}</span>
-                    </div>
-                    <div className="flex justify-between border-t pt-2 mt-2">
-                      <span className="text-sm font-bold">Net Araç Kârı</span>
-                      <span className={`font-bold ${summary.carSales - summary.carPurchases - summary.carExpenses >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                        {formatCurrency(summary.carSales - summary.carPurchases - summary.carExpenses)}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <div className="bg-white border border-neutral-200 rounded-xl p-4">
-                  <h4 className="font-bold text-sm mb-3 text-neutral-600 uppercase">Genel İşletme</h4>
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-sm text-neutral-500">Genel Giderler</span>
-                      <span className="font-bold text-red-600">-{formatCurrency(summary.generalExpenses)}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Category Breakdown */}
-              <div className="bg-white border border-neutral-200 rounded-xl p-4">
-                <h4 className="font-bold text-sm mb-3 text-neutral-600 uppercase">Kategori Bazlı Dağılım</h4>
-                <div className="space-y-2">
-                  {categoryBreakdown.map(([category, amounts]) => (
-                    <div key={category} className="flex justify-between items-center py-2 border-b border-neutral-100 last:border-0">
-                      <span className="text-sm">{category}</span>
-                      <div className="flex gap-4">
-                        {amounts.income > 0 && (
-                          <span className="text-green-600 font-bold text-sm">+{formatCurrency(amounts.income)}</span>
-                        )}
-                        {amounts.expense > 0 && (
-                          <span className="text-red-600 font-bold text-sm">-{formatCurrency(amounts.expense)}</span>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+              <div className="text-right">
+                <p className="font-bold text-sm">{getScopeLabel()}</p>
+                <p className="text-xs text-neutral-500">
+                  {formatDate(dateRange.start)} - {formatDate(dateRange.end)}
+                </p>
               </div>
             </div>
-          )}
-          
-          {/* Transactions Report */}
-          {reportType === 'transactions' && (
-            <div className="space-y-4">
-              <div className="bg-white border border-neutral-200 rounded-xl overflow-hidden">
-                <table className="w-full text-sm">
-                  <thead className="bg-neutral-50 border-b border-neutral-200">
-                    <tr>
-                      <th className="text-left p-3 font-bold text-neutral-600">Tarih</th>
-                      <th className="text-left p-3 font-bold text-neutral-600">Kategori</th>
-                      <th className="text-left p-3 font-bold text-neutral-600">Açıklama</th>
-                      <th className="text-right p-3 font-bold text-neutral-600">Tutar</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-neutral-100">
-                    {filteredTransactions.length > 0 ? filteredTransactions.map(t => (
-                      <tr key={t.id} className="hover:bg-neutral-50">
-                        <td className="p-3 text-neutral-500">{formatDate(t.date)}</td>
-                        <td className="p-3">{t.category}</td>
-                        <td className="p-3 text-neutral-600">{t.description}</td>
-                        <td className={`p-3 text-right font-bold ${t.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
-                          {t.type === 'income' ? '+' : '-'}{formatCurrency(t.amount)}
-                        </td>
-                      </tr>
-                    )) : (
-                      <tr>
-                        <td colSpan="4" className="p-8 text-center text-neutral-400">
-                          Bu tarih aralığında işlem bulunamadı.
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
+            
+            {/* Summary Boxes */}
+            <div className="flex gap-4 mb-8">
+              <div className="flex-1 p-4 border border-neutral-200 rounded-lg">
+                <p className="text-xs font-bold text-neutral-500 uppercase mb-1">Toplam Gelir</p>
+                <p className="text-2xl font-black text-green-600">{formatCurrency(totals.income)}</p>
+              </div>
+              <div className="flex-1 p-4 border border-neutral-200 rounded-lg">
+                <p className="text-xs font-bold text-neutral-500 uppercase mb-1">Toplam Gider</p>
+                <p className="text-2xl font-black text-red-600">{formatCurrency(totals.expense)}</p>
+              </div>
+              <div className="flex-1 p-4 border border-neutral-200 rounded-lg">
+                <p className="text-xs font-bold text-neutral-500 uppercase mb-1">Net Kâr</p>
+                <p className={`text-2xl font-black ${totals.net >= 0 ? 'text-black' : 'text-red-600'}`}>
+                  {formatCurrency(totals.net)}
+                </p>
               </div>
             </div>
-          )}
-          
-          {/* Inventory Report */}
-          {reportType === 'inventory' && (
-            <div className="space-y-6">
-              {/* Stats */}
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-4 text-center">
-                  <p className="text-3xl font-black">{inventoryStats.total}</p>
-                  <p className="text-xs text-neutral-500 uppercase font-bold">Toplam Araç</p>
-                </div>
-                <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-center">
-                  <p className="text-3xl font-black text-green-700">{inventoryStats.stock}</p>
-                  <p className="text-xs text-green-600 uppercase font-bold">Stok</p>
-                </div>
-                <div className="bg-purple-50 border border-purple-200 rounded-xl p-4 text-center">
-                  <p className="text-3xl font-black text-purple-700">{inventoryStats.consignment}</p>
-                  <p className="text-xs text-purple-600 uppercase font-bold">Konsinye</p>
-                </div>
-                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-center">
-                  <p className="text-3xl font-black text-amber-700">{inventoryStats.deposit}</p>
-                  <p className="text-xs text-amber-600 uppercase font-bold">Kapora</p>
-                </div>
-                <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-center">
-                  <p className="text-3xl font-black text-blue-700">{inventoryStats.sold}</p>
-                  <p className="text-xs text-blue-600 uppercase font-bold">Satıldı</p>
-                </div>
-              </div>
-              
-              {/* Total Value */}
-              <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
-                <p className="text-xs text-amber-600 uppercase font-bold mb-1">Stoktaki Araçların Toplam Değeri</p>
-                <p className="text-3xl font-black text-amber-700">{formatCurrency(inventoryStats.totalValue)}</p>
-              </div>
-              
-              {/* Inventory Table */}
-              <div className="bg-white border border-neutral-200 rounded-xl overflow-hidden">
-                <table className="w-full text-sm">
-                  <thead className="bg-neutral-50 border-b border-neutral-200">
-                    <tr>
-                      <th className="text-left p-3 font-bold text-neutral-600">Araç</th>
-                      <th className="text-left p-3 font-bold text-neutral-600">Plaka</th>
-                      <th className="text-left p-3 font-bold text-neutral-600">Durum</th>
-                      <th className="text-left p-3 font-bold text-neutral-600">Tip</th>
-                      <th className="text-right p-3 font-bold text-neutral-600">Alış</th>
-                      <th className="text-right p-3 font-bold text-neutral-600">Satış</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-neutral-100">
-                    {inventory.filter(c => !c.deleted).map(car => (
-                      <tr key={car.id} className="hover:bg-neutral-50">
-                        <td className="p-3 font-bold">{car.brand} {car.model} ({car.year})</td>
-                        <td className="p-3">{car.plate?.toLocaleUpperCase('tr-TR')}</td>
-                        <td className="p-3">
-                          <span className={`px-2 py-1 rounded text-xs font-bold ${
-                            car.status === 'Satıldı' ? 'bg-blue-100 text-blue-700'
-                            : car.status === 'Kapora Alındı' ? 'bg-amber-100 text-amber-700'
-                            : 'bg-green-100 text-green-700'
-                          }`}>
-                            {car.status}
+            
+            {/* Transaction Table */}
+            <div className="mb-8">
+              <h2 className="text-lg font-bold mb-4 pb-2 border-b border-neutral-200">İşlem Dökümü</h2>
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-neutral-300">
+                    <th className="text-left py-2 font-bold text-neutral-600">Tarih</th>
+                    <th className="text-left py-2 font-bold text-neutral-600">Tür</th>
+                    <th className="text-left py-2 font-bold text-neutral-600">Kategori</th>
+                    <th className="text-left py-2 font-bold text-neutral-600">Açıklama</th>
+                    <th className="text-right py-2 font-bold text-neutral-600">Tutar</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredTransactions.length > 0 ? (
+                    filteredTransactions.map(t => (
+                      <tr key={t.id} className="border-b border-neutral-100">
+                        <td className="py-2 text-neutral-500">{formatDate(t.date)}</td>
+                        <td className="py-2">
+                          <span className={`text-xs font-bold ${t.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
+                            {t.type === 'income' ? 'GELİR' : 'GİDER'}
                           </span>
                         </td>
-                        <td className="p-3">
-                          <span className={`px-2 py-1 rounded text-xs font-bold ${
-                            car.ownership === 'consignment' ? 'bg-purple-100 text-purple-700' : 'bg-neutral-100 text-neutral-700'
-                          }`}>
-                            {car.ownership === 'consignment' ? 'Konsinye' : 'Stok'}
-                          </span>
+                        <td className="py-2">{t.category}</td>
+                        <td className="py-2 text-neutral-600">{t.description}</td>
+                        <td className={`py-2 text-right font-bold ${t.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
+                          {t.type === 'income' ? '' : '-'}{formatCurrency(t.amount)}
                         </td>
-                        <td className="p-3 text-right">{formatCurrency(car.purchasePrice || 0)}</td>
-                        <td className="p-3 text-right font-bold">{formatCurrency(car.salePrice || 0)}</td>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="5" className="py-8 text-center text-neutral-400">
+                        Bu tarih aralığında işlem bulunamadı.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+            
+            {/* Totals Summary */}
+            <div className="border-t border-neutral-300 pt-4">
+              <div className="flex justify-end">
+                <div className="w-64">
+                  <div className="flex justify-between py-1">
+                    <span className="text-neutral-600">Toplam Gelir:</span>
+                    <span className="font-bold text-green-600">{formatCurrency(totals.income)}</span>
+                  </div>
+                  <div className="flex justify-between py-1">
+                    <span className="text-neutral-600">Toplam Gider:</span>
+                    <span className="font-bold text-red-600">-{formatCurrency(totals.expense)}</span>
+                  </div>
+                  <div className="flex justify-between py-2 border-t border-neutral-300 mt-2">
+                    <span className="font-bold">NET SONUÇ:</span>
+                    <span className={`font-black ${totals.net >= 0 ? 'text-black' : 'text-red-600'}`}>
+                      {formatCurrency(totals.net)}
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
-          )}
+            
+            {/* Signature Area */}
+            <div className="flex justify-between mt-16 pt-4 border-t border-neutral-200">
+              <div className="text-center">
+                <p className="font-bold text-sm mb-12">Muhasebe / Onay</p>
+                <div className="border-t border-black pt-2 w-48">
+                  <p className="text-xs text-neutral-500">İmza / Kaşe</p>
+                </div>
+              </div>
+              <div className="text-center">
+                <p className="font-bold text-sm mb-12">{userProfile?.name || 'Galeri'} Yetkilisi</p>
+                <div className="border-t border-black pt-2 w-48">
+                  <p className="text-xs text-neutral-500">İmza</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
