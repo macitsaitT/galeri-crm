@@ -9,8 +9,8 @@ import {
   Upload,
   Camera
 } from 'lucide-react';
-import { CAR_DATA, VEHICLE_DATA, CAR_SVG_PATHS, EXPERTISE_STATUSES } from '../data/mock';
-import { formatNumberInput, resizeImage } from '../utils/helpers';
+import { CAR_DATA, VEHICLE_DATA, CAR_SVG_PATHS, EXPERTISE_STATUSES } from '../../data/mock';
+import { formatNumberInput, resizeImage } from '../../utils/helpers';
 
 // Ekspertiz Görsel Haritası
 const ExpertiseVisualMap = ({ value = {}, onChange, readonly = false }) => {
