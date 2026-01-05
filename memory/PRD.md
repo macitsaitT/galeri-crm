@@ -55,9 +55,9 @@ Araç galerisi yönetim sistemi (CRM). Araç envanteri, müşteri yönetimi, fin
 - Yazdır/PDF dışa aktarım
 
 ### 7. Tanıtım Kartı (05 Ocak 2026)
-- Araç seçerek tanıtım kartı oluşturma
-- PDF indirme özelliği
-- Araç bilgileri, fotoğraf, fiyat gösterimi
+- Araç seçimi
+- Otomatik kart önizlemesi
+- PDF indirme (html2pdf.js)
 
 ### 8. Diğer Özellikler
 - Çöp kutusu (soft delete)
