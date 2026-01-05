@@ -764,11 +764,11 @@ function App() {
           setEditingCarId(null);
           setModals({ ...modals, addCar: true });
         }}
-        onOpenPromoCard={() => showToast("Tanıtım kartı özelliği yakında aktif olacak!", "info")}
+        onOpenPromoCard={() => setModals({ ...modals, promoCard: true })}
         onOpenGeneralExpense={() => setModals({ ...modals, addGeneralExpense: true })}
         onOpenTransaction={() => setModals({ ...modals, addTransaction: true })}
         onOpenSettings={() => setModals({ ...modals, settings: true })}
-        onOpenReport={() => showToast("Rapor özelliği yakında aktif olacak!", "info")}
+        onOpenReport={() => setModals({ ...modals, report: true })}
       />
       
       {/* Main Content */}
