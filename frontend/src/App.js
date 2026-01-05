@@ -119,7 +119,9 @@ function App() {
     addGeneralExpense: false,
     carDetail: false,
     deposit: false,
-    sale: false
+    sale: false,
+    report: false,
+    promoCard: false
   });
 
   // Form states
