@@ -26,8 +26,7 @@ import CarDetailModal from './components/modals/CarDetailModal';
 
 // Firebase Services
 import {
-  initAuth,
-  subscribeToAuth,
+  getLocalUserId,
   subscribeToInventory,
   subscribeToCustomers,
   subscribeToTransactions,
