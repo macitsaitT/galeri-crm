@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './App.css';
 import { Menu } from 'lucide-react';
 
@@ -24,17 +24,33 @@ import SettingsModal from './components/modals/SettingsModal';
 import DeleteConfirmationModal from './components/modals/DeleteConfirmationModal';
 import CarDetailModal from './components/modals/CarDetailModal';
 
+// Firebase Services
+import {
+  initAuth,
+  subscribeToAuth,
+  subscribeToInventory,
+  subscribeToCustomers,
+  subscribeToTransactions,
+  subscribeToProfile,
+  addCar,
+  updateCar,
+  deleteCar,
+  restoreCar,
+  addCustomer,
+  updateCustomer,
+  deleteCustomer,
+  restoreCustomer,
+  addTransaction,
+  deleteTransaction,
+  updateTransaction,
+  saveProfile
+} from './services/firebase';
+
 // Data & Utils
-import { 
-  mockInventory, 
-  mockCustomers, 
-  mockTransactions, 
-  DEFAULT_PROFILE 
-} from './data/mock';
+import { DEFAULT_PROFILE } from './data/mock';
 import { 
   formatNumberInput, 
-  parseFormattedNumber, 
-  generateId 
+  parseFormattedNumber 
 } from './utils/helpers';
 
 function App() {
