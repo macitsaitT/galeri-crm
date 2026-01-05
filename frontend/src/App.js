@@ -180,6 +180,11 @@ function App() {
     setToast({ message, type });
   };
 
+  // Helper to get userId
+  const getUserId = useCallback(() => {
+    return firebaseUser?.uid || null;
+  }, [firebaseUser]);
+
   // =============== AUTHENTICATION ===============
   const handleLogin = (password) => {
     if (password === userProfile.password) {
@@ -199,15 +204,24 @@ function App() {
 
   const handlePasswordReset = async (code) => {
     if (code === '123456') {
-      setUserProfile(prev => ({ ...prev, password: 'admin' }));
+      const userId = getUserId();
+      if (userId) {
+        const newProfile = { ...userProfile, password: 'admin' };
+        await saveProfile(userId, newProfile);
+      }
       return true;
     }
     return false;
   };
 
   // =============== CAR OPERATIONS ===============
-  const handleSaveCar = (e) => {
+  const handleSaveCar = async (e) => {
     e.preventDefault();
+    const userId = getUserId();
+    if (!userId) {
+      showToast("Oturum hatası. Lütfen sayfayı yenileyin.", "error");
+      return;
+    }
     
     if (newCar.ownership === 'stock' && (!newCar.purchasePrice || parseFormattedNumber(newCar.purchasePrice) <= 0)) {
       showToast("Stok araç için Alış Fiyatı gereklidir.", "error");
@@ -228,36 +242,35 @@ function App() {
       commissionRate: parseInt(newCar.commissionRate) || (newCar.ownership === 'consignment' ? 5 : 0),
     };
 
-    if (editingCarId) {
-      setInventory(prev => prev.map(car => 
-        car.id === editingCarId ? { ...car, ...carData } : car
-      ));
-      showToast("Araç güncellendi.");
-    } else {
-      const newId = generateId();
-      const newCarWithId = { ...carData, id: newId, createdAt: new Date().toISOString() };
-      setInventory(prev => [newCarWithId, ...prev]);
-      
-      // Stok araç için otomatik alış gideri
-      if (carData.ownership === 'stock' && carData.purchasePrice > 0) {
-        const purchaseTransaction = {
-          id: generateId(),
-          type: 'expense',
-          category: 'Araç Alımı',
-          amount: carData.purchasePrice,
-          date: carData.entryDate,
-          description: `${carData.plate?.toLocaleUpperCase('tr-TR')} - ${carData.brand} Alışı`,
-          carId: newId,
-          createdAt: new Date().toISOString()
-        };
-        setTransactions(prev => [purchaseTransaction, ...prev]);
+    try {
+      if (editingCarId) {
+        await updateCar(userId, editingCarId, carData);
+        showToast("Araç güncellendi.");
+      } else {
+        const newCarId = await addCar(userId, carData);
+        
+        // Stok araç için otomatik alış gideri
+        if (carData.ownership === 'stock' && carData.purchasePrice > 0) {
+          const purchaseTransaction = {
+            type: 'expense',
+            category: 'Araç Alımı',
+            amount: carData.purchasePrice,
+            date: carData.entryDate,
+            description: `${carData.plate?.toLocaleUpperCase('tr-TR')} - ${carData.brand} Alışı`,
+            carId: newCarId
+          };
+          await addTransaction(userId, purchaseTransaction);
+        }
+        showToast("Araç eklendi.");
       }
-      showToast("Araç eklendi.");
+      
+      setModals({ ...modals, addCar: false });
+      setNewCar(defaultCar);
+      setEditingCarId(null);
+    } catch (error) {
+      console.error("Error saving car:", error);
+      showToast("Araç kaydedilirken hata oluştu.", "error");
     }
-    
-    setModals({ ...modals, addCar: false });
-    setNewCar(defaultCar);
-    setEditingCarId(null);
   };
 
   const handleEditCar = (car) => {
