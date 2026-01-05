@@ -264,26 +264,29 @@ export default function ReportModal({
           <div ref={reportRef} className="max-w-4xl mx-auto">
             {/* Report Header */}
             <div className="flex justify-between items-start mb-6 pb-4 border-b-2 border-black">
-              <div className="flex items-center gap-4">
+              <div>
+                <h2 className="text-lg font-bold text-neutral-600">{getReportTitle()}</h2>
+                <p className="text-sm text-neutral-500 mt-1">
+                  {formatDate(dateRange.start)} - {formatDate(dateRange.end)}
+                </p>
+                <p className="text-xs text-neutral-400 mt-0.5">{getScopeLabel()}</p>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="text-right">
+                  <h1 className="text-xl font-black text-black tracking-tight">
+                    {userProfile?.name?.toLocaleUpperCase('tr-TR') || 'GALERİ ADI'}
+                  </h1>
+                  {userProfile?.phone && (
+                    <p className="text-xs text-neutral-500">{userProfile.phone}</p>
+                  )}
+                </div>
                 {userProfile?.logo && (
                   <img 
                     src={userProfile.logo} 
                     alt="Logo" 
-                    className="h-16 w-auto object-contain"
+                    className="h-10 w-auto object-contain"
                   />
                 )}
-                <div>
-                  <h1 className="text-3xl font-black text-black tracking-tight">
-                    {userProfile?.name?.toLocaleUpperCase('tr-TR') || 'GALERİ ADI'}
-                  </h1>
-                  <p className="text-neutral-500 mt-1">{getReportTitle()}</p>
-                </div>
-              </div>
-              <div className="text-right">
-                <p className="font-bold text-sm">{getScopeLabel()}</p>
-                <p className="text-xs text-neutral-500">
-                  {formatDate(dateRange.start)} - {formatDate(dateRange.end)}
-                </p>
               </div>
             </div>
             
