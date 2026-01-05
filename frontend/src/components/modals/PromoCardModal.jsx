@@ -3,7 +3,6 @@ import {
   X,
   FileText,
   Download,
-  Camera,
   Phone,
   Car,
   Fuel,
@@ -135,23 +134,9 @@ export default function PromoCardModal({
                 </div>
               </div>
               
-              {/* Car Image */}
-              <div className="aspect-video bg-neutral-100 relative">
-                {selectedCar.photos && selectedCar.photos.length > 0 ? (
-                  <img 
-                    src={selectedCar.photos[0]} 
-                    alt="Car" 
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-neutral-300">
-                    <Camera size={48}/>
-                  </div>
-                )}
-                {/* Price Badge */}
-                <div className="absolute bottom-3 right-3 bg-amber-500 text-black px-3 py-1.5 rounded shadow-lg">
-                  <p className="text-lg font-black">{formatCurrency(selectedCar.salePrice)}</p>
-                </div>
+              {/* Price Badge - moved to top */}
+              <div className="bg-amber-500 text-black px-4 py-2 text-center">
+                <p className="text-xl font-black">{formatCurrency(selectedCar.salePrice)}</p>
               </div>
               
               {/* Car Info */}
