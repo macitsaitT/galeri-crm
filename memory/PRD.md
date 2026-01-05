@@ -44,7 +44,18 @@ Araç galerisi yönetim sistemi (CRM). Araç envanteri, müşteri yönetimi, fin
 - Kasa durumu
 - Son işlemler listesi
 
-### 6. Diğer Özellikler
+### 6. Raporlar Modülü (05 Ocak 2026)
+- **Özet Rapor**: Toplam gelir/gider, net durum, araç işlemleri, genel işletme
+- **İşlemler Raporu**: Tarih filtrelemeli tüm işlem listesi
+- **Envanter Raporu**: Araç stok durumu, toplam değer
+- PDF/Yazdır özelliği
+
+### 7. Tanıtım Kartı (05 Ocak 2026)
+- Araç seçerek tanıtım kartı oluşturma
+- PDF indirme özelliği
+- Araç bilgileri, fotoğraf, fiyat gösterimi
+
+### 8. Diğer Özellikler
 - Çöp kutusu (soft delete)
 - Ayarlar (profil, şifre, logo)
 - Responsive tasarım
@@ -58,29 +69,11 @@ artifacts/galeri-crm-app/users/{userId}/
 └── settings/profile    # Kullanıcı ayarları
 ```
 
-## Dosya Yapısı
-```
-/app/frontend/src/
-├── App.js                    # Ana uygulama
-├── services/firebase.js      # Firebase servisleri
-├── components/
-│   ├── Dashboard.jsx
-│   ├── InventoryList.jsx
-│   ├── CustomersList.jsx
-│   ├── FinanceView.jsx
-│   ├── LoginScreen.jsx
-│   ├── Sidebar.jsx
-│   └── modals/              # Modal bileşenleri
-└── data/mock.js             # Sabit veriler (marka/model listesi)
-```
-
 ## Test Bilgileri
 - **Login şifresi**: 1
 - **Firebase projesi**: galericrm
 
 ## Gelecek Geliştirmeler (Backlog)
-- [ ] Tanıtım kartı PDF oluşturma
-- [ ] Rapor modülü
 - [ ] Ekspertiz raporu PDF
 - [ ] Konsinye sözleşmesi PDF
 - [ ] Çoklu kullanıcı desteği
