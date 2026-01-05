@@ -53,11 +53,10 @@ import {
 } from './utils/helpers';
 
 function App() {
-  // Firebase user state
-  const [firebaseUser, setFirebaseUser] = useState(null);
-  const [isFirebaseLoading, setIsFirebaseLoading] = useState(true);
+  // Local user ID (stored in localStorage)
+  const [userId] = useState(() => getLocalUserId());
 
-  // Authentication state
+  // Authentication state (local password auth, not Firebase auth)
   const [isAuthenticated, setIsAuthenticated] = useState(
     localStorage.getItem('galericrm_auth') === 'true'
   );
@@ -75,23 +74,10 @@ function App() {
   const [userProfile, setUserProfile] = useState(DEFAULT_PROFILE);
   const [dataLoading, setDataLoading] = useState(true);
 
-  // Initialize Firebase Auth
+  // Subscribe to Firestore data
   useEffect(() => {
-    initAuth();
-    const unsubscribe = subscribeToAuth((user) => {
-      setFirebaseUser(user);
-      setIsFirebaseLoading(false);
-    });
-    return () => unsubscribe();
-  }, []);
+    if (!userId) return;
 
-  // Subscribe to Firestore data when user is authenticated
-  useEffect(() => {
-    if (!firebaseUser) {
-      return;
-    }
-
-    const userId = firebaseUser.uid;
     setDataLoading(true);
 
     // Subscribe to all collections
@@ -118,7 +104,7 @@ function App() {
       unsubTransactions();
       unsubProfile();
     };
-  }, [firebaseUser]);
+  }, [userId]);
 
   // Modal states
   const [modals, setModals] = useState({
