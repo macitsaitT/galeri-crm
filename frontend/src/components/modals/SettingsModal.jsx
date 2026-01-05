@@ -68,7 +68,7 @@ export default function SettingsModal({
           </button>
         </div>
         <form 
-          onSubmit={(e) => { e.preventDefault(); setProfile(formData); onClose(); }} 
+          onSubmit={handleSubmit} 
           className="p-6 space-y-4"
         >
           {/* Logo Yükleme */}
