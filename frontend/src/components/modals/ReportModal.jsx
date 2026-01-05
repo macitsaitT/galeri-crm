@@ -115,9 +115,10 @@ export default function ReportModal({
             .text-green { color: #16a34a; }
             .text-red { color: #dc2626; }
             .summary-box { display: inline-block; padding: 15px 30px; margin-right: 20px; border: 1px solid #ddd; }
-            .signature-area { display: flex; justify-content: space-between; margin-top: 60px; padding-top: 20px; }
+            .signature-area { display: flex; justify-between; margin-top: 60px; padding-top: 20px; }
             .signature-box { text-align: center; width: 200px; }
             .signature-line { border-top: 1px solid #000; margin-top: 50px; padding-top: 5px; }
+            img { max-height: 40px !important; width: auto !important; }
             @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
           </style>
         </head>
