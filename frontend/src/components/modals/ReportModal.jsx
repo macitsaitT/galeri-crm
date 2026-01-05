@@ -104,32 +104,47 @@ export default function ReportModal({
           <style>
             * { margin: 0; padding: 0; box-sizing: border-box; }
             body { font-family: Arial, sans-serif; padding: 15px; color: #000; font-size: 11px; }
-            .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; }
-            .header-left h2 { font-size: 14px; margin-bottom: 3px; }
-            .header-left p { font-size: 10px; color: #666; }
-            .header-right { text-align: right; }
-            .header-right h1 { font-size: 16px; margin-bottom: 2px; }
-            .header-right p { font-size: 9px; color: #666; }
-            .header-right img { height: 30px; margin-top: 5px; }
-            .summary { display: flex; gap: 10px; margin-bottom: 15px; }
-            .summary-box { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 5px; text-align: center; }
-            .summary-box p.label { font-size: 9px; color: #666; text-transform: uppercase; margin-bottom: 3px; }
-            .summary-box p.value { font-size: 14px; font-weight: bold; }
-            .summary-box p.value.green { color: #16a34a; }
-            .summary-box p.value.red { color: #dc2626; }
-            table { width: 100%; border-collapse: collapse; margin-bottom: 15px; font-size: 10px; }
-            th { background: #f5f5f5; padding: 6px 4px; text-align: left; font-weight: bold; border-bottom: 2px solid #ddd; }
-            td { padding: 5px 4px; border-bottom: 1px solid #eee; }
+            img { max-height: 30px !important; max-width: 80px !important; width: auto !important; height: auto !important; object-fit: contain !important; }
+            .flex { display: flex; }
+            .items-center { align-items: center; }
+            .items-start { align-items: flex-start; }
+            .justify-between { justify-content: space-between; }
+            .gap-2 { gap: 8px; }
+            .gap-3 { gap: 12px; }
             .text-right { text-align: right; }
-            .text-green { color: #16a34a; }
-            .text-red { color: #dc2626; }
-            .totals { margin-top: 10px; text-align: right; }
-            .totals-row { display: flex; justify-content: flex-end; gap: 20px; padding: 3px 0; font-size: 11px; }
-            .totals-row.final { border-top: 2px solid #000; padding-top: 8px; margin-top: 5px; font-weight: bold; font-size: 12px; }
-            .signature { display: flex; justify-content: space-between; margin-top: 40px; padding-top: 15px; }
-            .sig-box { text-align: center; }
-            .sig-box p.title { font-size: 10px; font-weight: bold; margin-bottom: 40px; }
-            .sig-box .line { border-top: 1px solid #000; width: 150px; padding-top: 5px; font-size: 9px; color: #666; }
+            .text-center { text-align: center; }
+            .font-bold { font-weight: bold; }
+            .font-black { font-weight: 900; }
+            .border-b-2 { border-bottom: 2px solid #000; }
+            .border-b { border-bottom: 1px solid #eee; }
+            .border { border: 1px solid #ddd; }
+            .rounded { border-radius: 4px; }
+            .p-2 { padding: 8px; }
+            .p-4 { padding: 16px; }
+            .mb-4 { margin-bottom: 16px; }
+            .mb-3 { margin-bottom: 12px; }
+            .pb-3 { padding-bottom: 12px; }
+            .py-1 { padding-top: 4px; padding-bottom: 4px; }
+            .px-1 { padding-left: 4px; padding-right: 4px; }
+            .mt-10 { margin-top: 40px; }
+            .pt-3 { padding-top: 12px; }
+            .w-32 { width: 128px; }
+            .w-48 { width: 192px; }
+            .mb-8 { margin-bottom: 32px; }
+            .text-base { font-size: 16px; }
+            .text-sm { font-size: 14px; }
+            .text-xs { font-size: 12px; }
+            .text-neutral-500 { color: #737373; }
+            .text-neutral-600 { color: #525252; }
+            .text-neutral-700 { color: #404040; }
+            .text-green-600 { color: #16a34a; }
+            .text-red-600 { color: #dc2626; }
+            .bg-neutral-50 { background: #fafafa; }
+            .border-neutral-200 { border-color: #e5e5e5; }
+            .border-neutral-300 { border-color: #d4d4d4; }
+            table { width: 100%; border-collapse: collapse; font-size: 10px; }
+            th { background: #fafafa; padding: 6px 4px; text-align: left; font-weight: bold; border-bottom: 2px solid #d4d4d4; }
+            td { padding: 5px 4px; border-bottom: 1px solid #eee; }
             @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
           </style>
         </head>
