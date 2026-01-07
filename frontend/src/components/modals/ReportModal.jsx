@@ -41,10 +41,16 @@ export default function ReportModal({
 
   // Filter transactions by date range
   const filteredTransactions = useMemo(() => {
+    const startDate = new Date(dateRange.start);
+    startDate.setHours(0, 0, 0, 0);
+    
+    const endDate = new Date(dateRange.end);
+    endDate.setHours(23, 59, 59, 999);
+    
     let txs = transactions.filter(t => {
       if (t.deleted) return false;
       const tDate = new Date(t.date);
-      return tDate >= new Date(dateRange.start) && tDate <= new Date(dateRange.end);
+      return tDate >= startDate && tDate <= endDate;
     });
 
     if (reportScope === 'business') {
