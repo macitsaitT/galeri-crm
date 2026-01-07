@@ -233,6 +233,34 @@ function App() {
     try {
       if (editingCarId) {
         await updateCar(userId, editingCarId, carData);
+        
+        // Stok araç için alış fiyatı değiştiyse transaction'ı güncelle
+        if (carData.ownership === 'stock') {
+          const existingPurchaseTx = transactions.find(
+            t => t.carId === editingCarId && t.category === 'Araç Alımı' && !t.deleted
+          );
+          
+          if (existingPurchaseTx) {
+            // Mevcut transaction'ı güncelle
+            if (existingPurchaseTx.amount !== carData.purchasePrice) {
+              await updateTransaction(userId, existingPurchaseTx.id, {
+                amount: carData.purchasePrice,
+                description: `${carData.plate?.toLocaleUpperCase('tr-TR')} - ${carData.brand} Alışı`
+              });
+            }
+          } else if (carData.purchasePrice > 0) {
+            // Eğer yoksa yeni oluştur
+            await addTransaction(userId, {
+              type: 'expense',
+              category: 'Araç Alımı',
+              amount: carData.purchasePrice,
+              date: carData.entryDate,
+              description: `${carData.plate?.toLocaleUpperCase('tr-TR')} - ${carData.brand} Alışı`,
+              carId: editingCarId
+            });
+          }
+        }
+        
         showToast("Araç güncellendi.");
       } else {
         const newCarId = await addCar(userId, carData);
