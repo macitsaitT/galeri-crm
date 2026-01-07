@@ -936,6 +936,19 @@ function App() {
         customers={customers}
         selectedCustomerId={saleModal.customerId}
         setSelectedCustomerId={(val) => setSaleModal({ ...saleModal, customerId: val })}
+        onAddCustomer={async (customerData) => {
+          const userId = getUserId();
+          if (!userId) return null;
+          try {
+            const newId = await addCustomer(userId, customerData);
+            showToast("Müşteri eklendi.");
+            return newId;
+          } catch (error) {
+            console.error("Error adding customer:", error);
+            showToast("Müşteri eklenirken hata oluştu.", "error");
+            return null;
+          }
+        }}
       />
       
       <CarExpensesModal
