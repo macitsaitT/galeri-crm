@@ -958,7 +958,7 @@ function App() {
           setActiveExpenseCar(null);
         }}
         car={activeExpenseCar}
-        carTransactions={transactions.filter(t => t.carId === activeExpenseCar?.id).sort((a, b) => new Date(b.date) - new Date(a.date))}
+        carTransactions={transactions.filter(t => t.carId === activeExpenseCar?.id && !t.deleted).sort((a, b) => new Date(b.date) - new Date(a.date))}
         onAddExpense={handleAddCarExpense}
         onDeleteTransaction={handleDeleteTransaction}
       />
