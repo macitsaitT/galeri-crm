@@ -436,7 +436,30 @@ function App() {
     if (!userId) return;
     
     try {
+      const oldPrice = car.salePrice || 0;
+      const priceDiff = newPrice - oldPrice;
+      
+      // Aracı güncelle
       await updateCar(userId, car.id, { salePrice: newPrice });
+      
+      // Eğer araç satılmışsa, satış transaction'ını da güncelle
+      if (car.status === 'Satıldı') {
+        const saleTransaction = transactions.find(
+          t => t.carId === car.id && t.category === 'Araç Satışı' && !t.deleted
+        );
+        
+        if (saleTransaction) {
+          // Kapora varsa hesaba kat
+          const deposit = car.depositAmount || 0;
+          const newTransactionAmount = newPrice - deposit;
+          
+          await updateTransaction(userId, saleTransaction.id, {
+            amount: newTransactionAmount > 0 ? newTransactionAmount : newPrice,
+            description: `Satış - ${car.plate?.toLocaleUpperCase('tr-TR')} ${car.brand} ${car.model}${deposit > 0 ? ' (Kalan Tutar)' : ''}`
+          });
+        }
+      }
+      
       showToast(`Satış fiyatı güncellendi.`);
     } catch (error) {
       console.error("Price update error:", error);
