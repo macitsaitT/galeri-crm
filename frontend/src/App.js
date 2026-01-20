@@ -160,7 +160,7 @@ function App() {
   });
   const [depositAmount, setDepositAmount] = useState('');
   const [saleModal, setSaleModal] = useState({ 
-    isOpen: false, carId: null, price: '', employeeShare: '', customerId: '' 
+    isOpen: false, carId: null, price: '', employeeShare: '', customerId: '', saleDate: new Date().toISOString().split('T')[0]
   });
 
   // Toast helper
@@ -307,7 +307,8 @@ function App() {
       carId: car.id, 
       price: formatNumberInput(car.salePrice), 
       employeeShare: '', 
-      customerId: '' 
+      customerId: '',
+      saleDate: new Date().toISOString().split('T')[0]
     });
   };
 
@@ -324,13 +325,14 @@ function App() {
     const finalPrice = parseFormattedNumber(saleModal.price);
     const employeeShareAmount = parseFormattedNumber(saleModal.employeeShare) || 0;
     const selectedCustomer = customers.find(c => c.id === saleModal.customerId);
+    const saleDateValue = saleModal.saleDate || new Date().toISOString().split('T')[0];
     
     try {
       // Aracı güncelle
       await updateCar(userId, car.id, {
         status: 'Satıldı',
         salePrice: finalPrice,
-        soldDate: new Date().toISOString().split('T')[0],
+        soldDate: saleDateValue,
         employeeShare: employeeShareAmount,
         customerId: saleModal.customerId || '',
         customerName: selectedCustomer?.name || ''
@@ -347,7 +349,7 @@ function App() {
           description: `Satış - ${car.plate?.toLocaleUpperCase('tr-TR')} ${car.brand} ${car.model} ${deposit > 0 ? '(Kalan Tutar)' : ''}`,
           amount: finalIncome,
           carId: car.id,
-          date: new Date().toISOString().split('T')[0]
+          date: saleDateValue
         });
       }
       
@@ -359,7 +361,7 @@ function App() {
           description: `Çalışan Payı - ${car.plate?.toLocaleUpperCase('tr-TR')} ${car.brand} ${car.model}`,
           amount: employeeShareAmount,
           carId: car.id,
-          date: new Date().toISOString().split('T')[0]
+          date: saleDateValue
         });
       }
       
@@ -371,12 +373,12 @@ function App() {
           description: `Araç Sahibine Ödeme - ${car.plate?.toLocaleUpperCase('tr-TR')} - ${car.ownerName || 'Konsinye'}`,
           amount: car.purchasePrice,
           carId: car.id,
-          date: new Date().toISOString().split('T')[0]
+          date: saleDateValue
         });
       }
       
       showToast(`Araç satışı ${formatNumberInput(finalPrice)} TL bedelle tamamlandı.`);
-      setSaleModal({ isOpen: false, carId: null, price: '', employeeShare: '', customerId: '' });
+      setSaleModal({ isOpen: false, carId: null, price: '', employeeShare: '', customerId: '', saleDate: new Date().toISOString().split('T')[0] });
     } catch (error) {
       console.error("Sale error:", error);
       showToast("Satış işlemi sırasında hata oluştu.", "error");
@@ -972,6 +974,8 @@ function App() {
             return null;
           }
         }}
+        saleDate={saleModal.saleDate}
+        setSaleDate={(val) => setSaleModal({ ...saleModal, saleDate: val })}
       />
       
       <CarExpensesModal
