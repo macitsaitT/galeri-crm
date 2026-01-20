@@ -366,6 +366,26 @@ export default function AddCarModal({
                   onChange={e => setNewCar({...newCar, inspectionDate: e.target.value})} 
                 />
               </div>
+              <div className="md:col-span-2 grid grid-cols-2 gap-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <div>
+                  <label className="block text-xs font-bold text-blue-700 mb-1">Sigorta Başlangıç Tarihi</label>
+                  <input 
+                    type="date" 
+                    className="w-full p-2 border border-blue-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white" 
+                    value={newCar.insuranceStartDate || ''} 
+                    onChange={e => setNewCar({...newCar, insuranceStartDate: e.target.value})} 
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-blue-700 mb-1">Sigorta Bitiş Tarihi</label>
+                  <input 
+                    type="date" 
+                    className="w-full p-2 border border-blue-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white" 
+                    value={newCar.insuranceEndDate || ''} 
+                    onChange={e => setNewCar({...newCar, insuranceEndDate: e.target.value})} 
+                  />
+                </div>
+              </div>
               <div className="md:col-span-2 grid grid-cols-2 gap-4 mt-2 p-4 bg-gray-50 rounded-lg border border-gray-200">
                 <div>
                   <label className="block text-xs font-bold text-neutral-500 mb-1">
@@ -444,6 +464,18 @@ export default function AddCarModal({
                     placeholder="95" 
                   />
                 </div>
+              </div>
+              <div className="p-4 bg-orange-50 rounded-xl border border-orange-200">
+                <label className="block text-xs font-bold text-orange-700 mb-1">Tramer Kayıt Tutarı (TL)</label>
+                <input 
+                  type="text"
+                  inputMode="numeric"
+                  className="w-full p-2 border border-orange-200 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 outline-none bg-white" 
+                  value={newCar.tramerAmount || ''} 
+                  onChange={e => setNewCar({...newCar, tramerAmount: formatNumberInput(e.target.value)})} 
+                  placeholder="0" 
+                />
+                <p className="text-xs text-orange-600 mt-1">Araç tramer kaydı varsa tutarını girin</p>
               </div>
               <div>
                 <label className="block text-xs font-bold text-neutral-500 mb-1">Ekspertiz Notları</label>
