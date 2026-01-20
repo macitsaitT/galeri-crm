@@ -3,7 +3,7 @@ import {
   X,
   CheckCircle,
   UserPlus,
-  ChevronDown
+  Calendar
 } from 'lucide-react';
 import { formatNumberInput, parseFormattedNumber, formatCurrency } from '../../utils/helpers';
 
@@ -19,7 +19,9 @@ export default function SaleModal({
   customers, 
   selectedCustomerId, 
   setSelectedCustomerId,
-  onAddCustomer
+  onAddCustomer,
+  saleDate,
+  setSaleDate
 }) {
   const [showNewCustomer, setShowNewCustomer] = useState(false);
   const [newCustomerName, setNewCustomerName] = useState('');
@@ -133,6 +135,18 @@ export default function SaleModal({
               </div>
             )}
             <p className="text-xs text-neutral-400 mt-1">Aracı satın alan müşteriyi seçin</p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-bold text-neutral-700 mb-1 flex items-center gap-1">
+              <Calendar size={14}/> Satış Tarihi
+            </label>
+            <input
+              type="date"
+              className="w-full px-4 py-3 border-2 border-purple-100 rounded-xl focus:border-purple-500 focus:ring-0 outline-none text-sm font-medium"
+              value={saleDate || new Date().toISOString().split('T')[0]}
+              onChange={(e) => setSaleDate(e.target.value)}
+            />
           </div>
 
           <div>
