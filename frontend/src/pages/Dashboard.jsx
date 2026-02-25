@@ -9,10 +9,7 @@ import {
   Package,
   ShoppingCart,
   CreditCard,
-  Plus,
   FileText,
-  Receipt,
-  ClipboardList,
   Calendar
 } from 'lucide-react';
 
