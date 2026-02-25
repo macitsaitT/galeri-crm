@@ -100,6 +100,23 @@ const VehicleCard = ({
                   <Receipt size={16} className="mr-2" />
                   Masraflar
                 </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={async () => {
+                    try {
+                      const res = await exportAPI.expertisePdf(car.id);
+                      const url = URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }));
+                      const a = document.createElement('a');
+                      a.href = url;
+                      a.download = `ekspertiz_${car.plate?.replace(/\s/g, '_') || car.id}.pdf`;
+                      a.click();
+                      URL.revokeObjectURL(url);
+                    } catch (e) { console.error(e); }
+                  }}
+                  data-testid={`pdf-${car.id}`}
+                >
+                  <FileText size={16} className="mr-2" />
+                  Ekspertiz PDF
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 {car.status === 'Stokta' && (
                   <>
