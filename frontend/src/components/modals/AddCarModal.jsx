@@ -3,6 +3,11 @@ import { X, Car, Upload, Plus, Trash2, FileText, Camera, Users, CheckCircle } fr
 import { formatNumberInput, parseNumber } from '../../utils/helpers';
 import { carBrands, carModels, engineTypes, packageTypes, gearTypes, fuelTypes, vehicleTypes, modelYears } from '../../data/carData';
 import { provinceList, getDistrictsByProvince } from '../../data/turkeyData';
+
+const getPackagesForBrand = (brand) => {
+  if (brand && packageTypes[brand]) return packageTypes[brand];
+  return packageTypes['Genel'] || [];
+};
 import {
   Dialog,
   DialogContent,

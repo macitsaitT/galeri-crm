@@ -95,6 +95,8 @@ class CarBase(BaseModel):
     employee_share: float = 0
     insurance_start: str = ""
     insurance_end: str = ""
+    province: str = ""
+    district: str = ""
 
 class CarCreate(CarBase):
     pass
