@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import './index.css';
 
@@ -21,15 +21,19 @@ import AddCarModal from './components/modals/AddCarModal';
 import AddCustomerModal from './components/modals/AddCustomerModal';
 import SaleModal from './components/modals/SaleModal';
 import DepositModal from './components/modals/DepositModal';
+import ReportModal from './components/modals/ReportModal';
+import PromoCardModal from './components/modals/PromoCardModal';
+import ExpenseModal from './components/modals/ExpenseModal';
+import TransactionModal from './components/modals/TransactionModal';
 
 const getViewTitle = (view) => {
   switch (view) {
     case 'dashboard': return 'Genel Bakış';
     case 'inventory': return 'Stok Araçlar';
-    case 'consignment': return 'Konsinye';
+    case 'consignment': return 'Konsinye Araçlar';
     case 'sold': return 'Satılan Araçlar';
     case 'customers': return 'Müşteriler';
-    case 'finance': return 'Finans';
+    case 'finance': return 'Gelir & Gider';
     case 'trash': return 'Çöp Kutusu';
     case 'settings': return 'Ayarlar';
     default: return 'Dashboard';
@@ -58,6 +62,27 @@ const AppContent = () => {
   const [customerModal, setCustomerModal] = useState({ open: false, customer: null });
   const [saleModal, setSaleModal] = useState({ open: false, car: null });
   const [depositModal, setDepositModal] = useState({ open: false, car: null });
+  const [reportModal, setReportModal] = useState(false);
+  const [promoCardModal, setPromoCardModal] = useState(false);
+  const [expenseModal, setExpenseModal] = useState(false);
+  const [transactionModal, setTransactionModal] = useState(false);
+
+  // Handle special view changes from sidebar quick actions
+  useEffect(() => {
+    if (activeView === 'add-car') {
+      setCarModal({ open: true, car: null });
+      setActiveView('dashboard');
+    } else if (activeView === 'promo-card') {
+      setPromoCardModal(true);
+      setActiveView('dashboard');
+    } else if (activeView === 'add-expense') {
+      setExpenseModal(true);
+      setActiveView('dashboard');
+    } else if (activeView === 'add-transaction') {
+      setTransactionModal(true);
+      setActiveView('dashboard');
+    }
+  }, [activeView]);
 
   // Show loading
   if (loading && isAuthenticated) {
@@ -80,11 +105,6 @@ const AppContent = () => {
   const handleSaveCar = async (carData) => {
     if (carModal.car) {
       await updateCar(carModal.car.id, carData);
-      
-      // Update purchase transaction if stock car
-      if (carData.ownership === 'stock' && carData.purchase_price > 0) {
-        // Transaction will be handled by backend or we can add here
-      }
     } else {
       const newCar = await addCar(carData);
       
@@ -95,7 +115,7 @@ const AppContent = () => {
           category: 'Araç Alımı',
           amount: carData.purchase_price,
           date: carData.entry_date || new Date().toISOString().split('T')[0],
-          description: `${carData.plate?.toUpperCase()} - ${carData.brand} Alışı`,
+          description: `${carData.plate?.toUpperCase()} - ${carData.brand} ${carData.model} Alışı`,
           car_id: newCar.id
         });
       }
@@ -246,8 +266,7 @@ const AppContent = () => {
     } else {
       setCarModal({ 
         open: true, 
-        car: null,
-        defaultOwnership: activeView === 'consignment' ? 'consignment' : 'stock'
+        car: null
       });
     }
   };
@@ -260,6 +279,7 @@ const AppContent = () => {
         setActiveView={setActiveView}
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
+        onOpenReport={() => setReportModal(true)}
       />
 
       {/* Main Content */}
@@ -272,7 +292,15 @@ const AppContent = () => {
 
         {/* Main Area */}
         <main className="flex-1 overflow-y-auto p-4 md:p-6">
-          {activeView === 'dashboard' && <Dashboard />}
+          {activeView === 'dashboard' && (
+            <Dashboard
+              onAddCar={() => setCarModal({ open: true, car: null })}
+              onAddExpense={() => setExpenseModal(true)}
+              onAddTransaction={() => setTransactionModal(true)}
+              onOpenReport={() => setReportModal(true)}
+              onOpenPromoCard={() => setPromoCardModal(true)}
+            />
+          )}
           
           {(activeView === 'inventory' || activeView === 'consignment' || activeView === 'sold') && (
             <InventoryPage
@@ -337,6 +365,26 @@ const AppContent = () => {
         car={depositModal.car}
         onConfirmDeposit={handleConfirmDeposit}
         onCancelDeposit={handleCancelDeposit}
+      />
+
+      <ReportModal
+        isOpen={reportModal}
+        onClose={() => setReportModal(false)}
+      />
+
+      <PromoCardModal
+        isOpen={promoCardModal}
+        onClose={() => setPromoCardModal(false)}
+      />
+
+      <ExpenseModal
+        isOpen={expenseModal}
+        onClose={() => setExpenseModal(false)}
+      />
+
+      <TransactionModal
+        isOpen={transactionModal}
+        onClose={() => setTransactionModal(false)}
       />
     </div>
   );
