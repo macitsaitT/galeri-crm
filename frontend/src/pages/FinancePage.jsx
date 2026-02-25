@@ -1,0 +1,237 @@
+import React, { useState, useMemo } from 'react';
+import { useApp } from '../../context/AppContext';
+import { formatCurrency, formatDate } from '../../utils/helpers';
+import { 
+  TrendingUp, 
+  TrendingDown, 
+  Wallet,
+  Search,
+  Trash2,
+  Calendar,
+  Filter
+} from 'lucide-react';
+
+const FinancePage = () => {
+  const { transactions, cars, deleteTransaction } = useApp();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterType, setFilterType] = useState('all');
+  const [dateRange, setDateRange] = useState('all');
+
+  const filteredTransactions = useMemo(() => {
+    let result = transactions.filter(t => !t.deleted);
+
+    // Type filter
+    if (filterType === 'income') {
+      result = result.filter(t => t.type === 'income');
+    } else if (filterType === 'expense') {
+      result = result.filter(t => t.type === 'expense');
+    }
+
+    // Date filter
+    const now = new Date();
+    if (dateRange === 'today') {
+      const today = now.toISOString().split('T')[0];
+      result = result.filter(t => t.date === today);
+    } else if (dateRange === 'week') {
+      const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      result = result.filter(t => new Date(t.date) >= weekAgo);
+    } else if (dateRange === 'month') {
+      const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      result = result.filter(t => new Date(t.date) >= monthAgo);
+    }
+
+    // Search filter
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter(t => 
+        t.category?.toLowerCase().includes(query) ||
+        t.description?.toLowerCase().includes(query)
+      );
+    }
+
+    // Sort by date (newest first)
+    result.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    return result;
+  }, [transactions, searchQuery, filterType, dateRange]);
+
+  // Calculate totals
+  const totals = useMemo(() => {
+    const income = filteredTransactions
+      .filter(t => t.type === 'income')
+      .reduce((sum, t) => sum + (t.amount || 0), 0);
+    
+    const expense = filteredTransactions
+      .filter(t => t.type === 'expense')
+      .reduce((sum, t) => sum + (t.amount || 0), 0);
+
+    return { income, expense, net: income - expense };
+  }, [filteredTransactions]);
+
+  // Get car info for transaction
+  const getCarInfo = (carId) => {
+    if (!carId) return null;
+    return cars.find(c => c.id === carId);
+  };
+
+  const handleDelete = async (transaction) => {
+    if (window.confirm('Bu işlemi silmek istediğinize emin misiniz?')) {
+      await deleteTransaction(transaction.id, true);
+    }
+  };
+
+  return (
+    <div className="space-y-6 pb-24 md:pb-6 animate-fade-in">
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="bg-gradient-to-br from-success/20 to-success/5 border border-success/20 rounded-xl p-5">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="p-2 rounded-lg bg-success/20">
+              <TrendingUp size={20} className="text-success" />
+            </div>
+            <span className="text-muted-foreground text-sm">Gelir</span>
+          </div>
+          <p className="font-heading font-bold text-2xl text-success tabular-nums">
+            {formatCurrency(totals.income)}
+          </p>
+        </div>
+
+        <div className="bg-gradient-to-br from-destructive/20 to-destructive/5 border border-destructive/20 rounded-xl p-5">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="p-2 rounded-lg bg-destructive/20">
+              <TrendingDown size={20} className="text-destructive" />
+            </div>
+            <span className="text-muted-foreground text-sm">Gider</span>
+          </div>
+          <p className="font-heading font-bold text-2xl text-destructive tabular-nums">
+            {formatCurrency(totals.expense)}
+          </p>
+        </div>
+
+        <div className={`bg-gradient-to-br ${totals.net >= 0 ? 'from-primary/20 to-primary/5 border-primary/20' : 'from-destructive/20 to-destructive/5 border-destructive/20'} border rounded-xl p-5`}>
+          <div className="flex items-center gap-3 mb-3">
+            <div className={`p-2 rounded-lg ${totals.net >= 0 ? 'bg-primary/20' : 'bg-destructive/20'}`}>
+              <Wallet size={20} className={totals.net >= 0 ? 'text-primary' : 'text-destructive'} />
+            </div>
+            <span className="text-muted-foreground text-sm">Net</span>
+          </div>
+          <p className={`font-heading font-bold text-2xl tabular-nums ${totals.net >= 0 ? 'text-primary' : 'text-destructive'}`}>
+            {formatCurrency(totals.net)}
+          </p>
+        </div>
+      </div>
+
+      {/* Filters */}
+      <div className="flex flex-col sm:flex-row gap-4">
+        {/* Search */}
+        <div className="relative flex-1">
+          <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Kategori veya açıklama ara..."
+            className="w-full h-12 pl-12 pr-4 bg-card border border-border rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+            data-testid="finance-search"
+          />
+        </div>
+
+        {/* Type Filter */}
+        <select
+          value={filterType}
+          onChange={(e) => setFilterType(e.target.value)}
+          className="h-12 px-4 bg-card border border-border rounded-lg focus:border-primary outline-none text-sm"
+          data-testid="type-filter"
+        >
+          <option value="all">Tüm İşlemler</option>
+          <option value="income">Gelirler</option>
+          <option value="expense">Giderler</option>
+        </select>
+
+        {/* Date Filter */}
+        <select
+          value={dateRange}
+          onChange={(e) => setDateRange(e.target.value)}
+          className="h-12 px-4 bg-card border border-border rounded-lg focus:border-primary outline-none text-sm"
+          data-testid="date-filter"
+        >
+          <option value="all">Tüm Zamanlar</option>
+          <option value="today">Bugün</option>
+          <option value="week">Son 7 Gün</option>
+          <option value="month">Son 30 Gün</option>
+        </select>
+      </div>
+
+      {/* Transactions List */}
+      <div className="bg-card border border-border rounded-xl overflow-hidden">
+        <div className="p-4 border-b border-border">
+          <h3 className="font-heading font-semibold">İşlem Geçmişi</h3>
+          <p className="text-sm text-muted-foreground">{filteredTransactions.length} işlem</p>
+        </div>
+
+        {filteredTransactions.length === 0 ? (
+          <div className="p-8 text-center">
+            <Wallet size={40} className="mx-auto text-muted-foreground mb-3" />
+            <p className="text-muted-foreground">İşlem bulunamadı</p>
+          </div>
+        ) : (
+          <div className="divide-y divide-border">
+            {filteredTransactions.map((tx) => {
+              const car = getCarInfo(tx.car_id);
+              const isIncome = tx.type === 'income';
+
+              return (
+                <div 
+                  key={tx.id} 
+                  className="p-4 hover:bg-muted/50 transition-colors flex items-center gap-4"
+                  data-testid={`transaction-${tx.id}`}
+                >
+                  {/* Icon */}
+                  <div className={`p-2 rounded-lg ${isIncome ? 'bg-success/20' : 'bg-destructive/20'}`}>
+                    {isIncome ? (
+                      <TrendingUp size={20} className="text-success" />
+                    ) : (
+                      <TrendingDown size={20} className="text-destructive" />
+                    )}
+                  </div>
+
+                  {/* Info */}
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium truncate">{tx.category}</p>
+                    <p className="text-sm text-muted-foreground truncate">
+                      {tx.description || '-'}
+                      {car && ` • ${car.plate?.toUpperCase()}`}
+                    </p>
+                  </div>
+
+                  {/* Date */}
+                  <div className="hidden sm:block text-right">
+                    <p className="text-sm text-muted-foreground">{formatDate(tx.date)}</p>
+                  </div>
+
+                  {/* Amount */}
+                  <div className="text-right">
+                    <p className={`font-heading font-bold tabular-nums ${isIncome ? 'text-success' : 'text-destructive'}`}>
+                      {isIncome ? '+' : '-'}{formatCurrency(tx.amount)}
+                    </p>
+                  </div>
+
+                  {/* Delete */}
+                  <button
+                    onClick={() => handleDelete(tx)}
+                    className="p-2 text-muted-foreground hover:text-destructive transition-colors"
+                    data-testid={`delete-tx-${tx.id}`}
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default FinancePage;
