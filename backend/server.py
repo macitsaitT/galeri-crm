@@ -32,6 +32,72 @@ db = client[os.environ['DB_NAME']]
 JWT_SECRET = os.environ.get('JWT_SECRET', 'aslanbasoto-secret-key-2024')
 JWT_ALGORITHM = "HS256"
 
+# ==================== OBJECT STORAGE ====================
+STORAGE_URL = "https://integrations.emergentagent.com/objstore/api/v1/storage"
+EMERGENT_KEY = os.environ.get("EMERGENT_LLM_KEY")
+APP_NAME = "aslanbasoto"
+storage_key = None
+
+def init_storage():
+    global storage_key
+    if storage_key:
+        return storage_key
+    resp = requests.post(f"{STORAGE_URL}/init", json={"emergent_key": EMERGENT_KEY}, timeout=30)
+    resp.raise_for_status()
+    storage_key = resp.json()["storage_key"]
+    return storage_key
+
+def put_object(path: str, data: bytes, content_type: str) -> dict:
+    key = init_storage()
+    resp = requests.put(
+        f"{STORAGE_URL}/objects/{path}",
+        headers={"X-Storage-Key": key, "Content-Type": content_type},
+        data=data, timeout=120
+    )
+    resp.raise_for_status()
+    return resp.json()
+
+def get_object(path: str):
+    key = init_storage()
+    resp = requests.get(
+        f"{STORAGE_URL}/objects/{path}",
+        headers={"X-Storage-Key": key}, timeout=60
+    )
+    resp.raise_for_status()
+    return resp.content, resp.headers.get("Content-Type", "application/octet-stream")
+
+# ==================== ENCRYPTION ====================
+def get_fernet():
+    enc_key = os.environ.get('ENCRYPTION_KEY')
+    if not enc_key:
+        enc_key = Fernet.generate_key().decode()
+        logger.info(f"Generated new encryption key. Store this: {enc_key}")
+    if len(enc_key) == 44 and enc_key.endswith('='):
+        return Fernet(enc_key.encode())
+    key_bytes = hashlib.sha256(enc_key.encode()).digest()
+    return Fernet(base64.urlsafe_b64encode(key_bytes))
+
+fernet = None
+
+def encrypt_value(value: str) -> str:
+    global fernet
+    if not fernet:
+        fernet = get_fernet()
+    if not value:
+        return value
+    return fernet.encrypt(value.encode()).decode()
+
+def decrypt_value(value: str) -> str:
+    global fernet
+    if not fernet:
+        fernet = get_fernet()
+    if not value:
+        return value
+    try:
+        return fernet.decrypt(value.encode()).decode()
+    except Exception:
+        return value
+
 # Create the main app
 app = FastAPI(title="Aslanbaş Oto CRM API")
 api_router = APIRouter(prefix="/api")
