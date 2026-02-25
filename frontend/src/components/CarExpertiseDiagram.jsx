@@ -46,14 +46,15 @@ const CarExpertiseDiagram = ({ expertiseParts = {}, onChange }) => {
           <path
             d="M100,10 Q100,0 110,0 L190,0 Q200,0 200,10 L200,30 Q240,30 245,40 L245,90 Q245,95 240,95 L240,280 Q240,285 245,285 L245,300 Q245,310 240,315 L60,315 Q55,310 55,300 L55,285 Q60,285 60,280 L60,95 Q55,95 55,90 L55,40 Q60,30 100,30 Z"
             fill="none"
-            stroke="#333"
+            stroke="currentColor"
             strokeWidth="2"
+            className="text-muted-foreground"
           />
           {/* Wheel arcs */}
-          <rect x="48" y="50" width="10" height="30" rx="3" fill="#1a1a2e" stroke="#333" strokeWidth="1" />
-          <rect x="242" y="50" width="10" height="30" rx="3" fill="#1a1a2e" stroke="#333" strokeWidth="1" />
-          <rect x="48" y="235" width="10" height="30" rx="3" fill="#1a1a2e" stroke="#333" strokeWidth="1" />
-          <rect x="242" y="235" width="10" height="30" rx="3" fill="#1a1a2e" stroke="#333" strokeWidth="1" />
+          <rect x="48" y="50" width="10" height="30" rx="3" fill="currentColor" className="text-muted-foreground/50" stroke="currentColor" strokeWidth="1" />
+          <rect x="242" y="50" width="10" height="30" rx="3" fill="currentColor" className="text-muted-foreground/50" stroke="currentColor" strokeWidth="1" />
+          <rect x="48" y="235" width="10" height="30" rx="3" fill="currentColor" className="text-muted-foreground/50" stroke="currentColor" strokeWidth="1" />
+          <rect x="242" y="235" width="10" height="30" rx="3" fill="currentColor" className="text-muted-foreground/50" stroke="currentColor" strokeWidth="1" />
 
           {/* Parts */}
           {parts.map((part) => {
