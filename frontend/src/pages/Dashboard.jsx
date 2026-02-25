@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useApp } from '../context/AppContext';
 import { formatCurrency } from '../utils/helpers';
 import { 
@@ -10,10 +10,15 @@ import {
   ShoppingCart,
   CreditCard,
   FileText,
-  Calendar
+  Calendar,
+  BarChart3,
+  PieChart as PieIcon
 } from 'lucide-react';
+import {
+  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
+  PieChart, Pie, Cell
+} from 'recharts';
 
-// Stat Card Component
 const StatCard = ({ title, value, icon: Icon, color = 'default', className = '' }) => {
   const colorClasses = {
     default: 'bg-card border-border',
@@ -22,7 +27,6 @@ const StatCard = ({ title, value, icon: Icon, color = 'default', className = '' 
     warning: 'bg-warning/10 border-warning/30',
     destructive: 'bg-destructive/10 border-destructive/30',
   };
-
   const iconColors = {
     default: 'text-muted-foreground',
     primary: 'text-primary',
@@ -49,7 +53,6 @@ const StatCard = ({ title, value, icon: Icon, color = 'default', className = '' 
   );
 };
 
-// Stock Status Item
 const StockStatusItem = ({ car }) => (
   <div className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/50 transition-colors">
     <div className="flex-1 min-w-0">
@@ -66,7 +69,6 @@ const StockStatusItem = ({ car }) => (
   </div>
 );
 
-// Transaction Item
 const TransactionItem = ({ transaction }) => {
   const isIncome = transaction.type === 'income';
   return (
@@ -76,14 +78,95 @@ const TransactionItem = ({ transaction }) => {
         <p className="text-xs text-muted-foreground truncate">{transaction.description}</p>
       </div>
       <span className={`font-heading font-bold tabular-nums ${isIncome ? 'text-success' : 'text-destructive'}`}>
-        {isIncome ? '+' : '-'}₺{formatCurrency(transaction.amount).replace('₺', '')}
+        {isIncome ? '+' : '-'}{formatCurrency(transaction.amount).replace('₺', '')}
       </span>
+    </div>
+  );
+};
+
+const CHART_COLORS = ['#d4a030', '#22c55e', '#ef4444', '#3b82f6', '#a855f7'];
+const PIE_COLORS = ['#d4a030', '#f59e0b', '#22c55e', '#3b82f6'];
+
+const CustomTooltip = ({ active, payload, label }) => {
+  if (!active || !payload?.length) return null;
+  return (
+    <div className="bg-card border border-border rounded-lg p-3 shadow-xl text-xs">
+      <p className="font-semibold mb-1">{label}</p>
+      {payload.map((entry, i) => (
+        <p key={i} style={{ color: entry.color }}>
+          {entry.name}: {formatCurrency(entry.value)}
+        </p>
+      ))}
     </div>
   );
 };
 
 const Dashboard = ({ onOpenReport }) => {
   const { stats, cars, transactions, loading } = useApp();
+
+  const activeCars = cars.filter(c => !c.deleted);
+  const activeTransactions = transactions.filter(t => !t.deleted);
+
+  const stockCars = activeCars.filter(c => c.ownership === 'stock' && c.status !== 'Satıldı');
+  const consignmentCars = activeCars.filter(c => c.ownership === 'consignment' && c.status !== 'Satıldı');
+  const depositCars = activeCars.filter(c => c.status === 'Kapora Alındı');
+  
+  const now = new Date();
+  const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const thisMonthSales = activeCars.filter(c => 
+    c.status === 'Satıldı' && c.sold_date && new Date(c.sold_date) >= thisMonthStart
+  ).length;
+
+  const totalIncome = activeTransactions.filter(t => t.type === 'income').reduce((sum, t) => sum + (t.amount || 0), 0);
+  const totalExpense = activeTransactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + (t.amount || 0), 0);
+  const kasaDurumu = totalIncome - totalExpense;
+
+  const recentTransactions = [...activeTransactions]
+    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+    .slice(0, 5);
+
+  const stockStatusCars = [...activeCars]
+    .filter(c => c.status !== 'Satıldı')
+    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+    .slice(0, 5);
+
+  // Monthly income/expense chart data (last 6 months)
+  const monthlyData = useMemo(() => {
+    const months = [];
+    const monthNames = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'];
+    
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const monthKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      const monthLabel = `${monthNames[d.getMonth()]} ${d.getFullYear() !== now.getFullYear() ? d.getFullYear() : ''}`.trim();
+      
+      const monthIncome = activeTransactions
+        .filter(t => t.type === 'income' && t.date?.startsWith(monthKey))
+        .reduce((sum, t) => sum + (t.amount || 0), 0);
+      
+      const monthExpense = activeTransactions
+        .filter(t => t.type === 'expense' && t.date?.startsWith(monthKey))
+        .reduce((sum, t) => sum + (t.amount || 0), 0);
+      
+      months.push({ name: monthLabel, Gelir: monthIncome, Gider: monthExpense });
+    }
+    return months;
+  }, [activeTransactions, now]);
+
+  // Vehicle status pie chart data
+  const vehicleStatusData = useMemo(() => {
+    const stokta = activeCars.filter(c => c.status === 'Stokta').length;
+    const kapora = activeCars.filter(c => c.status === 'Kapora Alındı').length;
+    const satildi = activeCars.filter(c => c.status === 'Satıldı').length;
+    const konsinye = activeCars.filter(c => c.ownership === 'consignment' && c.status !== 'Satıldı').length;
+    
+    return [
+      { name: 'Stokta', value: stokta },
+      { name: 'Konsinye', value: konsinye },
+      { name: 'Satıldı', value: satildi },
+      { name: 'Kapora', value: kapora },
+    ].filter(d => d.value > 0);
+  }, [activeCars]);
 
   if (loading) {
     return (
@@ -93,68 +176,14 @@ const Dashboard = ({ onOpenReport }) => {
     );
   }
 
-  // Filter active data
-  const activeCars = cars.filter(c => !c.deleted);
-  const activeTransactions = transactions.filter(t => !t.deleted);
-  
-  // Stats calculations
-  const stockCars = activeCars.filter(c => c.ownership === 'stock' && c.status !== 'Satıldı');
-  const consignmentCars = activeCars.filter(c => c.ownership === 'consignment' && c.status !== 'Satıldı');
-  const depositCars = activeCars.filter(c => c.status === 'Kapora Alındı');
-  
-  // This month sales
-  const now = new Date();
-  const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-  const thisMonthSales = activeCars.filter(c => 
-    c.status === 'Satıldı' && 
-    c.sold_date && 
-    new Date(c.sold_date) >= thisMonthStart
-  ).length;
-
-  // Kasa Durumu (Net Cash Position)
-  const totalIncome = activeTransactions.filter(t => t.type === 'income').reduce((sum, t) => sum + (t.amount || 0), 0);
-  const totalExpense = activeTransactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + (t.amount || 0), 0);
-  const kasaDurumu = totalIncome - totalExpense;
-
-  // Recent transactions
-  const recentTransactions = [...activeTransactions]
-    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-    .slice(0, 5);
-
-  // Stock status (recent cars)
-  const stockStatusCars = [...activeCars]
-    .filter(c => c.status !== 'Satıldı')
-    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-    .slice(0, 5);
-
   return (
     <div className="space-y-6 pb-24 md:pb-6 animate-fade-in">
-      {/* Stats Grid - 5 columns like original */}
+      {/* Stats Grid */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        <StatCard
-          title="STOK ARAÇ SAYISI"
-          value={stockCars.length}
-          icon={Car}
-          color="default"
-        />
-        <StatCard
-          title="KONSİNYE ARAÇ SAYISI"
-          value={consignmentCars.length}
-          icon={Package}
-          color="default"
-        />
-        <StatCard
-          title="KAPORASI ALINAN"
-          value={depositCars.length}
-          icon={CreditCard}
-          color="warning"
-        />
-        <StatCard
-          title="BU AY SATIŞ"
-          value={thisMonthSales}
-          icon={ShoppingCart}
-          color="success"
-        />
+        <StatCard title="STOK ARAÇ SAYISI" value={stockCars.length} icon={Car} color="default" />
+        <StatCard title="KONSİNYE ARAÇ SAYISI" value={consignmentCars.length} icon={Package} color="default" />
+        <StatCard title="KAPORASI ALINAN" value={depositCars.length} icon={CreditCard} color="warning" />
+        <StatCard title="BU AY SATIŞ" value={thisMonthSales} icon={ShoppingCart} color="success" />
         <StatCard
           title="KASA DURUMU"
           value={formatCurrency(kasaDurumu)}
@@ -164,18 +193,98 @@ const Dashboard = ({ onOpenReport }) => {
         />
       </div>
 
+      {/* Charts Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Monthly Income/Expense Bar Chart */}
+        <div className="lg:col-span-2 bg-card border border-border rounded-xl p-5" data-testid="monthly-chart">
+          <div className="flex items-center gap-2 mb-4">
+            <BarChart3 size={18} className="text-primary" />
+            <h3 className="font-heading font-semibold">Aylık Gelir / Gider</h3>
+          </div>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={monthlyData} barGap={4}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(0 0% 16%)" vertical={false} />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: 'hsl(0 0% 55%)', fontSize: 12 }} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fill: 'hsl(0 0% 55%)', fontSize: 11 }} tickFormatter={(v) => v >= 1000000 ? `${(v / 1000000).toFixed(1)}M` : v >= 1000 ? `${(v / 1000).toFixed(0)}K` : v} />
+                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'hsl(0 0% 16%)' }} />
+                <Bar dataKey="Gelir" fill="#22c55e" radius={[4, 4, 0, 0]} maxBarSize={32} />
+                <Bar dataKey="Gider" fill="#ef4444" radius={[4, 4, 0, 0]} maxBarSize={32} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="flex items-center gap-6 mt-3 justify-center">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-sm bg-green-500" />
+              <span className="text-xs text-muted-foreground">Gelir</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-sm bg-red-500" />
+              <span className="text-xs text-muted-foreground">Gider</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Vehicle Status Pie Chart */}
+        <div className="bg-card border border-border rounded-xl p-5" data-testid="status-chart">
+          <div className="flex items-center gap-2 mb-4">
+            <PieIcon size={18} className="text-primary" />
+            <h3 className="font-heading font-semibold">Araç Dağılımı</h3>
+          </div>
+          {vehicleStatusData.length > 0 ? (
+            <>
+              <div className="h-48 flex items-center justify-center">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={vehicleStatusData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={50}
+                      outerRadius={80}
+                      paddingAngle={3}
+                      dataKey="value"
+                      stroke="none"
+                    >
+                      {vehicleStatusData.map((entry, index) => (
+                        <Cell key={entry.name} fill={PIE_COLORS[index % PIE_COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      formatter={(value, name) => [`${value} araç`, name]}
+                      contentStyle={{ background: 'hsl(0 0% 8%)', border: '1px solid hsl(0 0% 16%)', borderRadius: '8px', fontSize: '12px' }}
+                      itemStyle={{ color: 'hsl(0 0% 95%)' }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="grid grid-cols-2 gap-2 mt-2">
+                {vehicleStatusData.map((item, i) => (
+                  <div key={item.name} className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: PIE_COLORS[i % PIE_COLORS.length] }} />
+                    <span className="text-xs text-muted-foreground">{item.name}</span>
+                    <span className="text-xs font-bold ml-auto">{item.value}</span>
+                  </div>
+                ))}
+              </div>
+            </>
+          ) : (
+            <div className="h-48 flex items-center justify-center">
+              <p className="text-sm text-muted-foreground">Henüz araç eklenmemiş</p>
+            </div>
+          )}
+        </div>
+      </div>
+
       {/* Content Grid - Son İşlemler & Stok Durumu */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Son İşlemler */}
         <div className="bg-card border border-border rounded-xl">
           <div className="p-4 border-b border-border">
             <h3 className="font-heading font-semibold text-lg">Son İşlemler</h3>
           </div>
           <div className="p-2">
             {recentTransactions.length === 0 ? (
-              <p className="text-muted-foreground text-sm text-center py-8">
-                Henüz işlem yok
-              </p>
+              <p className="text-muted-foreground text-sm text-center py-8">Henüz işlem yok</p>
             ) : (
               recentTransactions.map((tx) => (
                 <TransactionItem key={tx.id} transaction={tx} />
@@ -184,16 +293,13 @@ const Dashboard = ({ onOpenReport }) => {
           </div>
         </div>
 
-        {/* Stok Durumu */}
         <div className="bg-card border border-border rounded-xl">
           <div className="p-4 border-b border-border">
             <h3 className="font-heading font-semibold text-lg">Stok Durumu</h3>
           </div>
           <div className="p-2">
             {stockStatusCars.length === 0 ? (
-              <p className="text-muted-foreground text-sm text-center py-8">
-                Henüz araç eklenmemiş
-              </p>
+              <p className="text-muted-foreground text-sm text-center py-8">Henüz araç eklenmemiş</p>
             ) : (
               stockStatusCars.map((car) => (
                 <StockStatusItem key={car.id} car={car} />
