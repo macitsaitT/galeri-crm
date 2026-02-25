@@ -1,37 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { X, Car, Upload, Plus, Trash2, FileText, Camera, Users, CheckCircle } from 'lucide-react';
 import { formatNumberInput, parseNumber } from '../../utils/helpers';
+import { carBrands, carModels, engineTypes, packageTypes, gearTypes, fuelTypes, vehicleTypes, modelYears } from '../../data/carData';
+import { provinceList, getDistrictsByProvince } from '../../data/turkeyData';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from '../ui/dialog';
-
-const carBrands = [
-  'Audi', 'BMW', 'Chevrolet', 'Citroen', 'Dacia', 'Fiat', 'Ford', 'Honda', 
-  'Hyundai', 'Kia', 'Mercedes', 'Nissan', 'Opel', 'Peugeot', 'Renault', 
-  'Seat', 'Skoda', 'Toyota', 'Volkswagen', 'Volvo', 'Diğer'
-];
-
-const carModels = {
-  'Toyota': ['Corolla', 'Camry', 'Yaris', 'RAV4', 'C-HR', 'Land Cruiser', 'Hilux', 'Diğer'],
-  'Volkswagen': ['Golf', 'Passat', 'Polo', 'Tiguan', 'T-Cross', 'T-Roc', 'Arteon', 'Diğer'],
-  'BMW': ['3 Serisi', '5 Serisi', 'X1', 'X3', 'X5', '1 Serisi', 'Diğer'],
-  'Mercedes': ['A Serisi', 'C Serisi', 'E Serisi', 'GLA', 'GLC', 'GLE', 'Diğer'],
-  'Audi': ['A3', 'A4', 'A6', 'Q3', 'Q5', 'Q7', 'Diğer'],
-  'Renault': ['Clio', 'Megane', 'Taliant', 'Captur', 'Kadjar', 'Diğer'],
-  'Ford': ['Focus', 'Fiesta', 'Kuga', 'Puma', 'Ranger', 'Diğer'],
-  'Hyundai': ['i10', 'i20', 'Tucson', 'Kona', 'Santa Fe', 'Diğer'],
-  'Fiat': ['Egea', '500', 'Panda', 'Tipo', 'Doblo', 'Diğer'],
-  'default': ['Sedan', 'Hatchback', 'SUV', 'Crossover', 'Diğer']
-};
-
-const vehicleTypes = ['Sedan', 'Hatchback', 'SUV', 'Crossover', 'Station Wagon', 'Coupe', 'Cabrio', 'Pick-up', 'Minivan', 'Panelvan'];
-const fuelTypes = ['Benzin', 'Dizel', 'LPG', 'Hibrit', 'Elektrik', 'Benzin + LPG'];
-const gearTypes = ['Manuel', 'Otomatik', 'Yarı Otomatik'];
-const motorTypes = ['1.0', '1.2', '1.4', '1.5', '1.6', '1.8', '2.0', '2.5', '3.0', 'Diğer'];
-const packageTypes = ['Comfort', 'Style', 'Elegance', 'Executive', 'Sport', 'Premium', 'Base', 'Diğer'];
 
 // Expertise sections
 const expertiseParts = [
