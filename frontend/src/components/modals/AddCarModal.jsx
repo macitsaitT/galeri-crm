@@ -250,13 +250,16 @@ const AddCarModal = ({ isOpen, onClose, onSave, editingCar = null }) => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2">Model Yılı</label>
-                  <input
-                    type="number"
+                  <select
                     value={formData.year}
                     onChange={(e) => handleChange('year', e.target.value)}
                     className="w-full h-11 px-3 bg-background border border-border rounded-lg outline-none focus:border-primary text-sm"
-                    data-testid="car-year-input"
-                  />
+                    data-testid="car-year-select"
+                  >
+                    {modelYears.map(y => (
+                      <option key={y} value={y}>{y}</option>
+                    ))}
+                  </select>
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2">Marka</label>
