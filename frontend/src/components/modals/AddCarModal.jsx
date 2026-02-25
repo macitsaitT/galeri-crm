@@ -78,7 +78,9 @@ const defaultFormData = {
   package_info: '',
   engine_type: '',
   insurance_start: '',
-  insurance_end: ''
+  insurance_end: '',
+  province: '',
+  district: ''
 };
 
 const AddCarModal = ({ isOpen, onClose, onSave, editingCar = null }) => {
@@ -186,7 +188,9 @@ const AddCarModal = ({ isOpen, onClose, onSave, editingCar = null }) => {
     }
   };
 
-  const availableModels = carModels[formData.brand] || carModels['default'];
+  const availableModels = carModels[formData.brand] || [];
+  const availablePackages = getPackagesForBrand(formData.brand);
+  const availableDistricts = getDistrictsByProvince(formData.province);
 
   const tabs = [
     { id: 'general', label: 'Genel Bilgiler', icon: FileText },
