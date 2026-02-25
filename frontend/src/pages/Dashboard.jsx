@@ -105,7 +105,7 @@ const TransactionItem = ({ transaction }) => {
   );
 };
 
-const Dashboard = ({ onAddCar, onAddExpense, onAddTransaction, onOpenReport, onOpenPromoCard }) => {
+const Dashboard = ({ onOpenReport }) => {
   const { stats, cars, transactions, loading } = useApp();
 
   if (loading) {
@@ -152,32 +152,6 @@ const Dashboard = ({ onAddCar, onAddExpense, onAddTransaction, onOpenReport, onO
 
   return (
     <div className="space-y-6 pb-24 md:pb-6 animate-fade-in">
-      {/* Quick Actions */}
-      <div className="grid grid-cols-4 gap-3">
-        <QuickActionButton
-          icon={Plus}
-          label="ARAÇ GİRİŞİ"
-          onClick={onAddCar}
-          variant="primary"
-        />
-        <QuickActionButton
-          icon={FileText}
-          label="TANITIM KARTI"
-          onClick={onOpenPromoCard}
-        />
-        <QuickActionButton
-          icon={Receipt}
-          label="GİDER"
-          onClick={onAddExpense}
-          variant="warning"
-        />
-        <QuickActionButton
-          icon={ClipboardList}
-          label="İŞLEM"
-          onClick={onAddTransaction}
-        />
-      </div>
-
       {/* Stats Grid - 5 columns like original */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         <StatCard
