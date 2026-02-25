@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import './index.css';
+import { requestNotificationPermission, checkUpcomingAppointments } from './utils/notifications';
 
 // Layout Components
 import Sidebar from './components/layout/Sidebar';
