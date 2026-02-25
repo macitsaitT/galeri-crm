@@ -349,6 +349,69 @@ const Dashboard = ({ onOpenReport }) => {
         </div>
       </div>
 
+      {/* Sales Trend + Top Brands */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Sales Trend - Area Chart */}
+        <div className="lg:col-span-2 bg-card border border-border rounded-xl p-5" data-testid="sales-trend-chart">
+          <div className="flex items-center gap-2 mb-4">
+            <TrendingUp size={18} className="text-green-500" />
+            <h3 className="font-heading font-semibold">Son 30 Gün Satış Trendi</h3>
+          </div>
+          <div className="h-48">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={salesTrendData}>
+                <defs>
+                  <linearGradient id="salesGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(0 0% 16%)" vertical={false} />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: 'hsl(0 0% 55%)', fontSize: 10 }} interval={4} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fill: 'hsl(0 0% 55%)', fontSize: 11 }} allowDecimals={false} />
+                <Tooltip content={<CustomTooltip />} />
+                <Area type="monotone" dataKey="Satış" stroke="#22c55e" fill="url(#salesGrad)" strokeWidth={2} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Top Brands */}
+        <div className="bg-card border border-border rounded-xl p-5" data-testid="top-brands">
+          <div className="flex items-center gap-2 mb-4">
+            <Car size={18} className="text-primary" />
+            <h3 className="font-heading font-semibold">Marka Sıralaması</h3>
+          </div>
+          {topBrandsData.length > 0 ? (
+            <div className="space-y-3">
+              {topBrandsData.map((item, i) => {
+                const maxCount = topBrandsData[0]?.count || 1;
+                const pct = (item.count / maxCount) * 100;
+                return (
+                  <div key={item.brand}>
+                    <div className="flex items-center justify-between text-sm mb-1">
+                      <span className="font-medium">{i + 1}. {item.brand}</span>
+                      <span className="text-muted-foreground">{item.count} araç</span>
+                    </div>
+                    <div className="h-2 bg-muted rounded-full overflow-hidden">
+                      <div
+                        className="h-full rounded-full transition-all"
+                        style={{
+                          width: `${pct}%`,
+                          background: CHART_COLORS[i % CHART_COLORS.length]
+                        }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground text-center py-8">Henüz veri yok</p>
+          )}
+        </div>
+      </div>
+
       {/* Reports Button */}
       <button
         onClick={onOpenReport}
