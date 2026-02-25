@@ -129,6 +129,11 @@ GET  /api/stats
 - [x] Professional UI/UX
 - [x] Mobile responsive design
 - [x] Dynamic chained dropdowns in Add Car form (Brand→Model, Brand→Package, Province→District, Model Year, Engine Types)
+- [x] Visual car expertise diagram with clickable parts (13 parts, 4 statuses: Orijinal/Boyalı/Değişen/Lokal)
+- [x] Ekspertiz Puanı (%), Tramer Kayıt Tutarı (TL), Ekspertiz Notları
+- [x] Phone number field in registration form
+- [x] Email verification during registration (MOCKED - code shown on screen)
+- [x] KVKK compliant account deletion feature with 'SİL' confirmation
 
 ### P1 (High Priority) - Next Phase
 - [ ] Capacitor integration for native mobile apps (Play Store/App Store)
