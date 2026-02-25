@@ -16,7 +16,8 @@ import {
 } from 'lucide-react';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
-  PieChart, Pie, Cell
+  PieChart, Pie, Cell,
+  LineChart, Line, AreaChart, Area
 } from 'recharts';
 
 const StatCard = ({ title, value, icon: Icon, color = 'default', className = '' }) => {
