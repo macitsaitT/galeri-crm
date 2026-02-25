@@ -5,25 +5,29 @@ import {
   Car, 
   TrendingUp, 
   TrendingDown, 
-  Users, 
   Wallet,
   Package,
   ShoppingCart,
-  ArrowUpRight,
-  ArrowDownRight
+  CreditCard,
+  Plus,
+  FileText,
+  Receipt,
+  ClipboardList,
+  Calendar
 } from 'lucide-react';
 
-const StatCard = ({ title, value, icon: Icon, trend, trendValue, color = 'primary' }) => {
-  const isPositive = trend === 'up';
-  
+// Stat Card Component
+const StatCard = ({ title, value, icon: Icon, color = 'default', className = '' }) => {
   const colorClasses = {
-    primary: 'from-primary/20 to-primary/5 border-primary/20',
-    success: 'from-success/20 to-success/5 border-success/20',
-    warning: 'from-warning/20 to-warning/5 border-warning/20',
-    destructive: 'from-destructive/20 to-destructive/5 border-destructive/20',
+    default: 'bg-card border-border',
+    primary: 'bg-primary/10 border-primary/30',
+    success: 'bg-success/10 border-success/30',
+    warning: 'bg-warning/10 border-warning/30',
+    destructive: 'bg-destructive/10 border-destructive/30',
   };
 
-  const iconColorClasses = {
+  const iconColors = {
+    default: 'text-muted-foreground',
     primary: 'text-primary',
     success: 'text-success',
     warning: 'text-warning',
@@ -32,40 +36,76 @@ const StatCard = ({ title, value, icon: Icon, trend, trendValue, color = 'primar
 
   return (
     <div 
-      className={`bg-gradient-to-br ${colorClasses[color]} border rounded-xl p-5 hover:shadow-lg transition-all duration-300`}
-      data-testid={`stat-card-${title.toLowerCase().replace(/\s/g, '-')}`}
+      className={`border rounded-xl p-4 ${colorClasses[color]} ${className}`}
+      data-testid={`stat-${title.toLowerCase().replace(/\s/g, '-')}`}
     >
-      <div className="flex items-start justify-between mb-4">
-        <div className={`p-3 rounded-lg bg-card ${iconColorClasses[color]}`}>
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-xs text-muted-foreground uppercase font-medium mb-1">{title}</p>
+          <p className="font-heading font-bold text-2xl tabular-nums">{value}</p>
+        </div>
+        <div className={`p-3 rounded-lg bg-background/50 ${iconColors[color]}`}>
           <Icon size={24} />
         </div>
-        {trend && (
-          <div className={`flex items-center gap-1 text-sm ${isPositive ? 'text-success' : 'text-destructive'}`}>
-            {isPositive ? <ArrowUpRight size={16} /> : <ArrowDownRight size={16} />}
-            <span className="font-medium">{trendValue}</span>
-          </div>
-        )}
       </div>
-      <p className="text-muted-foreground text-sm font-medium mb-1">{title}</p>
-      <p className="font-heading font-bold text-2xl md:text-3xl tabular-nums">{value}</p>
     </div>
   );
 };
 
-const RecentActivityItem = ({ icon: Icon, title, subtitle, time, color }) => (
-  <div className="flex items-center gap-4 p-3 rounded-lg hover:bg-muted/50 transition-colors">
-    <div className={`p-2 rounded-lg ${color}`}>
-      <Icon size={18} />
-    </div>
+// Quick Action Button
+const QuickActionButton = ({ icon: Icon, label, onClick, variant = 'default' }) => {
+  const variants = {
+    default: 'bg-card border-border hover:bg-muted',
+    primary: 'bg-primary text-primary-foreground hover:bg-primary/90',
+    warning: 'bg-warning text-warning-foreground hover:bg-warning/90',
+  };
+
+  return (
+    <button
+      onClick={onClick}
+      className={`flex flex-col items-center justify-center p-4 rounded-xl border transition-all active:scale-95 ${variants[variant]}`}
+      data-testid={`quick-action-${label.toLowerCase().replace(/\s/g, '-')}`}
+    >
+      <Icon size={24} className="mb-2" />
+      <span className="text-xs font-medium text-center">{label}</span>
+    </button>
+  );
+};
+
+// Stock Status Item
+const StockStatusItem = ({ car }) => (
+  <div className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/50 transition-colors">
     <div className="flex-1 min-w-0">
-      <p className="font-medium text-sm truncate">{title}</p>
-      <p className="text-xs text-muted-foreground">{subtitle}</p>
+      <p className="font-medium text-sm truncate">{car.brand} {car.model} {car.vehicle_type}</p>
+      <p className="text-xs text-muted-foreground">{car.plate?.toUpperCase()} - {car.year}</p>
     </div>
-    <span className="text-xs text-muted-foreground whitespace-nowrap">{time}</span>
+    <span className={`px-3 py-1 text-xs font-bold rounded-full ${
+      car.status === 'Stokta' ? 'bg-primary/20 text-primary' :
+      car.status === 'Kapora Alındı' ? 'bg-warning/20 text-warning' :
+      'bg-success/20 text-success'
+    }`}>
+      {car.status === 'Stokta' ? 'Stokta' : car.status === 'Kapora Alındı' ? 'Kapora' : 'Satıldı'}
+    </span>
   </div>
 );
 
-const Dashboard = () => {
+// Transaction Item
+const TransactionItem = ({ transaction }) => {
+  const isIncome = transaction.type === 'income';
+  return (
+    <div className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/50 transition-colors">
+      <div className="flex-1 min-w-0">
+        <p className="font-medium text-sm">{transaction.category}</p>
+        <p className="text-xs text-muted-foreground truncate">{transaction.description}</p>
+      </div>
+      <span className={`font-heading font-bold tabular-nums ${isIncome ? 'text-success' : 'text-destructive'}`}>
+        {isIncome ? '+' : '-'}₺{formatCurrency(transaction.amount).replace('₺', '')}
+      </span>
+    </div>
+  );
+};
+
+const Dashboard = ({ onAddCar, onAddExpense, onAddTransaction, onOpenReport, onOpenPromoCard }) => {
   const { stats, cars, transactions, loading } = useApp();
 
   if (loading) {
@@ -80,131 +120,155 @@ const Dashboard = () => {
   const activeCars = cars.filter(c => !c.deleted);
   const activeTransactions = transactions.filter(t => !t.deleted);
   
+  // Stats calculations
+  const stockCars = activeCars.filter(c => c.ownership === 'stock' && c.status !== 'Satıldı');
+  const consignmentCars = activeCars.filter(c => c.ownership === 'consignment' && c.status !== 'Satıldı');
+  const depositCars = activeCars.filter(c => c.status === 'Kapora Alındı');
+  
+  // This month sales
+  const now = new Date();
+  const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const thisMonthSales = activeCars.filter(c => 
+    c.status === 'Satıldı' && 
+    c.sold_date && 
+    new Date(c.sold_date) >= thisMonthStart
+  ).length;
+
+  // Kasa Durumu (Net Cash Position)
+  const totalIncome = activeTransactions.filter(t => t.type === 'income').reduce((sum, t) => sum + (t.amount || 0), 0);
+  const totalExpense = activeTransactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + (t.amount || 0), 0);
+  const kasaDurumu = totalIncome - totalExpense;
+
   // Recent transactions
   const recentTransactions = [...activeTransactions]
     .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
     .slice(0, 5);
 
-  // Recent cars
-  const recentCars = [...activeCars]
+  // Stock status (recent cars)
+  const stockStatusCars = [...activeCars]
+    .filter(c => c.status !== 'Satıldı')
     .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
     .slice(0, 5);
 
   return (
     <div className="space-y-6 pb-24 md:pb-6 animate-fade-in">
-      {/* Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Quick Actions */}
+      <div className="grid grid-cols-4 gap-3">
+        <QuickActionButton
+          icon={Plus}
+          label="ARAÇ GİRİŞİ"
+          onClick={onAddCar}
+          variant="primary"
+        />
+        <QuickActionButton
+          icon={FileText}
+          label="TANITIM KARTI"
+          onClick={onOpenPromoCard}
+        />
+        <QuickActionButton
+          icon={Receipt}
+          label="GİDER"
+          onClick={onAddExpense}
+          variant="warning"
+        />
+        <QuickActionButton
+          icon={ClipboardList}
+          label="İŞLEM"
+          onClick={onAddTransaction}
+        />
+      </div>
+
+      {/* Stats Grid - 5 columns like original */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         <StatCard
-          title="Toplam Araç"
-          value={stats?.total_cars || 0}
+          title="STOK ARAÇ SAYISI"
+          value={stockCars.length}
           icon={Car}
-          color="primary"
+          color="default"
         />
         <StatCard
-          title="Stokta"
-          value={stats?.stock_cars || 0}
+          title="KONSİNYE ARAÇ SAYISI"
+          value={consignmentCars.length}
           icon={Package}
-          color="primary"
+          color="default"
         />
         <StatCard
-          title="Satılan"
-          value={stats?.sold_cars || 0}
+          title="KAPORASI ALINAN"
+          value={depositCars.length}
+          icon={CreditCard}
+          color="warning"
+        />
+        <StatCard
+          title="BU AY SATIŞ"
+          value={thisMonthSales}
           icon={ShoppingCart}
           color="success"
         />
         <StatCard
-          title="Müşteriler"
-          value={stats?.total_customers || 0}
-          icon={Users}
-          color="warning"
-        />
-      </div>
-
-      {/* Financial Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <StatCard
-          title="Toplam Gelir"
-          value={formatCurrency(stats?.total_income || 0)}
-          icon={TrendingUp}
-          color="success"
-        />
-        <StatCard
-          title="Toplam Gider"
-          value={formatCurrency(stats?.total_expense || 0)}
-          icon={TrendingDown}
-          color="destructive"
-        />
-        <StatCard
-          title="Net Kar"
-          value={formatCurrency(stats?.net_profit || 0)}
+          title="KASA DURUMU"
+          value={formatCurrency(kasaDurumu)}
           icon={Wallet}
-          color={(stats?.net_profit || 0) >= 0 ? 'success' : 'destructive'}
+          color={kasaDurumu >= 0 ? 'success' : 'destructive'}
+          className="col-span-2 md:col-span-1"
         />
       </div>
 
-      {/* Content Grid */}
+      {/* Content Grid - Son İşlemler & Stok Durumu */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Cars */}
-        <div className="bg-card border border-border rounded-xl p-5">
-          <h3 className="font-heading font-semibold text-lg mb-4">Son Eklenen Araçlar</h3>
-          <div className="space-y-2">
-            {recentCars.length === 0 ? (
-              <p className="text-muted-foreground text-sm text-center py-8">
-                Henüz araç eklenmemiş
-              </p>
-            ) : (
-              recentCars.map((car) => (
-                <RecentActivityItem
-                  key={car.id}
-                  icon={Car}
-                  title={`${car.brand} ${car.model}`}
-                  subtitle={car.plate?.toUpperCase() || '-'}
-                  time={new Date(car.created_at).toLocaleDateString('tr-TR')}
-                  color={car.status === 'Satıldı' ? 'bg-success/20 text-success' : 'bg-primary/20 text-primary'}
-                />
-              ))
-            )}
+        {/* Son İşlemler */}
+        <div className="bg-card border border-border rounded-xl">
+          <div className="p-4 border-b border-border">
+            <h3 className="font-heading font-semibold text-lg">Son İşlemler</h3>
           </div>
-        </div>
-
-        {/* Recent Transactions */}
-        <div className="bg-card border border-border rounded-xl p-5">
-          <h3 className="font-heading font-semibold text-lg mb-4">Son İşlemler</h3>
-          <div className="space-y-2">
+          <div className="p-2">
             {recentTransactions.length === 0 ? (
               <p className="text-muted-foreground text-sm text-center py-8">
                 Henüz işlem yok
               </p>
             ) : (
               recentTransactions.map((tx) => (
-                <RecentActivityItem
-                  key={tx.id}
-                  icon={tx.type === 'income' ? TrendingUp : TrendingDown}
-                  title={tx.category}
-                  subtitle={formatCurrency(tx.amount)}
-                  time={new Date(tx.date).toLocaleDateString('tr-TR')}
-                  color={tx.type === 'income' ? 'bg-success/20 text-success' : 'bg-destructive/20 text-destructive'}
-                />
+                <TransactionItem key={tx.id} transaction={tx} />
+              ))
+            )}
+          </div>
+        </div>
+
+        {/* Stok Durumu */}
+        <div className="bg-card border border-border rounded-xl">
+          <div className="p-4 border-b border-border">
+            <h3 className="font-heading font-semibold text-lg">Stok Durumu</h3>
+          </div>
+          <div className="p-2">
+            {stockStatusCars.length === 0 ? (
+              <p className="text-muted-foreground text-sm text-center py-8">
+                Henüz araç eklenmemiş
+              </p>
+            ) : (
+              stockStatusCars.map((car) => (
+                <StockStatusItem key={car.id} car={car} />
               ))
             )}
           </div>
         </div>
       </div>
 
-      {/* Stock Value Card */}
-      <div className="bg-gradient-to-r from-primary/20 via-card to-card border border-primary/20 rounded-xl p-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-muted-foreground text-sm font-medium mb-1">Stok Değeri</p>
-            <p className="font-heading font-bold text-3xl md:text-4xl text-gradient-gold">
-              {formatCurrency(stats?.stock_value || 0)}
-            </p>
+      {/* Reports Button */}
+      <button
+        onClick={onOpenReport}
+        className="w-full p-4 bg-card border border-border rounded-xl flex items-center justify-between hover:bg-muted/50 transition-colors"
+        data-testid="open-reports-btn"
+      >
+        <div className="flex items-center gap-3">
+          <div className="p-3 rounded-lg bg-primary/10">
+            <FileText size={24} className="text-primary" />
           </div>
-          <div className="hidden md:block p-4 rounded-full bg-primary/10">
-            <Wallet size={40} className="text-primary" />
+          <div className="text-left">
+            <p className="font-semibold">Raporlar</p>
+            <p className="text-sm text-muted-foreground">Finansal raporlar ve döküm oluştur</p>
           </div>
         </div>
-      </div>
+        <Calendar size={20} className="text-muted-foreground" />
+      </button>
     </div>
   );
 };
