@@ -1014,6 +1014,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.on_event("startup")
+async def startup():
+    try:
+        init_storage()
+        logger.info("Object Storage initialized")
+    except Exception as e:
+        logger.warning(f"Storage init deferred: {e}")
+
 @app.on_event("shutdown")
 async def shutdown_db_client():
     client.close()
