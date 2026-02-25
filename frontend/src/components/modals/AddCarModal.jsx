@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { X, Car, Upload, Plus, Trash2, FileText, Camera, Users, CheckCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, Car, FileText, Camera, Users, CheckCircle } from 'lucide-react';
 import { formatNumberInput, parseNumber } from '../../utils/helpers';
 import { carBrands, carModels, engineTypes, packageTypes, gearTypes, fuelTypes, vehicleTypes, modelYears } from '../../data/carData';
 import { provinceList, getDistrictsByProvince } from '../../data/turkeyData';
