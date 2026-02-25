@@ -111,11 +111,24 @@ const InventoryPage = ({ viewType = 'inventory', onEditCar, onViewCar, onExpense
         </div>
       </div>
 
-      {/* Results count */}
+      {/* Results count + Export */}
       <div className="flex items-center justify-between">
         <p className="text-muted-foreground text-sm">
           <span className="font-semibold text-foreground">{filteredCars.length}</span> araç bulundu
         </p>
+        <button
+          onClick={async () => {
+            try {
+              const res = await exportAPI.cars();
+              downloadBlob(new Blob([res.data]), 'araclar.xlsx');
+            } catch (e) { console.error(e); }
+          }}
+          className="flex items-center gap-2 px-4 py-2 text-sm bg-card border border-border rounded-lg hover:bg-muted transition-colors"
+          data-testid="export-cars-btn"
+        >
+          <Download size={16} />
+          Excel
+        </button>
       </div>
 
       {/* Grid */}
