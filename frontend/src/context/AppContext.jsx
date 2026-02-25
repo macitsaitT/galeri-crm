@@ -254,6 +254,7 @@ export const AppProvider = ({ children }) => {
     login,
     register,
     logout,
+    deleteAccount,
     updateProfile,
 
     // Data
