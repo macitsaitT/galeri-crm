@@ -38,6 +38,8 @@ export const authAPI = {
   login: (data) => api.post('/auth/login', data),
   getMe: () => api.get('/auth/me'),
   updateProfile: (data) => api.put('/auth/profile', data),
+  deleteAccount: () => api.delete('/auth/delete-account'),
+  verifyEmail: (data) => api.post('/auth/verify-email', data),
 };
 
 // ==================== CARS ====================
