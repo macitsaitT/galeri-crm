@@ -54,11 +54,27 @@ const AppContent = () => {
     addCustomer,
     updateCustomer,
     deleteCustomer,
-    addTransaction
+    addTransaction,
+    appointments
   } = useApp();
 
   const [activeView, setActiveView] = useState('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Notification permission + appointment check
+  useEffect(() => {
+    if (isAuthenticated) {
+      requestNotificationPermission();
+    }
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    if (!isAuthenticated || !appointments?.length) return;
+    const interval = setInterval(() => {
+      checkUpcomingAppointments(appointments);
+    }, 60000); // Check every minute
+    return () => clearInterval(interval);
+  }, [isAuthenticated, appointments]);
 
   // Modal states
   const [carModal, setCarModal] = useState({ open: false, car: null });
