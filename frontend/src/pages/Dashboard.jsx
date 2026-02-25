@@ -1,6 +1,6 @@
 import React from 'react';
-import { useApp } from '../../context/AppContext';
-import { formatCurrency } from '../../utils/helpers';
+import { useApp } from '../context/AppContext';
+import { formatCurrency } from '../utils/helpers';
 import { 
   Car, 
   TrendingUp, 

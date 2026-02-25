@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { useApp } from '../../context/AppContext';
+import { useApp } from '../context/AppContext';
 import VehicleCard from '../components/vehicles/VehicleCard';
 import { Search, SlidersHorizontal, Car } from 'lucide-react';
 

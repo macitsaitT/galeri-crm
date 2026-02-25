@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import { useApp } from '../../context/AppContext';
-import { formatCurrency, formatDate } from '../../utils/helpers';
+import { useApp } from '../context/AppContext';
+import { formatCurrency, formatDate } from '../utils/helpers';
 import { 
   TrendingUp, 
   TrendingDown, 
