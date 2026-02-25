@@ -1002,6 +1002,55 @@ async def encrypt_customer_data(customer_id: str, current_user: dict = Depends(g
     
     return {"success": True, "message": "Customer data encrypted"}
 
+# ==================== APPOINTMENTS (TEST DRIVE) ====================
+
+class AppointmentBase(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    title: str
+    customer_name: str = ""
+    customer_phone: str = ""
+    car_id: str = ""
+    car_info: str = ""
+    date: str = ""
+    time: str = ""
+    notes: str = ""
+    status: str = "Bekliyor"
+
+@api_router.get("/appointments")
+async def get_appointments(current_user: dict = Depends(get_current_user)):
+    appointments = await db.appointments.find(
+        {"user_id": current_user["user_id"]},
+        {"_id": 0}
+    ).sort("date", 1).to_list(1000)
+    return appointments
+
+@api_router.post("/appointments")
+async def create_appointment(appointment: AppointmentBase, current_user: dict = Depends(get_current_user)):
+    doc = appointment.model_dump()
+    doc["id"] = str(uuid.uuid4())
+    doc["user_id"] = current_user["user_id"]
+    doc["created_at"] = datetime.now(timezone.utc).isoformat()
+    await db.appointments.insert_one(doc)
+    doc.pop("_id", None)
+    return doc
+
+@api_router.put("/appointments/{appointment_id}")
+async def update_appointment(appointment_id: str, data: dict, current_user: dict = Depends(get_current_user)):
+    data.pop("_id", None)
+    data.pop("id", None)
+    data["updated_at"] = datetime.now(timezone.utc).isoformat()
+    await db.appointments.update_one(
+        {"id": appointment_id, "user_id": current_user["user_id"]},
+        {"$set": data}
+    )
+    updated = await db.appointments.find_one({"id": appointment_id}, {"_id": 0})
+    return updated
+
+@api_router.delete("/appointments/{appointment_id}")
+async def delete_appointment(appointment_id: str, current_user: dict = Depends(get_current_user)):
+    await db.appointments.delete_one({"id": appointment_id, "user_id": current_user["user_id"]})
+    return {"success": True}
+
 # Include router
 app.include_router(api_router)
 
