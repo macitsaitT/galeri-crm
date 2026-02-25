@@ -294,11 +294,7 @@ const AppContent = () => {
         <main className="flex-1 overflow-y-auto p-4 md:p-6">
           {activeView === 'dashboard' && (
             <Dashboard
-              onAddCar={() => setCarModal({ open: true, car: null })}
-              onAddExpense={() => setExpenseModal(true)}
-              onAddTransaction={() => setTransactionModal(true)}
               onOpenReport={() => setReportModal(true)}
-              onOpenPromoCard={() => setPromoCardModal(true)}
             />
           )}
           
