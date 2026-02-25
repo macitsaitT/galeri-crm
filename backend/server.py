@@ -41,6 +41,7 @@ class UserCreate(BaseModel):
     password: str
     company_name: str = "Aslanbaş Oto"
     phone: str = ""
+    email_verified: bool = False
 
 class UserLogin(BaseModel):
     email: str
@@ -97,6 +98,9 @@ class CarBase(BaseModel):
     insurance_end: str = ""
     province: str = ""
     district: str = ""
+    expertise_score: int = 95
+    tramer_amount: float = 0
+    expertise_notes: str = ""
 
 class CarCreate(CarBase):
     pass
