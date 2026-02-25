@@ -516,48 +516,69 @@ const AddCarModal = ({ isOpen, onClose, onSave, editingCar = null }) => {
           {/* Expertise Tab */}
           {activeTab === 'expertise' && (
             <div className="space-y-6 py-4">
-              {/* Body Parts */}
-              <div>
-                <h4 className="font-semibold mb-4">Kaporta Durumu</h4>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                  {expertiseParts.map((part) => (
-                    <div key={part.id} className="p-3 bg-muted/30 rounded-lg">
-                      <label className="block text-xs font-medium mb-2 text-muted-foreground">{part.name}</label>
-                      <select
-                        value={formData.expertise?.parts?.[part.id] || 'orijinal'}
-                        onChange={(e) => handleExpertiseChange(part.id, e.target.value)}
-                        className="w-full h-9 px-2 bg-background border border-border rounded text-xs outline-none focus:border-primary"
-                        data-testid={`expertise-${part.id}`}
-                      >
-                        {expertiseStatuses.map(status => (
-                          <option key={status.value} value={status.value}>{status.label}</option>
-                        ))}
-                      </select>
-                    </div>
-                  ))}
-                </div>
+              {/* SVG Car Diagram */}
+              <div className="p-4 bg-muted/20 border border-border rounded-xl">
+                <CarExpertiseDiagram
+                  expertiseParts={formData.expertise?.parts || {}}
+                  onChange={handleExpertiseChange}
+                />
               </div>
 
               {/* Mechanical Parts */}
-              <div>
-                <h4 className="font-semibold mb-4">Mekanik Durum</h4>
-                <div className="grid grid-cols-3 gap-4">
-                  {mechanicalParts.map((part) => (
-                    <div key={part.id} className="p-4 bg-muted/30 rounded-lg">
-                      <label className="block text-sm font-medium mb-2">{part.name}</label>
-                      <select
-                        value={formData.expertise?.mechanical?.[part.id] || 'Orijinal'}
-                        onChange={(e) => handleMechanicalChange(part.id, e.target.value)}
-                        className="w-full h-10 px-3 bg-background border border-border rounded-lg text-sm outline-none focus:border-primary"
-                        data-testid={`mechanical-${part.id}`}
-                      >
-                        {mechanicalStatuses.map(status => (
-                          <option key={status} value={status}>{status}</option>
-                        ))}
-                      </select>
-                    </div>
-                  ))}
+              <div className="grid grid-cols-2 gap-4">
+                {mechanicalParts.map((part) => (
+                  <div key={part.id}>
+                    <label className="block text-sm font-medium mb-2">{part.name}</label>
+                    <select
+                      value={formData.expertise?.mechanical?.[part.id] || 'Orijinal'}
+                      onChange={(e) => handleMechanicalChange(part.id, e.target.value)}
+                      className="w-full h-11 px-3 bg-background border border-border rounded-lg text-sm outline-none focus:border-primary"
+                      data-testid={`mechanical-${part.id}`}
+                    >
+                      {mechanicalStatuses.map(status => (
+                        <option key={status} value={status}>{status}</option>
+                      ))}
+                    </select>
+                  </div>
+                ))}
+                <div>
+                  <label className="block text-sm font-medium mb-2">Ekspertiz Puanı (%)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={formData.expertise_score}
+                    onChange={(e) => handleChange('expertise_score', parseInt(e.target.value) || 0)}
+                    className="w-full h-11 px-3 bg-background border border-border rounded-lg text-sm outline-none focus:border-primary"
+                    data-testid="expertise-score-input"
+                  />
                 </div>
+              </div>
+
+              {/* Tramer */}
+              <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-lg">
+                <label className="block text-sm font-medium mb-2 text-amber-400">Tramer Kayıt Tutarı (TL)</label>
+                <input
+                  type="text"
+                  value={formData.tramer_amount}
+                  onChange={(e) => handleNumberChange('tramer_amount', e.target.value)}
+                  className="w-full h-11 px-3 bg-background border border-border rounded-lg text-sm outline-none focus:border-primary"
+                  placeholder="0"
+                  data-testid="tramer-amount-input"
+                />
+                <p className="text-xs text-amber-400/70 mt-1">Araç tramer kaydı varsa tutarını girin</p>
+              </div>
+
+              {/* Ekspertiz Notları */}
+              <div>
+                <label className="block text-sm font-medium mb-2">Ekspertiz Notları</label>
+                <textarea
+                  value={formData.expertise_notes}
+                  onChange={(e) => handleChange('expertise_notes', e.target.value)}
+                  className="w-full h-24 p-3 bg-background border border-border rounded-lg text-sm outline-none focus:border-primary resize-none"
+                  placeholder="Ek notlar..."
+                  data-testid="expertise-notes-input"
+                />
               </div>
             </div>
           )}
