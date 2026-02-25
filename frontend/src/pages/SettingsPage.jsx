@@ -17,10 +17,12 @@ import {
 } from 'lucide-react';
 
 const SettingsPage = () => {
-  const { user, updateProfile, theme, toggleTheme } = useApp();
+  const { user, updateProfile, deleteAccount, theme, toggleTheme } = useApp();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [success, setSuccess] = useState('');
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
   
   const [formData, setFormData] = useState({
     company_name: user?.company_name || '',
