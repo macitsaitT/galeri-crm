@@ -11,7 +11,8 @@ import {
   Receipt,
   CreditCard,
   ShoppingCart,
-  Car
+  Car,
+  FileText
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -20,6 +21,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
+import { exportAPI, fileAPI } from '../../services/api';
 
 const VehicleCard = ({ 
   car, 
