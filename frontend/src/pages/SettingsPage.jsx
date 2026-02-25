@@ -11,7 +11,9 @@ import {
   Moon,
   Save,
   Eye,
-  EyeOff
+  EyeOff,
+  Trash2,
+  AlertTriangle
 } from 'lucide-react';
 
 const SettingsPage = () => {
