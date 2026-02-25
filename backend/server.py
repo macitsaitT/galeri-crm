@@ -298,6 +298,18 @@ async def update_profile(profile: ProfileUpdate, current_user: dict = Depends(ge
     user = await db.users.find_one({"id": current_user["user_id"]}, {"_id": 0, "password_hash": 0})
     return user
 
+@api_router.delete("/auth/delete-account")
+async def delete_account(current_user: dict = Depends(get_current_user)):
+    user_id = current_user["user_id"]
+    
+    # Delete all user data
+    await db.cars.delete_many({"user_id": user_id})
+    await db.customers.delete_many({"user_id": user_id})
+    await db.transactions.delete_many({"user_id": user_id})
+    await db.users.delete_one({"id": user_id})
+    
+    return {"success": True, "message": "Account and all data deleted"}
+
 # ==================== CAR ROUTES ====================
 
 @api_router.get("/cars", response_model=List[Car])
