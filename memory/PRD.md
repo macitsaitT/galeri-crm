@@ -143,6 +143,16 @@ GET  /api/stats
 - [x] Professional expertise SVG+HTML hybrid diagram (13 parts, color-coded, car silhouette)
 - [x] Pure black dark theme (background: #0a0a0a, card: #141414)
 - [x] Dashboard charts: Monthly Gelir/Gider bar chart + Araç Dağılımı donut chart (Recharts)
+- [x] Dashboard: Son 30 gün satış trendi area chart + En çok satan marka sıralaması
+- [x] Calendar/Appointments page: Full CRUD, monthly grid, status flow (Bekliyor→Onaylandı→Tamamlandı)
+- [x] SMS links on customer cards (sms: protocol)
+- [x] Call links on customer cards (tel: protocol)
+- [x] Offline support via Service Worker (API caching, static asset caching, offline fallback)
+- [x] Push notifications for upcoming appointments (browser Notification API)
+
+### P1 (Remaining)
+- [ ] Capacitor native build (APK/IPA)
+- [ ] Real email verification (currently MOCKED)
 
 ### P1 (High Priority) - Next Phase
 - [ ] Capacitor integration for native mobile apps (Play Store/App Store)
