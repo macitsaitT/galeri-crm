@@ -12,7 +12,8 @@ import {
   Sun,
   Moon,
   X,
-  FileText
+  FileText,
+  Calendar
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { cn } from '../../lib/utils';
@@ -25,6 +26,7 @@ const menuItems = [
   { id: 'finance', label: 'Gelir & Gider', icon: Wallet },
   { id: 'reports', label: 'Raporlar', icon: FileText },
   { id: 'customers', label: 'Müşteriler', icon: Users },
+  { id: 'calendar', label: 'Randevular', icon: Calendar },
   { id: 'trash', label: 'Çöp Kutusu', icon: Trash2 },
 ];
 
