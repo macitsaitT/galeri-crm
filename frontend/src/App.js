@@ -37,6 +37,7 @@ const getViewTitle = (view) => {
     case 'finance': return 'Gelir & Gider';
     case 'trash': return 'Çöp Kutusu';
     case 'settings': return 'Ayarlar';
+    case 'calendar': return 'Randevular';
     default: return 'Dashboard';
   }
 };
