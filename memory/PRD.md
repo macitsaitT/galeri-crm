@@ -128,6 +128,7 @@ GET  /api/stats
 - [x] Backend API (MongoDB)
 - [x] Professional UI/UX
 - [x] Mobile responsive design
+- [x] Dynamic chained dropdowns in Add Car form (Brand→Model, Brand→Package, Province→District, Model Year, Engine Types)
 
 ### P1 (High Priority) - Next Phase
 - [ ] Capacitor integration for native mobile apps (Play Store/App Store)
