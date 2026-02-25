@@ -1,0 +1,260 @@
+import React, { useState } from 'react';
+import { ShoppingCart } from 'lucide-react';
+import { formatNumberInput, parseNumber, formatCurrency } from '../../utils/helpers';
+import { useApp } from '../../context/AppContext';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '../ui/dialog';
+
+const SaleModal = ({ isOpen, onClose, car, onConfirmSale }) => {
+  const { customers, addCustomer } = useApp();
+  const [formData, setFormData] = useState({
+    price: '',
+    employee_share: '',
+    customer_id: '',
+    sale_date: new Date().toISOString().split('T')[0]
+  });
+  const [loading, setLoading] = useState(false);
+  const [showNewCustomer, setShowNewCustomer] = useState(false);
+  const [newCustomerName, setNewCustomerName] = useState('');
+  const [newCustomerPhone, setNewCustomerPhone] = useState('');
+
+  React.useEffect(() => {
+    if (car && isOpen) {
+      setFormData({
+        price: formatNumberInput(car.sale_price),
+        employee_share: '',
+        customer_id: '',
+        sale_date: new Date().toISOString().split('T')[0]
+      });
+    }
+  }, [car, isOpen]);
+
+  const activeCustomers = customers.filter(c => !c.deleted);
+
+  const handleAddNewCustomer = async () => {
+    if (!newCustomerName.trim()) return;
+    
+    try {
+      const newCustomer = await addCustomer({
+        name: newCustomerName,
+        phone: newCustomerPhone,
+        type: 'Satış Yapıldı',
+        notes: `${car?.brand} ${car?.model} satışı`,
+        interested_car_id: car?.id
+      });
+      
+      setFormData(prev => ({ ...prev, customer_id: newCustomer.id }));
+      setShowNewCustomer(false);
+      setNewCustomerName('');
+      setNewCustomerPhone('');
+    } catch (error) {
+      console.error('Error adding customer:', error);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!car) return;
+
+    setLoading(true);
+    try {
+      await onConfirmSale({
+        carId: car.id,
+        price: parseNumber(formData.price),
+        employeeShare: parseNumber(formData.employee_share),
+        customerId: formData.customer_id,
+        saleDate: formData.sale_date
+      });
+      onClose();
+    } catch (error) {
+      console.error('Error confirming sale:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!car) return null;
+
+  const finalPrice = parseNumber(formData.price);
+  const deposit = car.deposit_amount || 0;
+  const remaining = finalPrice - deposit;
+  const employeeShare = parseNumber(formData.employee_share);
+  const ownerPayment = car.ownership === 'consignment' ? (car.purchase_price || 0) : 0;
+  const netProfit = remaining - employeeShare - ownerPayment - (car.ownership === 'stock' ? (car.purchase_price || 0) : 0);
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <ShoppingCart size={24} className="text-success" />
+            Satış Onayla
+          </DialogTitle>
+        </DialogHeader>
+
+        <div className="mt-4">
+          {/* Car Info */}
+          <div className="p-4 bg-muted/50 rounded-lg mb-6">
+            <p className="font-semibold">{car.brand} {car.model}</p>
+            <p className="text-sm text-muted-foreground">{car.plate?.toUpperCase()}</p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-2">Satış Fiyatı (₺)</label>
+              <input
+                type="text"
+                value={formData.price}
+                onChange={(e) => setFormData(prev => ({ ...prev, price: formatNumberInput(e.target.value) }))}
+                className="w-full h-12 px-4 bg-background border border-border rounded-lg outline-none focus:border-primary transition-colors"
+                data-testid="sale-price-input"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2">Satış Tarihi</label>
+              <input
+                type="date"
+                value={formData.sale_date}
+                onChange={(e) => setFormData(prev => ({ ...prev, sale_date: e.target.value }))}
+                className="w-full h-12 px-4 bg-background border border-border rounded-lg outline-none focus:border-primary transition-colors"
+                data-testid="sale-date-input"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2">Çalışan Payı (₺)</label>
+              <input
+                type="text"
+                value={formData.employee_share}
+                onChange={(e) => setFormData(prev => ({ ...prev, employee_share: formatNumberInput(e.target.value) }))}
+                className="w-full h-12 px-4 bg-background border border-border rounded-lg outline-none focus:border-primary transition-colors"
+                placeholder="0"
+                data-testid="employee-share-input"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-2">Müşteri</label>
+              {!showNewCustomer ? (
+                <div className="space-y-2">
+                  <select
+                    value={formData.customer_id}
+                    onChange={(e) => setFormData(prev => ({ ...prev, customer_id: e.target.value }))}
+                    className="w-full h-12 px-4 bg-background border border-border rounded-lg outline-none focus:border-primary transition-colors"
+                    data-testid="sale-customer-select"
+                  >
+                    <option value="">Müşteri seçilmedi</option>
+                    {activeCustomers.map(c => (
+                      <option key={c.id} value={c.id}>{c.name} - {c.phone}</option>
+                    ))}
+                  </select>
+                  <button
+                    type="button"
+                    onClick={() => setShowNewCustomer(true)}
+                    className="text-sm text-primary hover:underline"
+                    data-testid="add-new-customer-btn"
+                  >
+                    + Yeni Müşteri Ekle
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-2 p-3 bg-muted/50 rounded-lg">
+                  <input
+                    type="text"
+                    value={newCustomerName}
+                    onChange={(e) => setNewCustomerName(e.target.value)}
+                    className="w-full h-10 px-3 bg-background border border-border rounded-lg outline-none focus:border-primary text-sm"
+                    placeholder="Müşteri adı"
+                    data-testid="new-customer-name-input"
+                  />
+                  <input
+                    type="tel"
+                    value={newCustomerPhone}
+                    onChange={(e) => setNewCustomerPhone(e.target.value)}
+                    className="w-full h-10 px-3 bg-background border border-border rounded-lg outline-none focus:border-primary text-sm"
+                    placeholder="Telefon"
+                    data-testid="new-customer-phone-input"
+                  />
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={handleAddNewCustomer}
+                      className="flex-1 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium"
+                    >
+                      Ekle
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setShowNewCustomer(false)}
+                      className="flex-1 py-2 border border-border rounded-lg text-sm"
+                    >
+                      İptal
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Summary */}
+            <div className="p-4 bg-muted/50 rounded-lg space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Satış Fiyatı</span>
+                <span className="font-medium">{formatCurrency(finalPrice)}</span>
+              </div>
+              {deposit > 0 && (
+                <div className="flex justify-between text-warning">
+                  <span>Alınan Kapora</span>
+                  <span>-{formatCurrency(deposit)}</span>
+                </div>
+              )}
+              {employeeShare > 0 && (
+                <div className="flex justify-between text-muted-foreground">
+                  <span>Çalışan Payı</span>
+                  <span>-{formatCurrency(employeeShare)}</span>
+                </div>
+              )}
+              {ownerPayment > 0 && (
+                <div className="flex justify-between text-muted-foreground">
+                  <span>Araç Sahibine</span>
+                  <span>-{formatCurrency(ownerPayment)}</span>
+                </div>
+              )}
+              <div className="flex justify-between pt-2 border-t border-border font-semibold">
+                <span>Tahmini Net Kar</span>
+                <span className={netProfit >= 0 ? 'text-success' : 'text-destructive'}>
+                  {formatCurrency(netProfit)}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-3 pt-4 border-t border-border">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-6 py-3 rounded-lg border border-border text-muted-foreground hover:bg-muted transition-colors"
+                data-testid="cancel-sale-btn"
+              >
+                İptal
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="px-6 py-3 rounded-lg bg-success text-success-foreground font-semibold shadow-lg hover:shadow-xl transition-all active:scale-95 disabled:opacity-50"
+                data-testid="confirm-sale-btn"
+              >
+                {loading ? 'İşleniyor...' : 'Satışı Onayla'}
+              </button>
+            </div>
+          </form>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export default SaleModal;
