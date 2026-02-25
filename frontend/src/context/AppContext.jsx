@@ -115,6 +115,11 @@ export const AppProvider = ({ children }) => {
     setStats(null);
   };
 
+  const deleteAccount = async () => {
+    await authAPI.deleteAccount();
+    logout();
+  };
+
   const updateProfile = async (data) => {
     const response = await authAPI.updateProfile(data);
     const updatedUser = response.data;
