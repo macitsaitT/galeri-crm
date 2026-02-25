@@ -49,26 +49,6 @@ const StatCard = ({ title, value, icon: Icon, color = 'default', className = '' 
   );
 };
 
-// Quick Action Button
-const QuickActionButton = ({ icon: Icon, label, onClick, variant = 'default' }) => {
-  const variants = {
-    default: 'bg-card border-border hover:bg-muted',
-    primary: 'bg-primary text-primary-foreground hover:bg-primary/90',
-    warning: 'bg-warning text-warning-foreground hover:bg-warning/90',
-  };
-
-  return (
-    <button
-      onClick={onClick}
-      className={`flex flex-col items-center justify-center p-4 rounded-xl border transition-all active:scale-95 ${variants[variant]}`}
-      data-testid={`quick-action-${label.toLowerCase().replace(/\s/g, '-')}`}
-    >
-      <Icon size={24} className="mb-2" />
-      <span className="text-xs font-medium text-center">{label}</span>
-    </button>
-  );
-};
-
 // Stock Status Item
 const StockStatusItem = ({ car }) => (
   <div className="flex items-center justify-between p-3 rounded-lg hover:bg-muted/50 transition-colors">
