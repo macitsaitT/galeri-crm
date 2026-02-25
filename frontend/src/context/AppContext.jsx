@@ -250,6 +250,24 @@ export const AppProvider = ({ children }) => {
     setTheme(prev => prev === 'dark' ? 'light' : 'dark');
   };
 
+  // Appointments
+  const addAppointment = async (data) => {
+    const response = await appointmentsAPI.create(data);
+    setAppointments(prev => [...prev, response.data]);
+    return response.data;
+  };
+
+  const updateAppointment = async (id, data) => {
+    const response = await appointmentsAPI.update(id, data);
+    setAppointments(prev => prev.map(a => a.id === id ? response.data : a));
+    return response.data;
+  };
+
+  const deleteAppointment = async (id) => {
+    await appointmentsAPI.delete(id);
+    setAppointments(prev => prev.filter(a => a.id !== id));
+  };
+
   const value = {
     // Auth
     user,
@@ -265,6 +283,7 @@ export const AppProvider = ({ children }) => {
     customers,
     transactions,
     stats,
+    appointments,
     loading,
     fetchData,
     refreshStats,
@@ -286,6 +305,11 @@ export const AppProvider = ({ children }) => {
     addTransaction,
     updateTransaction,
     deleteTransaction,
+
+    // Appointments
+    addAppointment,
+    updateAppointment,
+    deleteAppointment,
 
     // Theme
     theme,
