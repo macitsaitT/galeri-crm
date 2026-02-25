@@ -93,6 +93,8 @@ class CarBase(BaseModel):
     customer_id: Optional[str] = None
     customer_name: Optional[str] = None
     employee_share: float = 0
+    insurance_start: str = ""
+    insurance_end: str = ""
 
 class CarCreate(CarBase):
     pass
