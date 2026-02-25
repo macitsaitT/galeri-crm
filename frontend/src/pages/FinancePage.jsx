@@ -8,8 +8,19 @@ import {
   Search,
   Trash2,
   Calendar,
-  Filter
+  Filter,
+  Download
 } from 'lucide-react';
+import { exportAPI } from '../services/api';
+
+const downloadBlob = (blob, filename) => {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+};
 
 const FinancePage = () => {
   const { transactions, cars, deleteTransaction } = useApp();
