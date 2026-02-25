@@ -206,6 +206,68 @@ const SettingsPage = () => {
         <p>Aslanbaş Oto CRM v1.0.0</p>
         <p className="mt-1">© 2024 Tüm hakları saklıdır.</p>
       </div>
+
+      {/* KVKK - Delete Account */}
+      <div className="bg-destructive/5 border border-destructive/20 rounded-xl p-5">
+        <div className="flex items-center gap-2 mb-3">
+          <AlertTriangle size={20} className="text-destructive" />
+          <h3 className="font-semibold text-destructive">Hesabımı ve Verilerimi Sil</h3>
+        </div>
+        <p className="text-sm text-muted-foreground mb-4">
+          KVKK kapsamında hesabınızı ve tüm ilişkili verilerinizi (araçlar, müşteriler, işlemler) kalıcı olarak silebilirsiniz. Bu işlem geri alınamaz.
+        </p>
+
+        {!showDeleteConfirm ? (
+          <button
+            onClick={() => setShowDeleteConfirm(true)}
+            className="px-4 py-2.5 rounded-lg bg-destructive/10 border border-destructive/30 text-destructive text-sm font-medium hover:bg-destructive/20 transition-colors flex items-center gap-2"
+            data-testid="show-delete-account-btn"
+          >
+            <Trash2 size={16} />
+            Hesabımı Sil
+          </button>
+        ) : (
+          <div className="space-y-3 p-4 bg-destructive/10 rounded-lg border border-destructive/30">
+            <p className="text-sm font-medium text-destructive">
+              Onaylamak için aşağıya <strong>"SİL"</strong> yazın:
+            </p>
+            <input
+              type="text"
+              value={deleteConfirmText}
+              onChange={(e) => setDeleteConfirmText(e.target.value)}
+              className="w-full h-11 px-3 bg-background border border-destructive/50 rounded-lg text-sm outline-none focus:border-destructive"
+              placeholder='SİL'
+              data-testid="delete-confirm-input"
+            />
+            <div className="flex gap-3">
+              <button
+                onClick={async () => {
+                  if (deleteConfirmText === 'SİL') {
+                    try {
+                      await deleteAccount();
+                    } catch (e) {
+                      console.error('Delete failed:', e);
+                    }
+                  }
+                }}
+                disabled={deleteConfirmText !== 'SİL'}
+                className="px-4 py-2.5 rounded-lg bg-destructive text-destructive-foreground text-sm font-medium disabled:opacity-40 transition-colors flex items-center gap-2"
+                data-testid="confirm-delete-account-btn"
+              >
+                <Trash2 size={16} />
+                Kalıcı Olarak Sil
+              </button>
+              <button
+                onClick={() => { setShowDeleteConfirm(false); setDeleteConfirmText(''); }}
+                className="px-4 py-2.5 rounded-lg border border-border text-sm text-muted-foreground hover:bg-muted transition-colors"
+                data-testid="cancel-delete-btn"
+              >
+                İptal
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
