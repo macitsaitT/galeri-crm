@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 
 const statusMap = {
-  orijinal: { label: 'ORJ', color: '#86efac', border: '#22c55e', name: 'Orijinal' },
-  boyali: { label: 'BOY', color: '#fde68a', border: '#f59e0b', name: 'Boyalı' },
-  degisen: { label: 'DEĞ', color: '#fca5a5', border: '#ef4444', name: 'Değişen' },
-  lokal: { label: 'LOK', color: '#93c5fd', border: '#3b82f6', name: 'Lokal Boyalı' },
+  orijinal: { label: 'ORJ', color: '#4ade80', border: '#16a34a', name: 'Orijinal' },
+  boyali: { label: 'BOY', color: '#fbbf24', border: '#d97706', name: 'Boyalı' },
+  degisen: { label: 'DEĞ', color: '#f87171', border: '#dc2626', name: 'Değişen' },
+  lokal: { label: 'LOK', color: '#60a5fa', border: '#2563eb', name: 'Lokal Boyalı' },
 };
 
 const statusOrder = ['orijinal', 'boyali', 'degisen', 'lokal'];
@@ -77,7 +77,6 @@ const CarExpertiseDiagram = ({ expertiseParts = {}, onChange }) => {
                   fill={info.color}
                   stroke={info.border}
                   strokeWidth={1.5}
-                  opacity={0.85}
                 />
                 <text
                   x={part.x + part.w / 2}
