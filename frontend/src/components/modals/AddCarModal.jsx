@@ -81,7 +81,10 @@ const defaultFormData = {
   insurance_start: '',
   insurance_end: '',
   province: '',
-  district: ''
+  district: '',
+  expertise_score: 95,
+  tramer_amount: '',
+  expertise_notes: ''
 };
 
 const AddCarModal = ({ isOpen, onClose, onSave, editingCar = null }) => {
