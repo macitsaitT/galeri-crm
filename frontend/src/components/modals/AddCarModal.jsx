@@ -356,7 +356,7 @@ const AddCarModal = ({ isOpen, onClose, onSave, editingCar = null }) => {
                     data-testid="car-engine-select"
                   >
                     <option value="">Seçiniz</option>
-                    {motorTypes.map(type => (
+                    {engineTypes.map(type => (
                       <option key={type} value={type}>{type}</option>
                     ))}
                   </select>
@@ -370,7 +370,7 @@ const AddCarModal = ({ isOpen, onClose, onSave, editingCar = null }) => {
                     data-testid="car-package-select"
                   >
                     <option value="">Seçiniz</option>
-                    {packageTypes.map(type => (
+                    {availablePackages.map(type => (
                       <option key={type} value={type}>{type}</option>
                     ))}
                   </select>
