@@ -588,47 +588,7 @@ const AddCarModal = ({ isOpen, onClose, onSave, editingCar = null }) => {
 
           {/* Photos Tab */}
           {activeTab === 'photos' && (
-            <div className="space-y-4 py-4">
-              <div className="text-center py-12 border-2 border-dashed border-border rounded-xl">
-                <Camera size={48} className="mx-auto text-muted-foreground mb-4" />
-                <p className="text-muted-foreground mb-2">Fotoğraf yüklemek için tıklayın veya sürükleyin</p>
-                <p className="text-xs text-muted-foreground">PNG, JPG (max. 5MB)</p>
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  className="hidden"
-                  id="photo-upload"
-                  data-testid="photo-upload-input"
-                />
-                <label
-                  htmlFor="photo-upload"
-                  className="inline-block mt-4 px-6 py-2 bg-primary text-primary-foreground rounded-lg cursor-pointer hover:bg-primary/90 transition-colors"
-                >
-                  Fotoğraf Seç
-                </label>
-              </div>
-
-              {formData.photos && formData.photos.length > 0 && (
-                <div className="grid grid-cols-4 gap-3">
-                  {formData.photos.map((photo, index) => (
-                    <div key={index} className="relative aspect-video rounded-lg overflow-hidden bg-muted">
-                      <img src={photo} alt={`Araç ${index + 1}`} className="w-full h-full object-cover" />
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const newPhotos = formData.photos.filter((_, i) => i !== index);
-                          handleChange('photos', newPhotos);
-                        }}
-                        className="absolute top-1 right-1 p-1 bg-destructive text-destructive-foreground rounded-full"
-                      >
-                        <X size={14} />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            <PhotoUploadTab formData={formData} handleChange={handleChange} />
           )}
 
           {/* Ownership Tab */}
