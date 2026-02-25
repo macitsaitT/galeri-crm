@@ -87,15 +87,19 @@ export const AppProvider = ({ children }) => {
     return userData;
   };
 
-  const register = async (email, password, companyName) => {
-    const response = await authAPI.register({ email, password, company_name: companyName });
-    const { token, user: userData } = response.data;
+  const register = async (email, password, companyName, phone = '') => {
+    const response = await authAPI.register({ email, password, company_name: companyName, phone });
+    const { token, user: userData, verification_code, requires_verification } = response.data;
     
     localStorage.setItem('crm_token', token);
     localStorage.setItem('crm_user', JSON.stringify(userData));
     
     setUser(userData);
     setIsAuthenticated(true);
+    
+    if (requires_verification) {
+      return { verification_code };
+    }
     
     return userData;
   };
