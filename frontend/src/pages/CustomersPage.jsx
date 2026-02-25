@@ -117,6 +117,19 @@ const CustomerCard = ({ customer, cars, onEdit, onDelete }) => {
         <p className="text-xs text-muted-foreground">
           Eklenme: {formatDate(customer.created_at)}
         </p>
+
+        {customer.phone && (
+          <a
+            href={`https://wa.me/${customer.phone.replace(/\s/g, '').replace(/^0/, '90')}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-lg bg-green-500/10 text-green-500 border border-green-500/20 hover:bg-green-500/20 transition-colors"
+            data-testid={`whatsapp-btn-${customer.id}`}
+          >
+            <MessageCircle size={14} />
+            WhatsApp
+          </a>
+        )}
       </div>
     </div>
   );
