@@ -36,8 +36,14 @@ const VehicleCard = ({
   const statusColor = getStatusColor(car.status);
   const ownershipBadge = getOwnershipBadge(car.ownership);
   
-  // Placeholder image
-  const imageUrl = car.photos?.[0] || 'https://images.unsplash.com/photo-1763165562062-91d744691c65?w=400&h=300&fit=crop';
+  // Photo display - support both URLs and storage paths
+  const getPhotoUrl = () => {
+    const photo = car.photos?.[0];
+    if (!photo) return null;
+    if (photo.startsWith('http')) return photo;
+    return fileAPI.getUrl(photo);
+  };
+  const imageUrl = getPhotoUrl();
 
   return (
     <div 
@@ -46,14 +52,18 @@ const VehicleCard = ({
     >
       {/* Image */}
       <div className="relative aspect-[16/10] overflow-hidden bg-muted">
-        <img 
-          src={imageUrl} 
-          alt={`${car.brand} ${car.model}`}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          onError={(e) => {
-            e.target.src = 'https://images.unsplash.com/photo-1763165562062-91d744691c65?w=400&h=300&fit=crop';
-          }}
-        />
+        {imageUrl ? (
+          <img 
+            src={imageUrl} 
+            alt={`${car.brand} ${car.model}`}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            onError={(e) => { e.target.style.display = 'none'; }}
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-muted">
+            <Car size={48} className="text-muted-foreground/30" />
+          </div>
+        )}
         
         {/* Badges */}
         <div className="absolute top-3 left-3 flex gap-2">
