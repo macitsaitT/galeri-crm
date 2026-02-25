@@ -15,6 +15,7 @@ import CustomersPage from './pages/CustomersPage';
 import FinancePage from './pages/FinancePage';
 import TrashPage from './pages/TrashPage';
 import SettingsPage from './pages/SettingsPage';
+import CalendarPage from './pages/CalendarPage';
 
 // Modals
 import AddCarModal from './components/modals/AddCarModal';
