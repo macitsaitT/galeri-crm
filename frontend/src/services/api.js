@@ -89,4 +89,12 @@ export const statsAPI = {
   get: () => api.get('/stats'),
 };
 
+// ==================== APPOINTMENTS ====================
+export const appointmentsAPI = {
+  getAll: () => api.get('/appointments'),
+  create: (data) => api.post('/appointments', data),
+  update: (id, data) => api.put(`/appointments/${id}`, data),
+  delete: (id) => api.delete(`/appointments/${id}`),
+};
+
 export default api;
