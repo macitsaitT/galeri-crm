@@ -119,16 +119,34 @@ const CustomerCard = ({ customer, cars, onEdit, onDelete }) => {
         </p>
 
         {customer.phone && (
-          <a
-            href={`https://wa.me/${customer.phone.replace(/\s/g, '').replace(/^0/, '90')}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-lg bg-green-500/10 text-green-500 border border-green-500/20 hover:bg-green-500/20 transition-colors"
-            data-testid={`whatsapp-btn-${customer.id}`}
-          >
-            <MessageCircle size={14} />
-            WhatsApp
-          </a>
+          <div className="flex items-center gap-2 flex-wrap">
+            <a
+              href={`https://wa.me/${customer.phone.replace(/\s/g, '').replace(/^0/, '90')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-lg bg-green-500/10 text-green-500 border border-green-500/20 hover:bg-green-500/20 transition-colors"
+              data-testid={`whatsapp-btn-${customer.id}`}
+            >
+              <MessageCircle size={14} />
+              WhatsApp
+            </a>
+            <a
+              href={`sms:${customer.phone.replace(/\s/g, '')}`}
+              className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-lg bg-blue-500/10 text-blue-500 border border-blue-500/20 hover:bg-blue-500/20 transition-colors"
+              data-testid={`sms-btn-${customer.id}`}
+            >
+              <Phone size={14} />
+              SMS
+            </a>
+            <a
+              href={`tel:${customer.phone.replace(/\s/g, '')}`}
+              className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-lg bg-muted text-muted-foreground border border-border hover:bg-muted/80 transition-colors"
+              data-testid={`call-btn-${customer.id}`}
+            >
+              <Phone size={14} />
+              Ara
+            </a>
+          </div>
         )}
       </div>
     </div>
