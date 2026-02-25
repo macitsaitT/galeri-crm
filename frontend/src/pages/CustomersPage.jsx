@@ -9,7 +9,9 @@ import {
   Edit,
   Trash2,
   Car,
-  Plus
+  Plus,
+  Download,
+  MessageCircle
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -17,6 +19,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '../components/ui/dropdown-menu';
+import { exportAPI } from '../services/api';
+
+const downloadBlob = (blob, filename) => {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+};
 
 const CustomerCard = ({ customer, cars, onEdit, onDelete }) => {
   const interestedCar = cars.find(c => c.id === customer.interested_car_id);
