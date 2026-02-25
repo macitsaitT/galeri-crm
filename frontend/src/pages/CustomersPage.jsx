@@ -206,20 +206,35 @@ const CustomersPage = ({ onAddCustomer, onEditCustomer, onDeleteCustomer }) => {
         </button>
       </div>
 
-      {/* Stats */}
-      <div className="flex items-center gap-6 text-sm">
-        <span className="text-muted-foreground">
-          Toplam: <strong className="text-foreground">{filteredCustomers.length}</strong>
-        </span>
-        <span className="text-warning">
-          Potansiyel: {customers.filter(c => !c.deleted && c.type === 'Potansiyel').length}
-        </span>
-        <span className="text-primary">
-          Aktif: {customers.filter(c => !c.deleted && c.type === 'Aktif').length}
-        </span>
-        <span className="text-success">
-          Satış: {customers.filter(c => !c.deleted && c.type === 'Satış Yapıldı').length}
-        </span>
+      {/* Stats + Export */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-6 text-sm">
+          <span className="text-muted-foreground">
+            Toplam: <strong className="text-foreground">{filteredCustomers.length}</strong>
+          </span>
+          <span className="text-warning">
+            Potansiyel: {customers.filter(c => !c.deleted && c.type === 'Potansiyel').length}
+          </span>
+          <span className="text-primary">
+            Aktif: {customers.filter(c => !c.deleted && c.type === 'Aktif').length}
+          </span>
+          <span className="text-success">
+            Satış: {customers.filter(c => !c.deleted && c.type === 'Satış Yapıldı').length}
+          </span>
+        </div>
+        <button
+          onClick={async () => {
+            try {
+              const res = await exportAPI.customers();
+              downloadBlob(new Blob([res.data]), 'musteriler.xlsx');
+            } catch (e) { console.error(e); }
+          }}
+          className="flex items-center gap-2 px-4 py-2 text-sm bg-card border border-border rounded-lg hover:bg-muted transition-colors"
+          data-testid="export-customers-btn"
+        >
+          <Download size={16} />
+          Excel
+        </button>
       </div>
 
       {/* Grid */}
