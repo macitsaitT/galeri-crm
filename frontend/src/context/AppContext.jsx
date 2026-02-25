@@ -24,6 +24,7 @@ export const AppProvider = ({ children }) => {
   const [customers, setCustomers] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [stats, setStats] = useState(null);
+  const [appointments, setAppointments] = useState([]);
 
   // UI state
   const [loading, setLoading] = useState(true);
