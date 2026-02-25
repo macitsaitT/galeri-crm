@@ -45,17 +45,19 @@ export const AppProvider = ({ children }) => {
     
     setLoading(true);
     try {
-      const [carsRes, customersRes, transactionsRes, statsRes] = await Promise.all([
+      const [carsRes, customersRes, transactionsRes, statsRes, appointmentsRes] = await Promise.all([
         carsAPI.getAll(),
         customersAPI.getAll(),
         transactionsAPI.getAll(),
         statsAPI.get(),
+        appointmentsAPI.getAll(),
       ]);
 
       setCars(carsRes.data || []);
       setCustomers(customersRes.data || []);
       setTransactions(transactionsRes.data || []);
       setStats(statsRes.data || null);
+      setAppointments(appointmentsRes.data || []);
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
