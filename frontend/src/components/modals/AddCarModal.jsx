@@ -268,6 +268,7 @@ const AddCarModal = ({ isOpen, onClose, onSave, editingCar = null }) => {
                     onChange={(e) => {
                       handleChange('brand', e.target.value);
                       handleChange('model', '');
+                      handleChange('package_info', '');
                     }}
                     className={`w-full h-11 px-3 bg-background border rounded-lg outline-none text-sm ${errors.brand ? 'border-destructive' : 'border-border focus:border-primary'}`}
                     data-testid="car-brand-select"
