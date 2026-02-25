@@ -175,9 +175,24 @@ const FinancePage = () => {
 
       {/* Transactions List */}
       <div className="bg-card border border-border rounded-xl overflow-hidden">
-        <div className="p-4 border-b border-border">
-          <h3 className="font-heading font-semibold">İşlem Geçmişi</h3>
-          <p className="text-sm text-muted-foreground">{filteredTransactions.length} işlem</p>
+        <div className="p-4 border-b border-border flex items-center justify-between">
+          <div>
+            <h3 className="font-heading font-semibold">İşlem Geçmişi</h3>
+            <p className="text-sm text-muted-foreground">{filteredTransactions.length} işlem</p>
+          </div>
+          <button
+            onClick={async () => {
+              try {
+                const res = await exportAPI.transactions();
+                downloadBlob(new Blob([res.data]), 'islemler.xlsx');
+              } catch (e) { console.error(e); }
+            }}
+            className="flex items-center gap-2 px-4 py-2 text-sm bg-background border border-border rounded-lg hover:bg-muted transition-colors"
+            data-testid="export-transactions-btn"
+          >
+            <Download size={16} />
+            Excel
+          </button>
         </div>
 
         {filteredTransactions.length === 0 ? (
