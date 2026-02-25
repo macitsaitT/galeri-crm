@@ -1,0 +1,290 @@
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { authAPI, carsAPI, customersAPI, transactionsAPI, statsAPI } from '../services/api';
+
+const AppContext = createContext(null);
+
+export const useApp = () => {
+  const context = useContext(AppContext);
+  if (!context) {
+    throw new Error('useApp must be used within AppProvider');
+  }
+  return context;
+};
+
+export const AppProvider = ({ children }) => {
+  // Auth state
+  const [user, setUser] = useState(() => {
+    const saved = localStorage.getItem('crm_user');
+    return saved ? JSON.parse(saved) : null;
+  });
+  const [isAuthenticated, setIsAuthenticated] = useState(() => !!localStorage.getItem('crm_token'));
+
+  // Data state
+  const [cars, setCars] = useState([]);
+  const [customers, setCustomers] = useState([]);
+  const [transactions, setTransactions] = useState([]);
+  const [stats, setStats] = useState(null);
+
+  // UI state
+  const [loading, setLoading] = useState(true);
+  const [theme, setTheme] = useState(() => {
+    const saved = localStorage.getItem('crm_theme');
+    return saved || 'dark';
+  });
+
+  // Apply theme
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+    localStorage.setItem('crm_theme', theme);
+  }, [theme]);
+
+  // Fetch all data
+  const fetchData = useCallback(async () => {
+    if (!isAuthenticated) return;
+    
+    setLoading(true);
+    try {
+      const [carsRes, customersRes, transactionsRes, statsRes] = await Promise.all([
+        carsAPI.getAll(),
+        customersAPI.getAll(),
+        transactionsAPI.getAll(),
+        statsAPI.get(),
+      ]);
+
+      setCars(carsRes.data || []);
+      setCustomers(customersRes.data || []);
+      setTransactions(transactionsRes.data || []);
+      setStats(statsRes.data || null);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, [isAuthenticated]);
+
+  // Initial data fetch
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchData();
+    }
+  }, [isAuthenticated, fetchData]);
+
+  // Auth functions
+  const login = async (email, password) => {
+    const response = await authAPI.login({ email, password });
+    const { token, user: userData } = response.data;
+    
+    localStorage.setItem('crm_token', token);
+    localStorage.setItem('crm_user', JSON.stringify(userData));
+    
+    setUser(userData);
+    setIsAuthenticated(true);
+    
+    if (userData.theme) {
+      setTheme(userData.theme);
+    }
+    
+    return userData;
+  };
+
+  const register = async (email, password, companyName) => {
+    const response = await authAPI.register({ email, password, company_name: companyName });
+    const { token, user: userData } = response.data;
+    
+    localStorage.setItem('crm_token', token);
+    localStorage.setItem('crm_user', JSON.stringify(userData));
+    
+    setUser(userData);
+    setIsAuthenticated(true);
+    
+    return userData;
+  };
+
+  const logout = () => {
+    localStorage.removeItem('crm_token');
+    localStorage.removeItem('crm_user');
+    setUser(null);
+    setIsAuthenticated(false);
+    setCars([]);
+    setCustomers([]);
+    setTransactions([]);
+    setStats(null);
+  };
+
+  const updateProfile = async (data) => {
+    const response = await authAPI.updateProfile(data);
+    const updatedUser = response.data;
+    
+    localStorage.setItem('crm_user', JSON.stringify(updatedUser));
+    setUser(updatedUser);
+    
+    if (data.theme) {
+      setTheme(data.theme);
+    }
+    
+    return updatedUser;
+  };
+
+  // Car functions
+  const addCar = async (carData) => {
+    const response = await carsAPI.create(carData);
+    setCars(prev => [...prev, response.data]);
+    await refreshStats();
+    return response.data;
+  };
+
+  const updateCar = async (id, carData) => {
+    const response = await carsAPI.update(id, carData);
+    setCars(prev => prev.map(c => c.id === id ? response.data : c));
+    await refreshStats();
+    return response.data;
+  };
+
+  const patchCar = async (id, updates) => {
+    const response = await carsAPI.patch(id, updates);
+    setCars(prev => prev.map(c => c.id === id ? response.data : c));
+    await refreshStats();
+    return response.data;
+  };
+
+  const deleteCar = async (id, permanent = false) => {
+    await carsAPI.delete(id, permanent);
+    if (permanent) {
+      setCars(prev => prev.filter(c => c.id !== id));
+      setTransactions(prev => prev.filter(t => t.car_id !== id));
+    } else {
+      setCars(prev => prev.map(c => c.id === id ? { ...c, deleted: true } : c));
+      setTransactions(prev => prev.map(t => t.car_id === id ? { ...t, deleted: true } : t));
+    }
+    await refreshStats();
+  };
+
+  const restoreCar = async (id) => {
+    const response = await carsAPI.restore(id);
+    setCars(prev => prev.map(c => c.id === id ? { ...c, deleted: false } : c));
+    setTransactions(prev => prev.map(t => t.car_id === id ? { ...t, deleted: false } : t));
+    await refreshStats();
+    return response.data;
+  };
+
+  // Customer functions
+  const addCustomer = async (customerData) => {
+    const response = await customersAPI.create(customerData);
+    setCustomers(prev => [...prev, response.data]);
+    await refreshStats();
+    return response.data;
+  };
+
+  const updateCustomer = async (id, customerData) => {
+    const response = await customersAPI.update(id, customerData);
+    setCustomers(prev => prev.map(c => c.id === id ? response.data : c));
+    return response.data;
+  };
+
+  const deleteCustomer = async (id, permanent = false) => {
+    await customersAPI.delete(id, permanent);
+    if (permanent) {
+      setCustomers(prev => prev.filter(c => c.id !== id));
+    } else {
+      setCustomers(prev => prev.map(c => c.id === id ? { ...c, deleted: true } : c));
+    }
+    await refreshStats();
+  };
+
+  const restoreCustomer = async (id) => {
+    const response = await customersAPI.restore(id);
+    setCustomers(prev => prev.map(c => c.id === id ? { ...c, deleted: false } : c));
+    await refreshStats();
+    return response.data;
+  };
+
+  // Transaction functions
+  const addTransaction = async (transactionData) => {
+    const response = await transactionsAPI.create(transactionData);
+    setTransactions(prev => [...prev, response.data]);
+    await refreshStats();
+    return response.data;
+  };
+
+  const updateTransaction = async (id, updates) => {
+    const response = await transactionsAPI.update(id, updates);
+    setTransactions(prev => prev.map(t => t.id === id ? response.data : t));
+    await refreshStats();
+    return response.data;
+  };
+
+  const deleteTransaction = async (id, permanent = false) => {
+    await transactionsAPI.delete(id, permanent);
+    if (permanent) {
+      setTransactions(prev => prev.filter(t => t.id !== id));
+    } else {
+      setTransactions(prev => prev.map(t => t.id === id ? { ...t, deleted: true } : t));
+    }
+    await refreshStats();
+  };
+
+  // Refresh stats
+  const refreshStats = async () => {
+    try {
+      const response = await statsAPI.get();
+      setStats(response.data);
+    } catch (error) {
+      console.error('Error refreshing stats:', error);
+    }
+  };
+
+  // Toggle theme
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+  };
+
+  const value = {
+    // Auth
+    user,
+    isAuthenticated,
+    login,
+    register,
+    logout,
+    updateProfile,
+
+    // Data
+    cars,
+    customers,
+    transactions,
+    stats,
+    loading,
+    fetchData,
+    refreshStats,
+
+    // Cars
+    addCar,
+    updateCar,
+    patchCar,
+    deleteCar,
+    restoreCar,
+
+    // Customers
+    addCustomer,
+    updateCustomer,
+    deleteCustomer,
+    restoreCustomer,
+
+    // Transactions
+    addTransaction,
+    updateTransaction,
+    deleteTransaction,
+
+    // Theme
+    theme,
+    setTheme,
+    toggleTheme,
+  };
+
+  return (
+    <AppContext.Provider value={value}>
+      {children}
+    </AppContext.Provider>
+  );
+};
+
+export default AppContext;

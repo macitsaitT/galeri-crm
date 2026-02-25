@@ -1,0 +1,75 @@
+import axios from 'axios';
+
+const API_URL = process.env.REACT_APP_BACKEND_URL + '/api';
+
+// Create axios instance
+const api = axios.create({
+  baseURL: API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// Add token to requests
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('crm_token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+// Handle auth errors
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('crm_token');
+      localStorage.removeItem('crm_user');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
+// ==================== AUTH ====================
+export const authAPI = {
+  register: (data) => api.post('/auth/register', data),
+  login: (data) => api.post('/auth/login', data),
+  getMe: () => api.get('/auth/me'),
+  updateProfile: (data) => api.put('/auth/profile', data),
+};
+
+// ==================== CARS ====================
+export const carsAPI = {
+  getAll: () => api.get('/cars'),
+  create: (data) => api.post('/cars', data),
+  update: (id, data) => api.put(`/cars/${id}`, data),
+  patch: (id, data) => api.patch(`/cars/${id}`, data),
+  delete: (id, permanent = false) => api.delete(`/cars/${id}?permanent=${permanent}`),
+  restore: (id) => api.post(`/cars/${id}/restore`),
+};
+
+// ==================== CUSTOMERS ====================
+export const customersAPI = {
+  getAll: () => api.get('/customers'),
+  create: (data) => api.post('/customers', data),
+  update: (id, data) => api.put(`/customers/${id}`, data),
+  delete: (id, permanent = false) => api.delete(`/customers/${id}?permanent=${permanent}`),
+  restore: (id) => api.post(`/customers/${id}/restore`),
+};
+
+// ==================== TRANSACTIONS ====================
+export const transactionsAPI = {
+  getAll: () => api.get('/transactions'),
+  create: (data) => api.post('/transactions', data),
+  update: (id, data) => api.put(`/transactions/${id}`, data),
+  delete: (id, permanent = false) => api.delete(`/transactions/${id}?permanent=${permanent}`),
+};
+
+// ==================== STATS ====================
+export const statsAPI = {
+  get: () => api.get('/stats'),
+};
+
+export default api;
