@@ -179,8 +179,10 @@ const AddCarModal = ({ isOpen, onClose, onSave, editingCar = null }) => {
         km: formData.km?.replace(/[^\d]/g, '') || '0',
         purchase_price: parseNumber(formData.purchase_price),
         sale_price: parseNumber(formData.sale_price),
+        tramer_amount: parseNumber(formData.tramer_amount),
         commission_rate: parseInt(formData.commission_rate) || (formData.ownership === 'consignment' ? 5 : 0),
         year: parseInt(formData.year) || new Date().getFullYear(),
+        expertise_score: parseInt(formData.expertise_score) || 0,
       };
       
       await onSave(submitData);
