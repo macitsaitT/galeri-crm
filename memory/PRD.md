@@ -140,6 +140,9 @@ GET  /api/stats
 - [x] WhatsApp customer communication links (wa.me)
 - [x] Data encryption for sensitive customer fields (Fernet)
 - [x] Capacitor configuration for native mobile builds (com.aslanbasoto.crm)
+- [x] Professional expertise SVG+HTML hybrid diagram (13 parts, color-coded, car silhouette)
+- [x] Pure black dark theme (background: #0a0a0a, card: #141414)
+- [x] Dashboard charts: Monthly Gelir/Gider bar chart + Araç Dağılımı donut chart (Recharts)
 
 ### P1 (High Priority) - Next Phase
 - [ ] Capacitor integration for native mobile apps (Play Store/App Store)
