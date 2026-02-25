@@ -404,6 +404,42 @@ const AddCarModal = ({ isOpen, onClose, onSave, editingCar = null }) => {
                 </div>
               </div>
 
+              {/* İl / İlçe */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2">İl</label>
+                  <select
+                    value={formData.province}
+                    onChange={(e) => {
+                      handleChange('province', e.target.value);
+                      handleChange('district', '');
+                    }}
+                    className="w-full h-11 px-3 bg-background border border-border rounded-lg outline-none focus:border-primary text-sm"
+                    data-testid="car-province-select"
+                  >
+                    <option value="">Seçiniz</option>
+                    {provinceList.map(p => (
+                      <option key={p} value={p}>{p}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">İlçe</label>
+                  <select
+                    value={formData.district}
+                    onChange={(e) => handleChange('district', e.target.value)}
+                    className="w-full h-11 px-3 bg-background border border-border rounded-lg outline-none focus:border-primary text-sm"
+                    disabled={!formData.province}
+                    data-testid="car-district-select"
+                  >
+                    <option value="">Seçiniz</option>
+                    {availableDistricts.map(d => (
+                      <option key={d} value={d}>{d}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
               {/* Insurance Dates */}
               <div className="p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg">
                 <div className="grid grid-cols-2 gap-4">
