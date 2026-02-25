@@ -1,7 +1,17 @@
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../context/AppContext';
 import VehicleCard from '../components/vehicles/VehicleCard';
-import { Search, SlidersHorizontal, Car } from 'lucide-react';
+import { Search, SlidersHorizontal, Car, Download } from 'lucide-react';
+import { exportAPI } from '../services/api';
+
+const downloadBlob = (blob, filename) => {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+};
 
 const InventoryPage = ({ viewType = 'inventory', onEditCar, onViewCar, onExpenses, onDeposit, onSale, onDeleteCar }) => {
   const { cars } = useApp();
