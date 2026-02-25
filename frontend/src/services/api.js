@@ -42,6 +42,21 @@ export const authAPI = {
   verifyEmail: (data) => api.post('/auth/verify-email', data),
 };
 
+export const fileAPI = {
+  upload: (formData) => api.post('/upload', formData, { headers: { 'Content-Type': 'multipart/form-data' } }),
+  getUrl: (path) => {
+    const token = localStorage.getItem('crm_token');
+    return `${API_URL}/files/${path}?auth=${token}`;
+  },
+};
+
+export const exportAPI = {
+  cars: () => api.get('/export/cars', { responseType: 'blob' }),
+  customers: () => api.get('/export/customers', { responseType: 'blob' }),
+  transactions: () => api.get('/export/transactions', { responseType: 'blob' }),
+  expertisePdf: (carId) => api.get(`/export/expertise/${carId}`, { responseType: 'blob' }),
+};
+
 // ==================== CARS ====================
 export const carsAPI = {
   getAll: () => api.get('/cars'),
