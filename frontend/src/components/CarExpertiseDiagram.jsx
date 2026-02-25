@@ -162,19 +162,19 @@ const CarExpertiseDiagram = ({ expertiseParts = {}, onChange }) => {
                 <path
                   d={part.path}
                   fill={config.bg}
-                  stroke={isHovered ? '#fff' : 'rgba(0,0,0,0.3)'}
-                  strokeWidth={isHovered ? 2 : 1}
-                  opacity={isHovered ? 1 : 0.85}
+                  stroke={isHovered ? '#fff' : 'rgba(255,255,255,0.15)'}
+                  strokeWidth={isHovered ? 2.5 : 1}
+                  fillOpacity={1}
                 />
                 <text
                   x={part.labelX}
                   y={part.labelY}
                   textAnchor="middle"
                   dominantBaseline="middle"
-                  fontSize={part.id === 'tavan' ? 13 : 10}
-                  fontWeight="800"
+                  fontSize={part.id === 'tavan' ? 14 : 11}
+                  fontWeight="900"
                   fill={config.text}
-                  style={{ textShadow: '0 1px 2px rgba(0,0,0,0.5)', pointerEvents: 'none' }}
+                  style={{ textShadow: '0 1px 3px rgba(0,0,0,0.7)', pointerEvents: 'none' }}
                 >
                   {config.label}
                 </text>
