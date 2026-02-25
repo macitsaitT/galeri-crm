@@ -169,6 +169,45 @@ const Dashboard = ({ onOpenReport }) => {
     ].filter(d => d.value > 0);
   }, [activeCars]);
 
+  // Sales trend (last 30 days)
+  const salesTrendData = useMemo(() => {
+    const data = [];
+    for (let i = 29; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const dateStr = d.toISOString().split('T')[0];
+      const daySales = activeCars.filter(c =>
+        c.status === 'Satıldı' && c.sold_date && c.sold_date.startsWith(dateStr)
+      ).length;
+      const dayLabel = `${d.getDate()}/${d.getMonth() + 1}`;
+      data.push({ name: dayLabel, Satış: daySales });
+    }
+    return data;
+  }, [activeCars]);
+
+  // Top brands
+  const topBrandsData = useMemo(() => {
+    const brandCount = {};
+    activeCars.filter(c => c.status === 'Satıldı').forEach(c => {
+      brandCount[c.brand] = (brandCount[c.brand] || 0) + 1;
+    });
+    const all = Object.entries(brandCount)
+      .map(([brand, count]) => ({ brand, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5);
+    // If no sold cars, show stock brands
+    if (all.length === 0) {
+      activeCars.forEach(c => {
+        brandCount[c.brand] = (brandCount[c.brand] || 0) + 1;
+      });
+      return Object.entries(brandCount)
+        .map(([brand, count]) => ({ brand, count }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 5);
+    }
+    return all;
+  }, [activeCars]);
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
