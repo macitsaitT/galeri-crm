@@ -634,6 +634,374 @@ async def root():
 async def health():
     return {"status": "healthy"}
 
+# ==================== FILE UPLOAD ====================
+
+@api_router.post("/upload")
+async def upload_file(file: UploadFile = File(...), current_user: dict = Depends(get_current_user)):
+    ext = file.filename.split(".")[-1].lower() if "." in file.filename else "bin"
+    allowed = {"jpg", "jpeg", "png", "gif", "webp"}
+    if ext not in allowed:
+        raise HTTPException(status_code=400, detail="Only image files allowed")
+    
+    data = await file.read()
+    if len(data) > 10 * 1024 * 1024:
+        raise HTTPException(status_code=400, detail="File too large (max 10MB)")
+    
+    path = f"{APP_NAME}/uploads/{current_user['user_id']}/{uuid.uuid4()}.{ext}"
+    
+    mime = {"jpg": "image/jpeg", "jpeg": "image/jpeg", "png": "image/png", "gif": "image/gif", "webp": "image/webp"}
+    result = put_object(path, data, mime.get(ext, "application/octet-stream"))
+    
+    file_doc = {
+        "id": str(uuid.uuid4()),
+        "storage_path": result["path"],
+        "original_filename": file.filename,
+        "content_type": file.content_type,
+        "size": result.get("size", len(data)),
+        "user_id": current_user["user_id"],
+        "is_deleted": False,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.files.insert_one(file_doc)
+    
+    return {"id": file_doc["id"], "path": result["path"], "filename": file.filename}
+
+@api_router.get("/files/{file_path:path}")
+async def download_file(file_path: str, auth: str = Query(None), authorization: str = Header(None)):
+    auth_header = authorization or (f"Bearer {auth}" if auth else None)
+    if not auth_header:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    try:
+        token = auth_header.replace("Bearer ", "")
+        jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+    except Exception:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    
+    record = await db.files.find_one({"storage_path": file_path, "is_deleted": False})
+    if not record:
+        raise HTTPException(status_code=404, detail="File not found")
+    
+    data, content_type = get_object(file_path)
+    return Response(content=data, media_type=record.get("content_type", content_type))
+
+# ==================== EXCEL EXPORT ====================
+
+@api_router.get("/export/cars")
+async def export_cars_excel(current_user: dict = Depends(get_current_user)):
+    from openpyxl import Workbook
+    from openpyxl.styles import Font, PatternFill, Alignment
+    
+    cars = await db.cars.find({"user_id": current_user["user_id"], "deleted": False}, {"_id": 0}).to_list(5000)
+    
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Araçlar"
+    
+    header_font = Font(bold=True, color="FFFFFF")
+    header_fill = PatternFill(start_color="1a1a2e", end_color="1a1a2e", fill_type="solid")
+    
+    headers = ["Plaka", "Marka", "Model", "Yıl", "KM", "Yakıt", "Vites", "Durum", "İl", "İlçe",
+               "Alış Fiyatı", "Satış Fiyatı", "Ekspertiz Puanı", "Tramer", "Giriş Tarihi"]
+    
+    for col, h in enumerate(headers, 1):
+        cell = ws.cell(row=1, column=col, value=h)
+        cell.font = header_font
+        cell.fill = header_fill
+        cell.alignment = Alignment(horizontal="center")
+    
+    for i, car in enumerate(cars, 2):
+        ws.cell(row=i, column=1, value=car.get("plate", ""))
+        ws.cell(row=i, column=2, value=car.get("brand", ""))
+        ws.cell(row=i, column=3, value=car.get("model", ""))
+        ws.cell(row=i, column=4, value=car.get("year", ""))
+        ws.cell(row=i, column=5, value=car.get("km", ""))
+        ws.cell(row=i, column=6, value=car.get("fuel_type", ""))
+        ws.cell(row=i, column=7, value=car.get("gear", ""))
+        ws.cell(row=i, column=8, value=car.get("status", ""))
+        ws.cell(row=i, column=9, value=car.get("province", ""))
+        ws.cell(row=i, column=10, value=car.get("district", ""))
+        ws.cell(row=i, column=11, value=car.get("purchase_price", 0))
+        ws.cell(row=i, column=12, value=car.get("sale_price", 0))
+        ws.cell(row=i, column=13, value=car.get("expertise_score", 0))
+        ws.cell(row=i, column=14, value=car.get("tramer_amount", 0))
+        ws.cell(row=i, column=15, value=car.get("entry_date", ""))
+    
+    for col in range(1, len(headers) + 1):
+        ws.column_dimensions[ws.cell(row=1, column=col).column_letter].width = 16
+    
+    buffer = io.BytesIO()
+    wb.save(buffer)
+    buffer.seek(0)
+    
+    return StreamingResponse(
+        buffer,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": "attachment; filename=araclar.xlsx"}
+    )
+
+@api_router.get("/export/customers")
+async def export_customers_excel(current_user: dict = Depends(get_current_user)):
+    from openpyxl import Workbook
+    from openpyxl.styles import Font, PatternFill, Alignment
+    
+    customers = await db.customers.find({"user_id": current_user["user_id"], "deleted": False}, {"_id": 0}).to_list(5000)
+    
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Müşteriler"
+    
+    header_font = Font(bold=True, color="FFFFFF")
+    header_fill = PatternFill(start_color="1a1a2e", end_color="1a1a2e", fill_type="solid")
+    
+    headers = ["Ad Soyad", "Telefon", "Tür", "Notlar", "Kayıt Tarihi"]
+    
+    for col, h in enumerate(headers, 1):
+        cell = ws.cell(row=1, column=col, value=h)
+        cell.font = header_font
+        cell.fill = header_fill
+        cell.alignment = Alignment(horizontal="center")
+    
+    for i, c in enumerate(customers, 2):
+        ws.cell(row=i, column=1, value=c.get("name", ""))
+        ws.cell(row=i, column=2, value=c.get("phone", ""))
+        ws.cell(row=i, column=3, value=c.get("type", ""))
+        ws.cell(row=i, column=4, value=c.get("notes", ""))
+        ws.cell(row=i, column=5, value=c.get("created_at", "")[:10])
+    
+    for col in range(1, len(headers) + 1):
+        ws.column_dimensions[ws.cell(row=1, column=col).column_letter].width = 20
+    
+    buffer = io.BytesIO()
+    wb.save(buffer)
+    buffer.seek(0)
+    
+    return StreamingResponse(
+        buffer,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": "attachment; filename=musteriler.xlsx"}
+    )
+
+@api_router.get("/export/transactions")
+async def export_transactions_excel(current_user: dict = Depends(get_current_user)):
+    from openpyxl import Workbook
+    from openpyxl.styles import Font, PatternFill, Alignment
+    
+    transactions = await db.transactions.find({"user_id": current_user["user_id"], "deleted": False}, {"_id": 0}).to_list(5000)
+    
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "İşlemler"
+    
+    header_font = Font(bold=True, color="FFFFFF")
+    header_fill = PatternFill(start_color="1a1a2e", end_color="1a1a2e", fill_type="solid")
+    
+    headers = ["Tarih", "Tür", "Kategori", "Açıklama", "Tutar (TL)"]
+    
+    for col, h in enumerate(headers, 1):
+        cell = ws.cell(row=1, column=col, value=h)
+        cell.font = header_font
+        cell.fill = header_fill
+        cell.alignment = Alignment(horizontal="center")
+    
+    for i, t in enumerate(transactions, 2):
+        ws.cell(row=i, column=1, value=t.get("date", ""))
+        ws.cell(row=i, column=2, value="Gelir" if t.get("type") == "income" else "Gider")
+        ws.cell(row=i, column=3, value=t.get("category", ""))
+        ws.cell(row=i, column=4, value=t.get("description", ""))
+        ws.cell(row=i, column=5, value=t.get("amount", 0))
+    
+    for col in range(1, len(headers) + 1):
+        ws.column_dimensions[ws.cell(row=1, column=col).column_letter].width = 20
+    
+    buffer = io.BytesIO()
+    wb.save(buffer)
+    buffer.seek(0)
+    
+    return StreamingResponse(
+        buffer,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": "attachment; filename=islemler.xlsx"}
+    )
+
+# ==================== PDF EXPERTISE REPORT ====================
+
+@api_router.get("/export/expertise/{car_id}")
+async def export_expertise_pdf(car_id: str, current_user: dict = Depends(get_current_user)):
+    from reportlab.lib.pagesizes import A4
+    from reportlab.lib import colors
+    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+    from reportlab.lib.units import cm
+    from reportlab.pdfbase import pdfmetrics
+    from reportlab.pdfbase.ttfonts import TTFont
+    
+    car = await db.cars.find_one({"id": car_id, "user_id": current_user["user_id"]}, {"_id": 0})
+    if not car:
+        raise HTTPException(status_code=404, detail="Car not found")
+    
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=A4, topMargin=1.5*cm, bottomMargin=1.5*cm)
+    
+    styles = getSampleStyleSheet()
+    title_style = ParagraphStyle('Title2', parent=styles['Title'], fontSize=18, spaceAfter=20)
+    subtitle_style = ParagraphStyle('Sub', parent=styles['Normal'], fontSize=12, spaceAfter=10, textColor=colors.grey)
+    
+    elements = []
+    
+    # Title
+    elements.append(Paragraph("EKSPERTIZ RAPORU", title_style))
+    elements.append(Paragraph(f"{car.get('brand', '')} {car.get('model', '')} - {car.get('year', '')} | {car.get('plate', '')}", subtitle_style))
+    elements.append(Spacer(1, 15))
+    
+    # Vehicle Info Table
+    info_data = [
+        ["Marka", car.get("brand", ""), "Model", car.get("model", "")],
+        ["Yil", str(car.get("year", "")), "Plaka", car.get("plate", "")],
+        ["KM", car.get("km", ""), "Yakit", car.get("fuel_type", "")],
+        ["Vites", car.get("gear", ""), "Motor", car.get("engine_type", "")],
+        ["Il", car.get("province", ""), "Ilce", car.get("district", "")],
+    ]
+    
+    info_table = Table(info_data, colWidths=[3*cm, 5.5*cm, 3*cm, 5.5*cm])
+    info_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (0, -1), colors.Color(0.1, 0.1, 0.18)),
+        ('BACKGROUND', (2, 0), (2, -1), colors.Color(0.1, 0.1, 0.18)),
+        ('TEXTCOLOR', (0, 0), (0, -1), colors.white),
+        ('TEXTCOLOR', (2, 0), (2, -1), colors.white),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+        ('FONTSIZE', (0, 0), (-1, -1), 10),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('LEFTPADDING', (0, 0), (-1, -1), 8),
+        ('TOPPADDING', (0, 0), (-1, -1), 6),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+    ]))
+    elements.append(info_table)
+    elements.append(Spacer(1, 20))
+    
+    # Expertise Parts
+    elements.append(Paragraph("KAPORTA DURUMU", styles['Heading2']))
+    
+    status_labels = {"orijinal": "Orijinal", "boyali": "Boyali", "degisen": "Degisen", "lokal": "Lokal"}
+    parts_data = [["Parca", "Durum"]]
+    
+    part_names = {
+        "on_tampon": "On Tampon", "kaput": "Kaput", "sol_on_camurluk": "Sol On Camurluk",
+        "sag_on_camurluk": "Sag On Camurluk", "sol_on_kapi": "Sol On Kapi",
+        "sag_on_kapi": "Sag On Kapi", "tavan": "Tavan", "sol_arka_kapi": "Sol Arka Kapi",
+        "sag_arka_kapi": "Sag Arka Kapi", "sol_arka_camurluk": "Sol Arka Camurluk",
+        "sag_arka_camurluk": "Sag Arka Camurluk", "bagaj": "Bagaj", "arka_tampon": "Arka Tampon"
+    }
+    
+    expertise_parts = car.get("expertise", {}).get("parts", {})
+    for pid, pname in part_names.items():
+        status = expertise_parts.get(pid, "orijinal")
+        parts_data.append([pname, status_labels.get(status, status)])
+    
+    status_colors = {
+        "orijinal": colors.Color(0.13, 0.77, 0.37),
+        "boyali": colors.Color(0.92, 0.7, 0.05),
+        "degisen": colors.Color(0.94, 0.27, 0.27),
+        "lokal": colors.Color(0.23, 0.51, 0.94)
+    }
+    
+    parts_table = Table(parts_data, colWidths=[8.5*cm, 8.5*cm])
+    table_style_commands = [
+        ('BACKGROUND', (0, 0), (-1, 0), colors.Color(0.1, 0.1, 0.18)),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+        ('FONTSIZE', (0, 0), (-1, -1), 10),
+        ('TOPPADDING', (0, 0), (-1, -1), 5),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 5),
+        ('LEFTPADDING', (0, 0), (-1, -1), 8),
+    ]
+    
+    for i, (pid, _) in enumerate(part_names.items()):
+        status = expertise_parts.get(pid, "orijinal")
+        color = status_colors.get(status, colors.white)
+        table_style_commands.append(('BACKGROUND', (1, i+1), (1, i+1), color))
+    
+    parts_table.setStyle(TableStyle(table_style_commands))
+    elements.append(parts_table)
+    elements.append(Spacer(1, 20))
+    
+    # Mechanical Status
+    elements.append(Paragraph("MEKANIK DURUM", styles['Heading2']))
+    mechanical = car.get("expertise", {}).get("mechanical", {})
+    mech_data = [
+        ["Motor Durumu", mechanical.get("motor", "Orijinal")],
+        ["Sanziman Durumu", mechanical.get("sanziman", "Orijinal")],
+        ["Yuruyen Durumu", mechanical.get("yuruyen", "Orijinal")],
+    ]
+    mech_table = Table(mech_data, colWidths=[8.5*cm, 8.5*cm])
+    mech_table.setStyle(TableStyle([
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+        ('BACKGROUND', (0, 0), (0, -1), colors.Color(0.1, 0.1, 0.18)),
+        ('TEXTCOLOR', (0, 0), (0, -1), colors.white),
+        ('FONTSIZE', (0, 0), (-1, -1), 10),
+        ('TOPPADDING', (0, 0), (-1, -1), 5),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 5),
+        ('LEFTPADDING', (0, 0), (-1, -1), 8),
+    ]))
+    elements.append(mech_table)
+    elements.append(Spacer(1, 20))
+    
+    # Score and Tramer
+    score_data = [
+        ["Ekspertiz Puani (%)", str(car.get("expertise_score", 95))],
+        ["Tramer Kayit Tutari (TL)", f"{car.get('tramer_amount', 0):,.0f}"],
+    ]
+    score_table = Table(score_data, colWidths=[8.5*cm, 8.5*cm])
+    score_table.setStyle(TableStyle([
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+        ('BACKGROUND', (0, 0), (0, -1), colors.Color(0.1, 0.1, 0.18)),
+        ('TEXTCOLOR', (0, 0), (0, -1), colors.white),
+        ('FONTSIZE', (0, 0), (-1, -1), 11),
+        ('TOPPADDING', (0, 0), (-1, -1), 6),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+        ('LEFTPADDING', (0, 0), (-1, -1), 8),
+    ]))
+    elements.append(score_table)
+    
+    # Notes
+    notes = car.get("expertise_notes", "")
+    if notes:
+        elements.append(Spacer(1, 15))
+        elements.append(Paragraph("EKSPERTIZ NOTLARI", styles['Heading2']))
+        elements.append(Paragraph(notes, styles['Normal']))
+    
+    elements.append(Spacer(1, 30))
+    elements.append(Paragraph(f"Rapor Tarihi: {datetime.now(timezone.utc).strftime('%d.%m.%Y')}", subtitle_style))
+    
+    doc.build(elements)
+    buffer.seek(0)
+    
+    filename = f"ekspertiz_{car.get('plate', 'rapor').replace(' ', '_')}.pdf"
+    return StreamingResponse(
+        buffer,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f"attachment; filename={filename}"}
+    )
+
+# ==================== ENCRYPTION ENDPOINTS ====================
+
+@api_router.post("/encrypt-customer/{customer_id}")
+async def encrypt_customer_data(customer_id: str, current_user: dict = Depends(get_current_user)):
+    customer = await db.customers.find_one({"id": customer_id, "user_id": current_user["user_id"]})
+    if not customer:
+        raise HTTPException(status_code=404, detail="Customer not found")
+    
+    encrypted_fields = {}
+    if customer.get("phone"):
+        encrypted_fields["phone_encrypted"] = encrypt_value(customer["phone"])
+    if customer.get("notes"):
+        encrypted_fields["notes_encrypted"] = encrypt_value(customer["notes"])
+    
+    encrypted_fields["is_encrypted"] = True
+    await db.customers.update_one({"id": customer_id}, {"$set": encrypted_fields})
+    
+    return {"success": True, "message": "Customer data encrypted"}
+
 # Include router
 app.include_router(api_router)
 
