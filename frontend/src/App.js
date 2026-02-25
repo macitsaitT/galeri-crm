@@ -325,6 +325,8 @@ const AppContent = () => {
           {activeView === 'trash' && <TrashPage />}
           
           {activeView === 'settings' && <SettingsPage />}
+          
+          {activeView === 'calendar' && <CalendarPage />}
         </main>
       </div>
 
