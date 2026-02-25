@@ -134,6 +134,12 @@ GET  /api/stats
 - [x] Phone number field in registration form
 - [x] Email verification during registration (MOCKED - code shown on screen)
 - [x] KVKK compliant account deletion feature with 'SİL' confirmation
+- [x] Photo upload via Emergent Object Storage (drag & drop, multi-file)
+- [x] Excel export for Cars, Customers, Transactions (openpyxl)
+- [x] PDF Expertise Report export (reportlab)
+- [x] WhatsApp customer communication links (wa.me)
+- [x] Data encryption for sensitive customer fields (Fernet)
+- [x] Capacitor configuration for native mobile builds (com.aslanbasoto.crm)
 
 ### P1 (High Priority) - Next Phase
 - [ ] Capacitor integration for native mobile apps (Play Store/App Store)
