@@ -22,6 +22,7 @@ const InventoryPage = ({ viewType = 'inventory', onEditCar, onViewCar, onExpense
   const { cars } = useApp();
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('newest');
+  const [exporting, setExporting] = useState(false);
 
   // Filter cars based on view type
   const filteredCars = useMemo(() => {
