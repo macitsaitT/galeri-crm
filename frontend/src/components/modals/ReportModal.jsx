@@ -126,11 +126,10 @@ const buildPrintHTML = ({ title, dateRange, companyName, phone, logoDataUrl, tot
         <p class="report-date">${dateRange}</p>
       </div>
       <div class="company-right">
-        <div>
-          <h2>${companyName}</h2>
-          <p>${phone}</p>
-        </div>
-        ${logoImg}
+        ${logoDataUrl
+          ? `<img src="${logoDataUrl}" style="height:56px;width:auto;object-fit:contain;" />`
+          : `<div><h2>${companyName}</h2><p>${phone}</p></div>`
+        }
       </div>
     </div>
 
