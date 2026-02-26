@@ -276,7 +276,7 @@ ${watermarkHTML}
                 </div>
                 <div className="text-right">
                   <p className="text-[10px] uppercase tracking-wider text-black/60">Fiyat</p>
-                  <p className="text-[26px] font-extrabold text-black">{formatCurrency(selectedCar.sale_price)}</p>
+                  <p className="text-xl sm:text-[26px] font-extrabold text-black">{formatCurrency(selectedCar.sale_price)}</p>
                 </div>
               </div>
 
