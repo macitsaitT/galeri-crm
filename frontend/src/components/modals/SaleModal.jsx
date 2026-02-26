@@ -263,6 +263,7 @@ const SaleModal = ({ isOpen, onClose, car, onConfirmSale }) => {
             </div>
           </form>
         </div>
+        )}
       </DialogContent>
     </Dialog>
   );
