@@ -457,6 +457,7 @@ const ReportModal = ({ isOpen, onClose }) => {
                 )}
               </tbody>
             </table>
+            </div>
           </div>
 
           <div className="flex justify-end mb-8">
