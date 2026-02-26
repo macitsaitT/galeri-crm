@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { FileText, Download, Phone } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { formatCurrency } from '../../utils/helpers';
@@ -10,74 +10,79 @@ import {
   DialogTitle,
 } from '../ui/dialog';
 
-const CarBodyDiagram = ({ expertise }) => {
-  const getPartColor = (partId) => {
-    const status = expertise?.parts?.[partId] || 'orijinal';
-    switch (status) {
-      case 'orijinal': return '#22c55e';
-      case 'boyali': return '#eab308';
-      case 'lokal': return '#3b82f6';
-      case 'degisen': return '#ef4444';
-      default: return '#22c55e';
-    }
-  };
-
-  const getPartLabel = (partId) => {
-    const status = expertise?.parts?.[partId] || 'orijinal';
-    switch (status) {
-      case 'orijinal': return 'ORJ';
-      case 'boyali': return 'BOY';
-      case 'lokal': return 'LOK';
-      case 'degisen': return 'DEĞ';
-      default: return 'ORJ';
-    }
-  };
-
-  return (
-    <svg viewBox="0 0 200 350" className="w-full h-auto max-w-[180px]">
-      <rect x="40" y="30" width="120" height="290" rx="20" fill="none" stroke="#666" strokeWidth="2" />
-      <rect x="50" y="40" width="100" height="50" rx="5" fill={getPartColor('kaput')} opacity="0.5" stroke="#666" />
-      <text x="100" y="70" textAnchor="middle" fontSize="10" fill="#333">{getPartLabel('kaput')}</text>
-      <rect x="55" y="95" width="90" height="25" rx="3" fill="#87CEEB" opacity="0.5" stroke="#666" />
-      <rect x="50" y="125" width="100" height="60" rx="3" fill={getPartColor('tavan')} opacity="0.5" stroke="#666" />
-      <text x="100" y="160" textAnchor="middle" fontSize="10" fill="#333">{getPartLabel('tavan')}</text>
-      <rect x="55" y="190" width="90" height="25" rx="3" fill="#87CEEB" opacity="0.5" stroke="#666" />
-      <rect x="50" y="220" width="100" height="50" rx="5" fill={getPartColor('bagaj')} opacity="0.5" stroke="#666" />
-      <text x="100" y="250" textAnchor="middle" fontSize="10" fill="#333">{getPartLabel('bagaj')}</text>
-      <rect x="25" y="50" width="15" height="40" rx="3" fill={getPartColor('sol_on_camurluk')} opacity="0.5" stroke="#666" />
-      <text x="32" y="75" textAnchor="middle" fontSize="7" fill="#333">{getPartLabel('sol_on_camurluk')}</text>
-      <rect x="25" y="95" width="15" height="45" rx="3" fill={getPartColor('sol_on_kapi')} opacity="0.5" stroke="#666" />
-      <text x="32" y="122" textAnchor="middle" fontSize="7" fill="#333">{getPartLabel('sol_on_kapi')}</text>
-      <rect x="25" y="145" width="15" height="45" rx="3" fill={getPartColor('sol_arka_kapi')} opacity="0.5" stroke="#666" />
-      <text x="32" y="172" textAnchor="middle" fontSize="7" fill="#333">{getPartLabel('sol_arka_kapi')}</text>
-      <rect x="25" y="195" width="15" height="55" rx="3" fill={getPartColor('sol_arka_camurluk')} opacity="0.5" stroke="#666" />
-      <text x="32" y="227" textAnchor="middle" fontSize="7" fill="#333">{getPartLabel('sol_arka_camurluk')}</text>
-      <rect x="160" y="50" width="15" height="40" rx="3" fill={getPartColor('sag_on_camurluk')} opacity="0.5" stroke="#666" />
-      <text x="167" y="75" textAnchor="middle" fontSize="7" fill="#333">{getPartLabel('sag_on_camurluk')}</text>
-      <rect x="160" y="95" width="15" height="45" rx="3" fill={getPartColor('sag_on_kapi')} opacity="0.5" stroke="#666" />
-      <text x="167" y="122" textAnchor="middle" fontSize="7" fill="#333">{getPartLabel('sag_on_kapi')}</text>
-      <rect x="160" y="145" width="15" height="45" rx="3" fill={getPartColor('sag_arka_kapi')} opacity="0.5" stroke="#666" />
-      <text x="167" y="172" textAnchor="middle" fontSize="7" fill="#333">{getPartLabel('sag_arka_kapi')}</text>
-      <rect x="160" y="195" width="15" height="55" rx="3" fill={getPartColor('sag_arka_camurluk')} opacity="0.5" stroke="#666" />
-      <text x="167" y="227" textAnchor="middle" fontSize="7" fill="#333">{getPartLabel('sag_arka_camurluk')}</text>
-      <rect x="45" y="275" width="110" height="20" rx="5" fill={getPartColor('on_tampon')} opacity="0.5" stroke="#666" />
-      <text x="100" y="290" textAnchor="middle" fontSize="8" fill="#333">{getPartLabel('on_tampon')}</text>
-      <rect x="45" y="5" width="110" height="20" rx="5" fill={getPartColor('arka_tampon')} opacity="0.5" stroke="#666" />
-      <text x="100" y="20" textAnchor="middle" fontSize="8" fill="#333">{getPartLabel('arka_tampon')}</text>
-    </svg>
-  );
-};
-
 const getLogoUrl = (logoPath) => {
   if (!logoPath) return null;
   if (logoPath.startsWith('http')) return logoPath;
   return fileAPI.getUrl(logoPath);
 };
 
+const getPartColor = (status) => {
+  switch (status) {
+    case 'orijinal': return '#bbf7d0';
+    case 'boyali': return '#fde68a';
+    case 'lokal': return '#bfdbfe';
+    case 'degisen': return '#fecaca';
+    default: return '#bbf7d0';
+  }
+};
+const getPartBorder = (status) => {
+  switch (status) {
+    case 'orijinal': return '#22c55e';
+    case 'boyali': return '#eab308';
+    case 'lokal': return '#3b82f6';
+    case 'degisen': return '#ef4444';
+    default: return '#22c55e';
+  }
+};
+const getPartLabel = (status) => {
+  switch (status) {
+    case 'orijinal': return 'ORJ';
+    case 'boyali': return 'BOY';
+    case 'lokal': return 'LOK';
+    case 'degisen': return 'DEĞ';
+    default: return 'ORJ';
+  }
+};
+
+const TopDownDiagram = ({ expertise }) => {
+  const p = (id) => expertise?.parts?.[id] || 'orijinal';
+  const parts = [
+    { id: 'arka_tampon', x: 30, y: 5, w: 140, h: 22, rx: 8 },
+    { id: 'bagaj', x: 40, y: 30, w: 120, h: 45, rx: 4 },
+    { id: 'sol_arka_camurluk', x: 12, y: 30, w: 25, h: 55, rx: 4 },
+    { id: 'sag_arka_camurluk', x: 163, y: 30, w: 25, h: 55, rx: 4 },
+    { id: 'sol_arka_kapi', x: 12, y: 90, w: 25, h: 50, rx: 4 },
+    { id: 'sag_arka_kapi', x: 163, y: 90, w: 25, h: 50, rx: 4 },
+    { id: 'tavan', x: 40, y: 80, w: 120, h: 90, rx: 4 },
+    { id: 'sol_on_kapi', x: 12, y: 145, w: 25, h: 50, rx: 4 },
+    { id: 'sag_on_kapi', x: 163, y: 145, w: 25, h: 50, rx: 4 },
+    { id: 'sol_on_camurluk', x: 12, y: 200, w: 25, h: 50, rx: 4 },
+    { id: 'sag_on_camurluk', x: 163, y: 200, w: 25, h: 50, rx: 4 },
+    { id: 'kaput', x: 40, y: 175, w: 120, h: 55, rx: 4 },
+    { id: 'on_tampon', x: 30, y: 235, w: 140, h: 22, rx: 8 },
+  ];
+
+  return (
+    <svg viewBox="0 0 200 265" className="w-full max-w-[200px] mx-auto">
+      <rect x="30" y="25" width="140" height="210" rx="22" fill="none" stroke="#999" strokeWidth="1.5" />
+      <rect x="45" y="77" width="110" height="28" rx="4" fill="#87CEEB" opacity="0.3" stroke="#999" strokeWidth="0.8" />
+      <rect x="45" y="170" width="110" height="28" rx="4" fill="#87CEEB" opacity="0.3" stroke="#999" strokeWidth="0.8" />
+      {parts.map(({ id, x, y, w, h, rx }) => (
+        <g key={id}>
+          <rect x={x} y={y} width={w} height={h} rx={rx}
+            fill={getPartColor(p(id))} stroke={getPartBorder(p(id))} strokeWidth="1.2" />
+          <text x={x + w / 2} y={y + h / 2 + 4} textAnchor="middle"
+            fontSize="8" fontWeight="600" fill="#333">
+            {getPartLabel(p(id))}
+          </text>
+        </g>
+      ))}
+    </svg>
+  );
+};
+
 const PromoCardModal = ({ isOpen, onClose }) => {
   const { user, cars } = useApp();
-  const cardRef = useRef(null);
-
   const activeCars = cars.filter(c => !c.deleted && c.status !== 'Satıldı');
   const [selectedCarId, setSelectedCarId] = useState('');
   const selectedCar = activeCars.find(c => c.id === selectedCarId);
@@ -107,115 +112,123 @@ const PromoCardModal = ({ isOpen, onClose }) => {
   const handleDownloadPDF = async () => {
     if (!selectedCar) return;
     const logoDataUrl = await fetchLogoAsDataUrl();
-
-    const watermarkCSS = logoDataUrl ? `
-      .watermark { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.06; z-index: 0; pointer-events: none; }
-      .watermark img { width: 350px; height: auto; }
-    ` : '';
-    const watermarkHTML = logoDataUrl ? `<div class="watermark"><img src="${logoDataUrl}" /></div>` : '';
-    const logoImg = logoDataUrl ? `<img src="${logoDataUrl}" style="height:40px;width:auto;margin-left:10px;vertical-align:middle;" />` : '';
-
     const mechMotor = selectedCar.expertise?.mechanical?.motor || 'Orijinal';
     const mechSanziman = selectedCar.expertise?.mechanical?.sanziman || 'Orijinal';
     const mechYuruyen = selectedCar.expertise?.mechanical?.yuruyen || 'Orijinal';
 
-    const printWindow = window.open('', '_blank');
-    printWindow.document.write(`<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>Tanıtım Kartı - ${selectedCar.plate}</title>
-  <style>
-    @page { margin: 15mm; }
-    * { box-sizing: border-box; }
-    body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 0; color: #222; }
-    ${watermarkCSS}
-    .content { position: relative; z-index: 1; max-width: 600px; margin: 0 auto; border: 1.5px solid #ddd; border-radius: 12px; overflow: hidden; }
-    .page-header { text-align: center; font-size: 11px; color: #666; padding: 10px 0; display: flex; justify-content: space-between; max-width: 600px; margin: 0 auto 10px; }
-    .card-header { background: #1a1a1a; color: white; padding: 18px 24px; text-align: center; }
-    .card-header h1 { margin: 0; font-size: 22px; font-weight: 800; letter-spacing: 1px; display: inline-flex; align-items: center; gap: 10px; }
-    .card-header p { margin: 4px 0 0; color: #d4a030; font-size: 12px; letter-spacing: 2px; }
-    .car-info { background: #d4a030; padding: 18px 24px; display: flex; justify-content: space-between; align-items: center; }
-    .car-info h2 { margin: 0; font-size: 26px; font-weight: 800; }
-    .car-info .sub { font-size: 16px; margin-top: 2px; }
-    .car-info .year { font-size: 14px; color: #333; }
-    .car-info .price-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; }
-    .car-info .price-value { font-size: 26px; font-weight: 800; }
-    .specs { display: flex; justify-content: space-around; padding: 14px 20px; background: #f7f7f7; border-bottom: 1px solid #eee; }
-    .spec { text-align: center; }
-    .spec-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.5px; color: #888; }
-    .spec-value { font-size: 13px; font-weight: 700; }
-    .body-section { padding: 20px 24px; }
-    .body-section h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #888; margin: 0 0 8px; }
-    .body-section p { font-size: 13px; color: #555; line-height: 1.5; }
-    .mech-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #f0f0f0; font-size: 13px; }
-    .mech-row .label { color: #888; }
-    .mech-row .val { font-weight: 600; }
-    .contact { background: #f7f7f7; padding: 14px 24px; text-align: center; border-top: 1px solid #eee; }
-    .contact .phone { font-size: 18px; font-weight: 700; }
-  </style>
-</head>
-<body>
-  ${watermarkHTML}
-  <div class="page-header">
-    <span>${new Date().toLocaleDateString('tr-TR')}</span>
-    <span style="font-weight:600;">Tanıtım Kartı - ${companyName}</span>
-    <span></span>
+    const buildSvg = () => {
+      const parts = [
+        { id: 'arka_tampon', x: 30, y: 5, w: 140, h: 22, rx: 8 },
+        { id: 'bagaj', x: 40, y: 30, w: 120, h: 45, rx: 4 },
+        { id: 'sol_arka_camurluk', x: 12, y: 30, w: 25, h: 55, rx: 4 },
+        { id: 'sag_arka_camurluk', x: 163, y: 30, w: 25, h: 55, rx: 4 },
+        { id: 'sol_arka_kapi', x: 12, y: 90, w: 25, h: 50, rx: 4 },
+        { id: 'sag_arka_kapi', x: 163, y: 90, w: 25, h: 50, rx: 4 },
+        { id: 'tavan', x: 40, y: 80, w: 120, h: 90, rx: 4 },
+        { id: 'sol_on_kapi', x: 12, y: 145, w: 25, h: 50, rx: 4 },
+        { id: 'sag_on_kapi', x: 163, y: 145, w: 25, h: 50, rx: 4 },
+        { id: 'sol_on_camurluk', x: 12, y: 200, w: 25, h: 50, rx: 4 },
+        { id: 'sag_on_camurluk', x: 163, y: 200, w: 25, h: 50, rx: 4 },
+        { id: 'kaput', x: 40, y: 175, w: 120, h: 55, rx: 4 },
+        { id: 'on_tampon', x: 30, y: 235, w: 140, h: 22, rx: 8 },
+      ];
+      const p = (id) => selectedCar.expertise?.parts?.[id] || 'orijinal';
+      const rects = parts.map(({ id, x, y, w, h, rx }) =>
+        `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="${getPartColor(p(id))}" stroke="${getPartBorder(p(id))}" stroke-width="1.2"/>
+         <text x="${x + w / 2}" y="${y + h / 2 + 4}" text-anchor="middle" font-size="8" font-weight="600" fill="#333">${getPartLabel(p(id))}</text>`
+      ).join('');
+      return `<svg viewBox="0 0 200 265" width="220" xmlns="http://www.w3.org/2000/svg">
+        <rect x="30" y="25" width="140" height="210" rx="22" fill="none" stroke="#999" stroke-width="1.5"/>
+        <rect x="45" y="77" width="110" height="28" rx="4" fill="#87CEEB" opacity="0.3" stroke="#999" stroke-width="0.8"/>
+        <rect x="45" y="170" width="110" height="28" rx="4" fill="#87CEEB" opacity="0.3" stroke="#999" stroke-width="0.8"/>
+        ${rects}
+      </svg>`;
+    };
+
+    const watermarkCSS = logoDataUrl ? `.watermark{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);opacity:0.06;z-index:0;pointer-events:none;}.watermark img{width:350px;height:auto;}` : '';
+    const watermarkHTML = logoDataUrl ? `<div class="watermark"><img src="${logoDataUrl}"/></div>` : '';
+    const logoHeader = logoDataUrl ? `<img src="${logoDataUrl}" style="height:36px;width:auto;margin-left:10px;vertical-align:middle;"/>` : '';
+
+    const w = window.open('', '_blank');
+    w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Tanıtım Kartı - ${selectedCar.plate}</title>
+<style>
+@page{margin:15mm;}*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'Segoe UI',Arial,sans-serif;color:#222;}
+${watermarkCSS}
+.content{position:relative;z-index:1;max-width:560px;margin:20px auto;border:1.5px solid #ddd;border-radius:4px;overflow:hidden;background:#fff;}
+.card-head{background:#111;color:#fff;padding:18px 24px;text-align:center;}
+.card-head h1{font-size:22px;font-weight:800;letter-spacing:1px;display:inline;vertical-align:middle;}
+.card-head .sub{color:#d4a030;font-size:11px;letter-spacing:3px;margin-top:4px;}
+.gold{background:#d4a030;padding:18px 24px;display:flex;justify-content:space-between;align-items:center;}
+.gold h2{font-size:26px;font-weight:800;margin:0;}
+.gold .mdl{font-size:16px;font-weight:700;margin-top:2px;}
+.gold .yr{font-size:14px;color:#333;}
+.gold .pr-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;text-align:right;}
+.gold .pr-val{font-size:26px;font-weight:800;text-align:right;}
+.specs{display:flex;background:#f5f5f5;border-bottom:1px solid #ddd;}
+.spec{flex:1;text-align:center;padding:10px 6px;border-right:1px solid #ddd;}
+.spec:last-child{border-right:none;}
+.spec .lbl{font-size:9px;text-transform:uppercase;letter-spacing:0.5px;color:#888;margin-bottom:4px;}
+.spec .val{font-size:13px;font-weight:700;}
+.body-row{display:flex;min-height:280px;}
+.body-left{flex:1;padding:20px 24px;border-right:1px solid #ddd;}
+.body-right{width:240px;padding:16px;}
+.body-left h4{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#555;margin-bottom:8px;border-bottom:1px solid #eee;padding-bottom:4px;}
+.body-left p{font-size:12px;color:#555;line-height:1.6;margin-bottom:16px;}
+.mech .row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f0f0f0;font-size:12px;}
+.mech .row .l{color:#666;}
+.mech .row .v{font-weight:600;}
+.footer{background:#f5f5f5;padding:14px;text-align:center;border-top:1px solid #ddd;}
+.footer .ft{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:#888;margin-bottom:4px;}
+.footer .ph{font-size:18px;font-weight:700;}
+</style></head><body>
+${watermarkHTML}
+<div class="content">
+  <div class="card-head"><h1>${companyName} ${logoHeader}</h1><div class="sub">GALERİ SAHİBİ</div></div>
+  <div class="gold">
+    <div><h2>${selectedCar.brand?.toUpperCase()}</h2><div class="mdl">${selectedCar.model?.toUpperCase()} ${selectedCar.vehicle_type?.toUpperCase() || ''}</div><div class="yr">${selectedCar.year}</div></div>
+    <div><div class="pr-label">Fiyat</div><div class="pr-val">${formatCurrency(selectedCar.sale_price)}</div></div>
   </div>
-  <div class="content">
-    <div class="card-header">
-      <h1>${companyName} ${logoImg}</h1>
-      <p>GALERİ SAHİBİ</p>
-    </div>
-    <div class="car-info">
-      <div>
-        <h2>${selectedCar.brand?.toUpperCase()}</h2>
-        <div class="sub">${selectedCar.model?.toUpperCase()} ${selectedCar.vehicle_type?.toUpperCase() || ''}</div>
-        <div class="year">${selectedCar.year}</div>
+  <div class="specs">
+    <div class="spec"><div class="lbl">Kilometre</div><div class="val">${selectedCar.km || '0'} KM</div></div>
+    <div class="spec"><div class="lbl">Yakıt</div><div class="val">${selectedCar.fuel_type || '-'}</div></div>
+    <div class="spec"><div class="lbl">Vites</div><div class="val">${selectedCar.gear || '-'}</div></div>
+    <div class="spec"><div class="lbl">Kasa Tipi</div><div class="val">${selectedCar.vehicle_type || '-'}</div></div>
+    <div class="spec"><div class="lbl">Muayene</div><div class="val">${selectedCar.inspection_date ? new Date(selectedCar.inspection_date).toLocaleDateString('tr-TR', { month: '2-digit', year: '2-digit' }) : '-'}</div></div>
+  </div>
+  <div class="body-row">
+    <div class="body-left">
+      <h4>Araç Açıklaması</h4>
+      <p>${selectedCar.description || 'Araç hakkında detaylı bilgi için lütfen satış temsilcimiz ile iletişime geçiniz. Araçlarımız ekspertiz garantilidir.'}</p>
+      <h4>Mekanik Durum</h4>
+      <div class="mech">
+        <div class="row"><span class="l">MOTOR DURUMU</span><span class="v">${mechMotor}</span></div>
+        <div class="row"><span class="l">ŞANZIMAN DURUMU</span><span class="v">${mechSanziman}</span></div>
+        <div class="row"><span class="l">YÜRÜYEN DURUMU</span><span class="v">${mechYuruyen}</span></div>
       </div>
-      <div style="text-align:right">
-        <div class="price-label">Fiyat</div>
-        <div class="price-value">${formatCurrency(selectedCar.sale_price)}</div>
-      </div>
     </div>
-    <div class="specs">
-      <div class="spec"><div class="spec-label">Kilometre</div><div class="spec-value">${selectedCar.km || '0'} KM</div></div>
-      <div class="spec"><div class="spec-label">Yakıt</div><div class="spec-value">${selectedCar.fuel_type}</div></div>
-      <div class="spec"><div class="spec-label">Vites</div><div class="spec-value">${selectedCar.gear}</div></div>
-      <div class="spec"><div class="spec-label">Kasa Tipi</div><div class="spec-value">${selectedCar.vehicle_type}</div></div>
-      <div class="spec"><div class="spec-label">Muayene</div><div class="spec-value">${selectedCar.inspection_date ? new Date(selectedCar.inspection_date).toLocaleDateString('tr-TR', {month:'2-digit',year:'2-digit'}) : '-'}</div></div>
-    </div>
-    <div class="body-section">
-      <h3>Araç Açıklaması</h3>
-      <p>${selectedCar.description || 'Araç hakkında detaylı bilgi için lütfen satış temsilcimiz ile iletişime geçiniz.'}</p>
-      <h3 style="margin-top:16px">Mekanik Durum</h3>
-      <div class="mech-row"><span class="label">Motor Durumu</span><span class="val">${mechMotor}</span></div>
-      <div class="mech-row"><span class="label">Şanzıman Durumu</span><span class="val">${mechSanziman}</span></div>
-      <div class="mech-row"><span class="label">Yürüyen Durumu</span><span class="val">${mechYuruyen}</span></div>
-    </div>
-    <div class="contact">
-      <div style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">İletişim</div>
-      <div class="phone">${companyPhone}</div>
+    <div class="body-right">
+      <h4 style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#555;margin-bottom:8px;border-bottom:1px solid #eee;padding-bottom:4px;">Kaporta Durum Özeti</h4>
+      ${buildSvg()}
     </div>
   </div>
-</body>
-</html>`);
-    printWindow.document.close();
-    printWindow.onload = () => printWindow.print();
+  <div class="footer"><div class="ft">İletişim</div><div class="ph">${companyPhone}</div></div>
+</div></body></html>`);
+    w.document.close();
+    w.onload = () => w.print();
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+      <DialogContent className="max-w-3xl max-h-[92vh] overflow-hidden flex flex-col" data-testid="promo-card-modal">
         <DialogHeader className="flex-row items-center justify-between pr-10">
           <DialogTitle className="flex items-center gap-2">
-            <FileText size={24} className="text-primary" />
+            <FileText size={22} className="text-primary" />
             Tanıtım Kartı Oluştur
           </DialogTitle>
           <button
             onClick={handleDownloadPDF}
             disabled={!selectedCar}
-            className="px-4 py-2 bg-card border border-border rounded-lg flex items-center gap-2 text-sm font-medium hover:bg-muted transition-colors disabled:opacity-50"
+            className="px-4 py-2 bg-amber-500 text-white rounded-lg flex items-center gap-2 text-sm font-semibold hover:bg-amber-600 transition-colors disabled:opacity-40"
             data-testid="download-promo-pdf-btn"
           >
             <Download size={16} />
@@ -223,70 +236,102 @@ const PromoCardModal = ({ isOpen, onClose }) => {
           </button>
         </DialogHeader>
 
-        <div className="py-4 border-b border-border">
-          <label className="block text-sm font-medium text-muted-foreground mb-2">ARAÇ SEÇİN</label>
+        {/* Car selector */}
+        <div className="py-3 border-b border-border">
+          <label className="block text-[11px] font-semibold text-muted-foreground tracking-wider uppercase mb-1.5">Araç Seçin</label>
           <select
             value={selectedCarId}
             onChange={(e) => setSelectedCarId(e.target.value)}
-            className="w-full h-12 px-4 bg-background border border-border rounded-lg text-sm outline-none focus:border-primary"
+            className="w-full h-11 px-4 bg-background border border-border rounded-lg text-sm outline-none focus:border-primary"
             data-testid="promo-car-select"
           >
             <option value="">Araç seçiniz...</option>
             {activeCars.map((car) => (
               <option key={car.id} value={car.id}>
-                {car.plate?.toUpperCase()} - {car.brand} {car.model} ({car.year})
+                {car.plate?.toUpperCase()} - {car.brand} {car.model} {car.vehicle_type} ({car.year})
               </option>
             ))}
           </select>
         </div>
 
+        {/* Card Preview */}
         <div className="flex-1 overflow-y-auto py-4">
           {selectedCar ? (
-            <div ref={cardRef} className="bg-white rounded-xl overflow-hidden border border-border shadow-lg max-w-lg mx-auto">
-              <div className="bg-[#1a1a1a] text-white py-4 px-6 text-center">
+            <div className="rounded-lg overflow-hidden border border-border shadow-lg max-w-xl mx-auto bg-white text-black">
+              {/* Black header */}
+              <div className="bg-[#111] text-white py-5 px-6 text-center">
                 <div className="flex items-center justify-center gap-3">
-                  <h1 className="text-xl font-bold tracking-wider">{companyName}</h1>
-                  {logoPath && <img src={getLogoUrl(logoPath)} alt="Logo" className="h-8 w-auto object-contain" crossOrigin="anonymous" />}
+                  <h1 className="text-xl font-extrabold tracking-wider">{companyName}</h1>
+                  {logoPath && <img src={getLogoUrl(logoPath)} alt="" className="h-9 w-auto object-contain" crossOrigin="anonymous" />}
                 </div>
-                <p className="text-primary text-sm mt-1">GALERİ SAHİBİ</p>
+                <p className="text-amber-400 text-[11px] tracking-[3px] mt-1">GALERİ SAHİBİ</p>
               </div>
-              <div className="bg-primary py-5 px-6 flex justify-between items-center">
+
+              {/* Gold info band */}
+              <div className="bg-amber-400 py-5 px-6 flex justify-between items-center">
                 <div>
-                  <h2 className="text-2xl font-bold text-primary-foreground">{selectedCar.brand?.toUpperCase()}</h2>
-                  <p className="text-lg font-medium text-primary-foreground/80">{selectedCar.model?.toUpperCase()} {selectedCar.vehicle_type?.toUpperCase()}</p>
-                  <p className="text-primary-foreground/70">{selectedCar.year}</p>
+                  <h2 className="text-[26px] font-extrabold leading-tight text-black">{selectedCar.brand?.toUpperCase()}</h2>
+                  <p className="text-base font-bold text-black">{selectedCar.model?.toUpperCase()} {selectedCar.vehicle_type?.toUpperCase()}</p>
+                  <p className="text-sm text-black/70">{selectedCar.year}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-xs text-primary-foreground/70 uppercase">Fiyat</p>
-                  <p className="text-2xl font-bold text-primary-foreground">{formatCurrency(selectedCar.sale_price)}</p>
+                  <p className="text-[10px] uppercase tracking-wider text-black/60">Fiyat</p>
+                  <p className="text-[26px] font-extrabold text-black">{formatCurrency(selectedCar.sale_price)}</p>
                 </div>
               </div>
-              <div className="grid grid-cols-5 gap-2 px-4 py-3 bg-muted/30 border-b border-border text-center">
-                <div><p className="text-[10px] text-muted-foreground uppercase">Kilometre</p><p className="text-sm font-bold">{selectedCar.km || '0'} KM</p></div>
-                <div><p className="text-[10px] text-muted-foreground uppercase">Yakıt</p><p className="text-sm font-bold">{selectedCar.fuel_type}</p></div>
-                <div><p className="text-[10px] text-muted-foreground uppercase">Vites</p><p className="text-sm font-bold">{selectedCar.gear}</p></div>
-                <div><p className="text-[10px] text-muted-foreground uppercase">Kasa Tipi</p><p className="text-sm font-bold">{selectedCar.vehicle_type}</p></div>
-                <div><p className="text-[10px] text-muted-foreground uppercase">Muayene</p><p className="text-sm font-bold">{selectedCar.inspection_date ? new Date(selectedCar.inspection_date).toLocaleDateString('tr-TR', {month:'2-digit',year:'2-digit'}) : '-'}</p></div>
+
+              {/* Specs row */}
+              <div className="flex bg-[#f5f5f5] border-b border-[#ddd]">
+                {[
+                  { label: 'Kilometre', value: `${selectedCar.km || '0'} KM` },
+                  { label: 'Yakıt', value: selectedCar.fuel_type || '-' },
+                  { label: 'Vites', value: selectedCar.gear || '-' },
+                  { label: 'Kasa Tipi', value: selectedCar.vehicle_type || '-' },
+                  { label: 'Muayene', value: selectedCar.inspection_date ? new Date(selectedCar.inspection_date).toLocaleDateString('tr-TR', { month: '2-digit', year: '2-digit' }) : '-' },
+                ].map((spec, i) => (
+                  <div key={i} className={`flex-1 text-center py-3 px-2 ${i < 4 ? 'border-r border-[#ddd]' : ''}`}>
+                    <p className="text-[9px] uppercase tracking-wider text-gray-500 mb-1">{spec.label}</p>
+                    <p className="text-[13px] font-bold text-black">{spec.value}</p>
+                  </div>
+                ))}
               </div>
-              <div className="flex p-4 gap-4">
-                <div className="flex-1">
-                  <h3 className="text-xs font-bold text-muted-foreground uppercase mb-2">Araç Açıklaması</h3>
-                  <p className="text-sm text-muted-foreground mb-4">{selectedCar.description || 'Araç hakkında detaylı bilgi için lütfen satış temsilcimiz ile iletişime geçiniz.'}</p>
-                  <h3 className="text-xs font-bold text-muted-foreground uppercase mb-2">Mekanik Durum</h3>
-                  <div className="space-y-1">
-                    <div className="flex justify-between text-sm"><span className="text-muted-foreground">MOTOR DURUMU</span><span className="font-medium">{selectedCar.expertise?.mechanical?.motor || 'Orijinal'}</span></div>
-                    <div className="flex justify-between text-sm"><span className="text-muted-foreground">ŞANZIMAN DURUMU</span><span className="font-medium">{selectedCar.expertise?.mechanical?.sanziman || 'Orijinal'}</span></div>
-                    <div className="flex justify-between text-sm"><span className="text-muted-foreground">YÜRÜYEN DURUMU</span><span className="font-medium">{selectedCar.expertise?.mechanical?.yuruyen || 'Orijinal'}</span></div>
+
+              {/* Two-column body */}
+              <div className="flex min-h-[280px]">
+                {/* Left: Description + Mechanical */}
+                <div className="flex-1 p-5 border-r border-[#ddd]">
+                  <h4 className="text-[11px] uppercase tracking-wider text-gray-500 font-semibold mb-2 pb-1 border-b border-[#eee]">Araç Açıklaması</h4>
+                  <p className="text-[12px] text-gray-600 leading-relaxed mb-5">
+                    {selectedCar.description || 'Araç hakkında detaylı bilgi için lütfen satış temsilcimiz ile iletişime geçiniz. Araçlarımız ekspertiz garantilidir.'}
+                  </p>
+                  <h4 className="text-[11px] uppercase tracking-wider text-gray-500 font-semibold mb-2 pb-1 border-b border-[#eee]">Mekanik Durum</h4>
+                  <div className="space-y-0">
+                    {[
+                      { label: 'MOTOR DURUMU', value: selectedCar.expertise?.mechanical?.motor || 'Orijinal' },
+                      { label: 'ŞANZIMAN DURUMU', value: selectedCar.expertise?.mechanical?.sanziman || 'Orijinal' },
+                      { label: 'YÜRÜYEN DURUMU', value: selectedCar.expertise?.mechanical?.yuruyen || 'Orijinal' },
+                    ].map((m, i) => (
+                      <div key={i} className="flex justify-between py-1.5 border-b border-[#f0f0f0] text-[12px]">
+                        <span className="text-gray-500">{m.label}</span>
+                        <span className="font-semibold text-black">{m.value}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
-                <div className="w-44">
-                  <h3 className="text-xs font-bold text-muted-foreground uppercase mb-2 text-center">Kaporta Durum Özeti</h3>
-                  <CarBodyDiagram expertise={selectedCar.expertise} />
+
+                {/* Right: Body Diagram */}
+                <div className="w-[240px] p-4">
+                  <h4 className="text-[11px] uppercase tracking-wider text-gray-500 font-semibold mb-2 pb-1 border-b border-[#eee]">Kaporta Durum Özeti</h4>
+                  <TopDownDiagram expertise={selectedCar.expertise} />
                 </div>
               </div>
-              <div className="bg-muted/30 py-4 px-6 text-center border-t border-border">
-                <p className="text-xs text-muted-foreground uppercase mb-1">İletişim</p>
-                <p className="text-lg font-bold flex items-center justify-center gap-2"><Phone size={18} className="text-primary" />{companyPhone}</p>
+
+              {/* Footer */}
+              <div className="bg-[#f5f5f5] py-4 px-6 text-center border-t border-[#ddd]">
+                <p className="text-[10px] uppercase tracking-[2px] text-gray-500 mb-1">İletişim</p>
+                <p className="text-lg font-bold text-black flex items-center justify-center gap-2">
+                  <Phone size={18} className="text-amber-500" />{companyPhone}
+                </p>
               </div>
             </div>
           ) : (
