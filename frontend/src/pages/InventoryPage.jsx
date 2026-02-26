@@ -18,7 +18,7 @@ const downloadBlob = (blob, filename) => {
   }, 500);
 };
 
-const InventoryPage = ({ viewType = 'inventory', onEditCar, onViewCar, onExpenses, onDeposit, onSale, onDeleteCar }) => {
+const InventoryPage = ({ viewType = 'inventory', onEditCar, onViewCar, onExpenses, onDeposit, onSale, onDeleteCar, onCancelSale }) => {
   const { cars } = useApp();
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('newest');
@@ -169,7 +169,7 @@ const InventoryPage = ({ viewType = 'inventory', onEditCar, onViewCar, onExpense
               onExpenses={onExpenses}
               onDeposit={onDeposit}
               onSale={onSale}
-              showActions={viewType !== 'sold'}
+              onCancelSale={onCancelSale}
             />
           ))}
         </div>
