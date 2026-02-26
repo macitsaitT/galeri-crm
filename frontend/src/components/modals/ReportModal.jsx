@@ -430,7 +430,8 @@ const ReportModal = ({ isOpen, onClose }) => {
 
           <div className="mb-6">
             <h3 className="font-semibold mb-3 border-b border-border pb-2">İşlem Dökümü</h3>
-            <table className="w-full border-collapse">
+            <div className="overflow-x-auto">
+            <table className="w-full border-collapse min-w-[500px]">
               <thead>
                 <tr className="border-b border-border">
                   <th className="text-left p-3 text-sm font-medium text-muted-foreground">Tarih</th>
