@@ -32,6 +32,7 @@ const VehicleCard = ({
   onExpenses, 
   onDeposit, 
   onSale,
+  onCancelSale,
   showActions = true 
 }) => {
   const statusColor = getStatusColor(car.status);
@@ -142,6 +143,16 @@ const VehicleCard = ({
                       Satış Tamamla
                     </DropdownMenuItem>
                   </>
+                )}
+                {car.status === 'Satıldı' && (
+                  <DropdownMenuItem 
+                    onClick={() => onCancelSale?.(car)} 
+                    className="text-amber-500 focus:text-amber-500"
+                    data-testid={`cancel-sale-${car.id}`}
+                  >
+                    <RotateCcw size={16} className="mr-2" />
+                    Satışı İptal Et
+                  </DropdownMenuItem>
                 )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem 
