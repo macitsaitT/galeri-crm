@@ -188,16 +188,23 @@ const FinancePage = () => {
           </div>
           <button
             onClick={async () => {
+              setExporting(true);
               try {
                 const res = await exportAPI.transactions();
                 downloadBlob(new Blob([res.data]), 'islemler.xlsx');
-              } catch (e) { console.error(e); }
+              } catch (e) {
+                console.error(e);
+                alert('Excel indirme hatası: ' + (e.message || 'Bilinmeyen hata'));
+              } finally {
+                setExporting(false);
+              }
             }}
-            className="flex items-center gap-2 px-4 py-2 text-sm bg-background border border-border rounded-lg hover:bg-muted transition-colors"
+            disabled={exporting}
+            className="flex items-center gap-2 px-4 py-2 text-sm bg-background border border-border rounded-lg hover:bg-muted transition-colors disabled:opacity-50"
             data-testid="export-transactions-btn"
           >
-            <Download size={16} />
-            Excel
+            <Download size={16} className={exporting ? 'animate-bounce' : ''} />
+            {exporting ? 'İndiriliyor...' : 'Excel'}
           </button>
         </div>
 
