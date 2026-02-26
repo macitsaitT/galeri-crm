@@ -297,9 +297,9 @@ ${watermarkHTML}
               </div>
 
               {/* Two-column body */}
-              <div className="flex min-h-[280px]">
+              <div className="flex flex-col sm:flex-row sm:min-h-[280px]">
                 {/* Left: Description + Mechanical */}
-                <div className="flex-1 p-5 border-r border-[#ddd]">
+                <div className="flex-1 p-4 sm:p-5 sm:border-r border-b sm:border-b-0 border-[#ddd]">
                   <h4 className="text-[11px] uppercase tracking-wider text-gray-500 font-semibold mb-2 pb-1 border-b border-[#eee]">Araç Açıklaması</h4>
                   <p className="text-[12px] text-gray-600 leading-relaxed mb-5">
                     {selectedCar.description || 'Araç hakkında detaylı bilgi için lütfen satış temsilcimiz ile iletişime geçiniz. Araçlarımız ekspertiz garantilidir.'}
