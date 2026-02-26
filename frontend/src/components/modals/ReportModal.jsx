@@ -412,7 +412,7 @@ const ReportModal = ({ isOpen, onClose }) => {
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-4 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-6">
             <div className="p-4 border border-border rounded-lg text-center" data-testid="report-total-income">
               <p className="text-xs text-muted-foreground uppercase mb-1">Toplam Gelir</p>
               <p className="text-2xl font-bold text-success">{formatCurrency(totals.income)}</p>
