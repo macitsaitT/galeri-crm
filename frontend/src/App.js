@@ -306,7 +306,8 @@ const AppContent = () => {
         {/* Header */}
         <Header 
           title={getViewTitle(activeView)} 
-          onMenuClick={() => setSidebarOpen(true)} 
+          onMenuClick={() => setSidebarOpen(true)}
+          appointments={appointments}
         />
 
         {/* Main Area */}
