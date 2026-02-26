@@ -338,13 +338,13 @@ const ReportModal = ({ isOpen, onClose }) => {
 
         {/* Filters */}
         <div className="space-y-3 py-3 border-b border-border">
-          <div className="flex flex-wrap items-end gap-4">
+          <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-end gap-3">
             <div>
               <span className="text-[11px] font-semibold text-muted-foreground tracking-wider uppercase block mb-1">Tarih Aralığı</span>
               <div className="flex items-center gap-2">
-                <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="h-9 px-3 bg-background border border-border rounded-lg text-sm" data-testid="report-start-date" />
+                <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="h-9 px-2 sm:px-3 bg-background border border-border rounded-lg text-sm flex-1 min-w-0" data-testid="report-start-date" />
                 <span className="text-muted-foreground text-sm">-</span>
-                <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="h-9 px-3 bg-background border border-border rounded-lg text-sm" data-testid="report-end-date" />
+                <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="h-9 px-2 sm:px-3 bg-background border border-border rounded-lg text-sm flex-1 min-w-0" data-testid="report-end-date" />
               </div>
             </div>
             <div>
