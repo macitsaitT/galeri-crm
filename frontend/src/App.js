@@ -359,6 +359,7 @@ const AppContent = () => {
               onDeposit={(car) => setDepositModal({ open: true, car })}
               onSale={(car) => setSaleModal({ open: true, car })}
               onDeleteCar={handleDeleteCar}
+              onCancelSale={handleCancelSale}
             />
           )}
           
