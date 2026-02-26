@@ -55,6 +55,8 @@ const AppContent = () => {
     updateCustomer,
     deleteCustomer,
     addTransaction,
+    deleteTransaction,
+    transactions,
     appointments
   } = useApp();
 
