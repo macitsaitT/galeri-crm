@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../context/AppContext';
-import { Calendar, Plus, Clock, Phone, Car, Trash2, Check, X, ChevronLeft, ChevronRight, MessageCircle } from 'lucide-react';
+import { Calendar, Plus, Clock, Phone, Car, Trash2, Check, X, ChevronLeft, ChevronRight, MessageCircle, BellRing } from 'lucide-react';
 
 const STATUS_CONFIG = {
   'Bekliyor': { bg: 'bg-primary/15', text: 'text-primary', dot: 'bg-primary' },
