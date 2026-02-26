@@ -162,6 +162,7 @@ const CustomersPage = ({ onAddCustomer, onEditCustomer, onDeleteCustomer }) => {
   const { customers, cars } = useApp();
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('all');
+  const [exporting, setExporting] = useState(false);
 
   const filteredCustomers = useMemo(() => {
     let result = customers.filter(c => !c.deleted);
