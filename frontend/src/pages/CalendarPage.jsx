@@ -27,6 +27,7 @@ const CalendarPage = () => {
     time: '10:00',
     notes: '',
     status: 'Bekliyor',
+    reminder_date: '',
   });
 
   const activeCars = cars.filter(c => !c.deleted && c.status !== 'Satıldı');
