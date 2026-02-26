@@ -168,6 +168,11 @@ const AppContent = () => {
   const handleConfirmSale = async ({ carId, price, employeeShare, customerId, saleDate }) => {
     const car = saleModal.car;
     if (!car) return;
+    if (car.status === 'Satıldı') {
+      alert('Bu araç zaten satılmış!');
+      setSaleModal({ open: false, car: null });
+      return;
+    }
 
     // Update car status
     await patchCar(carId, {
