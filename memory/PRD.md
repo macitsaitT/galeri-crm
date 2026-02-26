@@ -21,7 +21,7 @@ Kullanıcı, GitHub'daki mevcut Galeri CRM uygulamasını profesyonelleştirmek 
 - [x] Ekspertiz diagram, fotoğraf yükleme, konsinye/stok
 - [x] Çift satış engelleme (SaleModal guard + App.js guard)
 - [x] Satış/Kapora iptalinde araç durumu otomatik geri dönüşü
-- [x] VehicleCard: durum bazlı koşullu menü öğeleri (Stokta/Kapora Alındı/Satıldı)
+- [x] Satılan araçlarda aksiyon menüsü: Satışı İptal Et, Düzenle, Detay, Ekspertiz PDF, Sil
 
 ### Finans Yönetimi
 - [x] Gelir/Gider takibi, filtreleme, arama
