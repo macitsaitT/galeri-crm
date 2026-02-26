@@ -283,7 +283,7 @@ async def register(user: UserCreate):
     token = create_token(user_id, user.email)
     return {
         "token": token,
-        "user": {"id": user_id, "email": user.email, "company_name": user.company_name, "phone": user.phone},
+        "user": {"id": user_id, "email": user.email, "company_name": user.company_name, "phone": user.phone, "logo_url": "", "address": ""},
         "verification_code": verification_code,
         "requires_verification": True
     }
@@ -344,6 +344,7 @@ async def login(credentials: UserLogin):
             "company_name": user.get("company_name", ""),
             "phone": user.get("phone", ""),
             "address": user.get("address", ""),
+            "logo_url": user.get("logo_url", ""),
             "theme": user.get("theme", "dark")
         }
     }
