@@ -352,7 +352,6 @@ const AppContent = () => {
       <BottomNav
         activeView={activeView}
         setActiveView={setActiveView}
-        onAddClick={handleFabClick}
       />
 
       {/* Modals */}
