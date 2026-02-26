@@ -18,20 +18,20 @@ const getLogoUrl = (logoPath) => {
 
 const getPartColor = (status) => {
   switch (status) {
-    case 'orijinal': return '#bbf7d0';
-    case 'boyali': return '#fde68a';
-    case 'lokal': return '#bfdbfe';
-    case 'degisen': return '#fecaca';
-    default: return '#bbf7d0';
+    case 'orijinal': return '#86efac';
+    case 'boyali': return '#fcd34d';
+    case 'lokal': return '#93c5fd';
+    case 'degisen': return '#fca5a5';
+    default: return '#86efac';
   }
 };
 const getPartBorder = (status) => {
   switch (status) {
-    case 'orijinal': return '#22c55e';
-    case 'boyali': return '#eab308';
-    case 'lokal': return '#3b82f6';
-    case 'degisen': return '#ef4444';
-    default: return '#22c55e';
+    case 'orijinal': return '#16a34a';
+    case 'boyali': return '#ca8a04';
+    case 'lokal': return '#2563eb';
+    case 'degisen': return '#dc2626';
+    default: return '#16a34a';
   }
 };
 const getPartLabel = (status) => {
