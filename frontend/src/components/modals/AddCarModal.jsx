@@ -109,10 +109,6 @@ const PhotoUploadTab = ({ formData, handleChange }) => {
   );
 };
 
-const getPackagesForBrand = (brand) => {
-  if (brand && packageTypes[brand]) return packageTypes[brand];
-  return packageTypes['Genel'] || [];
-};
 import {
   Dialog,
   DialogContent,
