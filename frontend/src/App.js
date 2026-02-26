@@ -285,6 +285,31 @@ const AppContent = () => {
     setDepositModal({ open: false, car: null });
   };
 
+  // Cancel sale handler - revert car status and soft-delete sale transactions
+  const handleCancelSale = async (car) => {
+    if (!car || car.status !== 'Satıldı') return;
+    if (!window.confirm(`${car.brand} ${car.model} satışını iptal etmek istediğinize emin misiniz? Araç tekrar stoğa alınacaktır.`)) return;
+
+    // Determine new status based on deposit
+    const newStatus = (car.deposit_amount && car.deposit_amount > 0) ? 'Kapora Alındı' : 'Stokta';
+
+    // Revert car status
+    await patchCar(car.id, {
+      status: newStatus,
+      sold_date: '',
+      employee_share: 0
+    });
+
+    // Soft-delete all sale-related transactions for this car
+    const saleCategories = ['Araç Satışı', 'Çalışan Payı', 'Araç Sahibine Ödeme'];
+    const relatedTxs = transactions.filter(
+      t => t.car_id === car.id && saleCategories.includes(t.category) && !t.deleted
+    );
+    for (const tx of relatedTxs) {
+      await deleteTransaction(tx.id, false);
+    }
+  };
+
   // FAB handler
   const handleFabClick = () => {
     if (activeView === 'customers') {
