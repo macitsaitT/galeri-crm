@@ -332,6 +332,17 @@ const CalendarPage = () => {
                 </select>
               </div>
               <div>
+                <label className="block text-sm font-medium mb-1.5">Hatırlatma Tarihi</label>
+                <input
+                  type="date"
+                  value={formData.reminder_date}
+                  onChange={(e) => setFormData(p => ({ ...p, reminder_date: e.target.value }))}
+                  className="w-full h-11 px-3 bg-background border border-border rounded-lg text-sm outline-none focus:border-primary"
+                  data-testid="appointment-reminder-date"
+                />
+                <p className="text-[11px] text-muted-foreground mt-1">Bu tarihte bildirim gönderilir</p>
+              </div>
+              <div>
                 <label className="block text-sm font-medium mb-1.5">Notlar</label>
                 <textarea
                   value={formData.notes}
