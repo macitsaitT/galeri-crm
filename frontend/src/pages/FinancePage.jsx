@@ -92,9 +92,50 @@ const FinancePage = () => {
   };
 
   const handleDelete = async (transaction) => {
-    if (window.confirm('Bu işlemi silmek istediğinize emin misiniz?')) {
+    if (window.confirm('Bu işlemi kalıcı olarak silmek istediğinize emin misiniz? İlgili araç durumu geri alınacaktır.')) {
+      // Revert car status before deleting
+      await revertTransactionEffect(transaction);
       await deleteTransaction(transaction.id, true);
     }
+  };
+
+  const handleCancel = async (transaction) => {
+    if (window.confirm('Bu işlemi iptal etmek istediğinize emin misiniz? İlgili araç durumu eski haline döndürülecektir.')) {
+      await revertTransactionEffect(transaction);
+      await deleteTransaction(transaction.id, false);
+    }
+  };
+
+  const revertTransactionEffect = async (tx) => {
+    if (!tx.car_id) return;
+    const car = cars.find(c => c.id === tx.car_id);
+    if (!car) return;
+
+    // Revert sale: car was sold, bring back to stock or deposit status
+    if (tx.category === 'Araç Satışı' && car.status === 'Satıldı') {
+      const newStatus = (car.deposit_amount && car.deposit_amount > 0) ? 'Kapora Alındı' : 'Stokta';
+      await patchCar(tx.car_id, { status: newStatus, sold_date: '', sale_price: car.sale_price || 0 });
+    }
+
+    // Revert deposit: remove deposit from car
+    if (tx.category === 'Kapora' && car.status === 'Kapora Alındı') {
+      await patchCar(tx.car_id, { status: 'Stokta', deposit_amount: 0 });
+    }
+
+    // Revert deposit addition: reduce deposit
+    if (tx.category === 'Kapora Eklemesi' && car.deposit_amount > 0) {
+      const newDeposit = Math.max(0, (car.deposit_amount || 0) - tx.amount);
+      const newStatus = newDeposit > 0 ? 'Kapora Alındı' : 'Stokta';
+      await patchCar(tx.car_id, { status: newStatus, deposit_amount: newDeposit });
+    }
+
+    // Revert deposit refund: restore deposit
+    if (tx.category === 'Kapora İadesi') {
+      await patchCar(tx.car_id, { status: 'Kapora Alındı', deposit_amount: tx.amount });
+    }
+
+    // Revert employee share: just delete the transaction, no car change needed
+    // Revert owner payment: just delete the transaction, no car change needed
   };
 
   return (
