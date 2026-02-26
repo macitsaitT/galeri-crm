@@ -65,11 +65,10 @@ const Header = ({ title, onMenuClick, appointments = [] }) => {
       {/* Right side */}
       <div className="flex items-center gap-3">
         {/* Live Clock */}
-        <div className="hidden md:flex items-center gap-2 text-right mr-2" data-testid="live-clock">
-          <Clock size={16} className="text-primary" />
-          <div className="leading-tight">
-            <p className="text-sm font-semibold tabular-nums">{timeStr}</p>
-            <p className="text-[10px] text-muted-foreground">{dayName}, {dateStr}</p>
+        <div className="hidden md:flex items-center gap-3 mr-2 border-r border-border pr-4" data-testid="live-clock">
+          <div className="text-right leading-tight">
+            <p className="text-2xl font-extrabold tabular-nums tracking-tight text-foreground">{timeStr.slice(0, 5)}</p>
+            <p className="text-[11px] font-semibold tracking-wider text-primary uppercase">{dateStr} {dayName}</p>
           </div>
         </div>
 
