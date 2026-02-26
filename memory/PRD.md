@@ -2,8 +2,8 @@
 
 ## Project Overview
 - **Project Name:** Aslanbaş Oto Galeri CRM
-- **Version:** 2.0.0
-- **Last Updated:** 2024-02-25
+- **Version:** 2.1.0
+- **Last Updated:** 2026-02-26
 - **Status:** MVP Complete - Tüm Orijinal Özellikler Aktif
 
 ## Original Problem Statement
@@ -28,93 +28,83 @@ Kullanıcı, GitHub'daki mevcut Galeri CRM uygulamasını profesyonelleştirmek 
 - [x] Son İşlemler listesi
 - [x] Stok Durumu listesi
 - [x] Raporlar butonu
+- [x] Aylık Gelir/Gider bar chart + Araç Dağılımı donut chart (Recharts)
+- [x] Son 30 gün satış trendi area chart + Marka sıralaması
 
 ### Araç Yönetimi
 - [x] Araç ekleme/düzenleme (4 Sekmeli Form)
-  - [x] Genel Bilgiler (Marka, Model, Yıl, Plaka, KM, Yakıt, Vites, Motor, Paket)
-  - [x] Ekspertiz (13 kaporta parçası durumu + 3 mekanik durum)
-  - [x] Fotoğraflar
-  - [x] Sahiplik/Konsinye (Araç sahibi bilgileri, komisyon oranı)
-- [x] Sigorta başlangıç/bitiş tarihleri
-- [x] Muayene tarihi
-- [x] Stok araç listesi
-- [x] Konsinye araç listesi
-- [x] Satılan araç listesi
+- [x] Ekspertiz (13 kaporta parçası durumu + 3 mekanik durum)
+- [x] Fotoğraflar (Object Storage ile)
+- [x] Sahiplik/Konsinye
+- [x] Sigorta ve muayene tarihleri
+- [x] Stok/Konsinye/Satılan araç listeleri
 
 ### Finansal Özellikler
 - [x] Gelir/Gider listeleme
-- [x] Gider ekleme modal (kategorili)
-- [x] İşlem ekleme modal (Gelir/Gider)
+- [x] Gider/İşlem ekleme modalleri
 - [x] Kapora alma/iade
 - [x] Satış işlemi (çalışan payı dahil)
 
 ### Raporlama
-- [x] Rapor Oluşturucu Modal
+- [x] Rapor Oluşturucu Modal (yeniden tasarlandı - 2026-02-26)
+- [x] İkonlu rapor kapsamı butonları (Genel, İşletme, Stok, Satılan, Kapora, Araç)
+- [x] Araç bazlı rapor filtreleme (Plaka Ara + Araç Seç)
+- [x] Kırmızı PDF butonu + Sarı/Amber Yazdır butonu
 - [x] Tarih aralığı filtreleme
-- [x] Rapor kapsamı filtreleri (Genel, İşletme, Stok, Satılan, Kapora, Araç)
-- [x] PDF indirme
-- [x] Yazdırma
-- [x] Finansal özet (Gelir, Gider, Net Kar)
+- [x] Finansal özet kartları (Gelir, Gider, Net Kâr)
 - [x] İşlem dökümü tablosu
 - [x] İmza alanları
 
 ### Tanıtım Kartı
-- [x] Araç seçimi
-- [x] Profesyonel kart tasarımı
-- [x] Kaporta durum diyagramı (SVG)
-- [x] Mekanik durum özeti
-- [x] Araç özellikleri (KM, Yakıt, Vites, Kasa, Muayene)
+- [x] Araç seçimi ve profesyonel kart tasarımı
 - [x] PDF indirme
 
 ### Müşteri Yönetimi
-- [x] Müşteri listesi
-- [x] Müşteri ekleme/düzenleme
-- [x] Müşteri tipi (Potansiyel, Aktif, Satış Yapıldı)
-- [x] İlgilendiği araç bağlantısı
+- [x] Müşteri CRUD + tipi (Potansiyel, Aktif, Satış Yapıldı)
+- [x] WhatsApp ve SMS linkleri
 
 ### Diğer Özellikler
 - [x] JWT tabanlı kimlik doğrulama
-- [x] Koyu/Açık tema desteği
+- [x] True-black koyu tema
 - [x] Çöp kutusu (soft delete + restore)
 - [x] Responsive tasarım (Desktop + Mobile)
-- [x] PWA manifest
-- [x] Bottom Navigation (mobil)
-- [x] FAB butonu (mobil)
-- [x] Sidebar quick actions (desktop)
+- [x] PWA manifest + Offline Support (Service Worker)
+- [x] Takvim/Randevu sistemi
+- [x] Excel export (Cars, Customers, Transactions)
+- [x] PDF Expertise Report export
+- [x] KVKK uyumlu hesap silme
+- [x] Veri şifreleme (Fernet)
+- [x] Tüm modallar viewport'ta ortalanmış (2026-02-26 düzeltildi)
 
 ## Tech Stack
-- **Frontend:** React 19, TailwindCSS, Radix UI, Lucide Icons
-- **Backend:** FastAPI, Motor (async MongoDB driver)
+- **Frontend:** React 19, TailwindCSS, Radix UI, Lucide Icons, Recharts, react-big-calendar
+- **Backend:** FastAPI, Python, MongoDB (pymongo)
 - **Database:** MongoDB
 - **Authentication:** JWT + bcrypt
-- **Styling:** Custom design system (The Asphalt Suite)
+- **Storage:** Emergent Object Storage
+- **Styling:** Custom dark theme (The Asphalt Suite)
 
 ## API Endpoints
 ```
-POST /api/auth/register
-POST /api/auth/login
-GET  /api/auth/me
+POST /api/auth/register, /api/auth/login, /api/auth/delete-account
+GET  /api/auth/me, /api/auth/verify-email/{token}
 PUT  /api/auth/profile
 
-GET  /api/cars
-POST /api/cars
-PUT  /api/cars/:id
-PATCH /api/cars/:id
-DELETE /api/cars/:id
-POST /api/cars/:id/restore
+GET/POST       /api/vehicles (CRUD)
+PUT/PATCH/DEL  /api/vehicles/:id
+POST           /api/vehicles/:id/restore, /api/vehicles/:id/export-pdf
 
-GET  /api/customers
-POST /api/customers
-PUT  /api/customers/:id
-DELETE /api/customers/:id
-POST /api/customers/:id/restore
+GET/POST       /api/customers (CRUD)
+PUT/DEL        /api/customers/:id
+POST           /api/customers/:id/restore
 
-GET  /api/transactions
-POST /api/transactions
-PUT  /api/transactions/:id
-DELETE /api/transactions/:id
+GET/POST       /api/transactions (CRUD)
+PUT/DEL        /api/transactions/:id
 
-GET  /api/stats
+GET            /api/stats
+GET/POST/PUT/DEL /api/appointments (CRUD)
+POST           /api/upload
+GET            /api/export/{vehicles|customers|transactions}
 ```
 
 ## Test Credentials
@@ -123,50 +113,24 @@ GET  /api/stats
 
 ## Prioritized Backlog
 
-### P0 (Critical) - Done ✅
+### P0 (Critical) - All Done ✅
 - [x] All original features migrated
-- [x] Backend API (MongoDB)
-- [x] Professional UI/UX
-- [x] Mobile responsive design
-- [x] Dynamic chained dropdowns in Add Car form (Brand→Model, Brand→Package, Province→District, Model Year, Engine Types)
-- [x] Visual car expertise diagram with clickable parts (13 parts, 4 statuses: Orijinal/Boyalı/Değişen/Lokal)
-- [x] Ekspertiz Puanı (%), Tramer Kayıt Tutarı (TL), Ekspertiz Notları
-- [x] Phone number field in registration form
-- [x] Email verification during registration (MOCKED - code shown on screen)
-- [x] KVKK compliant account deletion feature with 'SİL' confirmation
-- [x] Photo upload via Emergent Object Storage (drag & drop, multi-file)
-- [x] Excel export for Cars, Customers, Transactions (openpyxl)
-- [x] PDF Expertise Report export (reportlab)
-- [x] WhatsApp customer communication links (wa.me)
-- [x] Data encryption for sensitive customer fields (Fernet)
-- [x] Capacitor configuration for native mobile builds (com.aslanbasoto.crm)
-- [x] Professional expertise SVG+HTML hybrid diagram (13 parts, color-coded, car silhouette)
-- [x] Pure black dark theme (background: #0a0a0a, card: #141414)
-- [x] Dashboard charts: Monthly Gelir/Gider bar chart + Araç Dağılımı donut chart (Recharts)
-- [x] Dashboard: Son 30 gün satış trendi area chart + En çok satan marka sıralaması
-- [x] Calendar/Appointments page: Full CRUD, monthly grid, status flow (Bekliyor→Onaylandı→Tamamlandı)
-- [x] SMS links on customer cards (sms: protocol)
-- [x] Call links on customer cards (tel: protocol)
-- [x] Offline support via Service Worker (API caching, static asset caching, offline fallback)
-- [x] Push notifications for upcoming appointments (browser Notification API)
-
-### P1 (Remaining)
-- [ ] Capacitor native build (APK/IPA)
-- [ ] Real email verification (currently MOCKED)
+- [x] Modal centering fix (viewport-centered, sidebar independent)
+- [x] Report modal redesign with icons, vehicle filter, styled buttons
 
 ### P1 (High Priority) - Next Phase
-- [ ] Capacitor integration for native mobile apps (Play Store/App Store)
-- [ ] Cloudinary integration for photo uploads
-- [ ] WhatsApp integration for customer contact
+- [ ] Multi-user and Role Management (Admin, Salesperson)
+- [ ] Real email verification (currently MOCKED)
+- [ ] Capacitor native build (APK/IPA)
 
 ### P2 (Medium Priority)
-- [ ] Offline support with service worker
-- [ ] Export reports to Excel
-- [ ] Multi-user support with roles
-- [ ] Push notifications
+- [ ] Google Social Login
+- [ ] Backend refactoring (break server.py into routes/models/services)
 
 ### P3 (Low Priority)
 - [ ] AI-powered vehicle valuation
 - [ ] Integration with auto listing sites
-- [ ] SMS notifications
-- [ ] Calendar for test drives
+
+## Mocked Services
+- Email sending (verification) - placeholder
+- Google Authentication - placeholder
