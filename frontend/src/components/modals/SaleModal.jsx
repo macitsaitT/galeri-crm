@@ -59,6 +59,10 @@ const SaleModal = ({ isOpen, onClose, car, onConfirmSale }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!car) return;
+    if (car.status === 'Satıldı') {
+      alert('Bu araç zaten satılmış!');
+      return;
+    }
 
     setLoading(true);
     try {
