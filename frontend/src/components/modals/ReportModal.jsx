@@ -401,12 +401,13 @@ const ReportModal = ({ isOpen, onClose }) => {
               <p className="text-sm text-muted-foreground">{formatDate(startDate)} - {formatDate(endDate)}</p>
             </div>
             <div className="flex items-center gap-3">
-              <div className="text-right">
-                <h3 className="text-xl font-bold">{companyName}</h3>
-                <p className="text-sm text-muted-foreground">{companyPhone}</p>
-              </div>
-              {logoPath && (
-                <img src={getLogoUrl(logoPath)} alt="Logo" className="h-12 w-auto object-contain rounded" crossOrigin="anonymous" />
+              {logoPath ? (
+                <img src={getLogoUrl(logoPath)} alt="Logo" className="h-14 w-auto object-contain rounded" crossOrigin="anonymous" />
+              ) : (
+                <div className="text-right">
+                  <h3 className="text-xl font-bold">{companyName}</h3>
+                  <p className="text-sm text-muted-foreground">{companyPhone}</p>
+                </div>
               )}
             </div>
           </div>
