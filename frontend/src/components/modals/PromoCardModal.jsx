@@ -219,7 +219,7 @@ ${watermarkHTML}
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-3xl max-h-[92vh] overflow-hidden flex flex-col" data-testid="promo-card-modal">
+      <DialogContent className="w-[calc(100vw-1.5rem)] sm:max-w-3xl max-h-[92vh] overflow-hidden flex flex-col" data-testid="promo-card-modal">
         <DialogHeader className="flex-row items-center justify-between pr-10">
           <DialogTitle className="flex items-center gap-2">
             <FileText size={22} className="text-primary" />

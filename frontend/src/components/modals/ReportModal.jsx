@@ -309,7 +309,7 @@ const ReportModal = ({ isOpen, onClose }) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-5xl max-h-[92vh] overflow-hidden flex flex-col" data-testid="report-modal">
+      <DialogContent className="w-[calc(100vw-1.5rem)] sm:max-w-5xl max-h-[92vh] overflow-hidden flex flex-col" data-testid="report-modal">
         {/* Header */}
         <DialogHeader className="flex-row items-center justify-between space-y-0 pb-2 pr-10">
           <DialogTitle className="flex items-center gap-2">
