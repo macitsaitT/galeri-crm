@@ -248,16 +248,23 @@ const CustomersPage = ({ onAddCustomer, onEditCustomer, onDeleteCustomer }) => {
         </div>
         <button
           onClick={async () => {
+            setExporting(true);
             try {
               const res = await exportAPI.customers();
               downloadBlob(new Blob([res.data]), 'musteriler.xlsx');
-            } catch (e) { console.error(e); }
+            } catch (e) {
+              console.error(e);
+              alert('Excel indirme hatası: ' + (e.message || 'Bilinmeyen hata'));
+            } finally {
+              setExporting(false);
+            }
           }}
-          className="flex items-center gap-2 px-4 py-2 text-sm bg-card border border-border rounded-lg hover:bg-muted transition-colors"
+          disabled={exporting}
+          className="flex items-center gap-2 px-4 py-2 text-sm bg-card border border-border rounded-lg hover:bg-muted transition-colors disabled:opacity-50"
           data-testid="export-customers-btn"
         >
-          <Download size={16} />
-          Excel
+          <Download size={16} className={exporting ? 'animate-bounce' : ''} />
+          {exporting ? 'İndiriliyor...' : 'Excel'}
         </button>
       </div>
 
