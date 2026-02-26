@@ -25,18 +25,29 @@ export const checkUpcomingAppointments = (appointments) => {
   const currentMinute = now.getMinutes();
 
   appointments
-    .filter(a => a.date === today && a.status !== 'İptal' && a.status !== 'Tamamlandı')
+    .filter(a => a.status !== 'İptal' && a.status !== 'Tamamlandı')
     .forEach(a => {
-      if (!a.time) return;
-      const [hour, minute] = a.time.split(':').map(Number);
-      const diffMinutes = (hour * 60 + minute) - (currentHour * 60 + currentMinute);
-      
-      if (diffMinutes > 0 && diffMinutes <= 30) {
+      // Reminder date notification
+      if (a.reminder_date === today) {
         sendLocalNotification(
-          'Yaklaşan Randevu',
-          `${a.title} - ${a.time}${a.customer_name ? ` (${a.customer_name})` : ''}`,
-          `appointment-${a.id}`
+          'Randevu Hatırlatma',
+          `${a.title} - ${a.date} ${a.time || ''}${a.customer_name ? ` (${a.customer_name})` : ''}`,
+          `reminder-${a.id}`
         );
+      }
+
+      // Same-day upcoming appointment (within 30 min)
+      if (a.date === today && a.time) {
+        const [hour, minute] = a.time.split(':').map(Number);
+        const diffMinutes = (hour * 60 + minute) - (currentHour * 60 + currentMinute);
+        
+        if (diffMinutes > 0 && diffMinutes <= 30) {
+          sendLocalNotification(
+            'Yaklaşan Randevu',
+            `${a.title} - ${a.time}${a.customer_name ? ` (${a.customer_name})` : ''}`,
+            `appointment-${a.id}`
+          );
+        }
       }
     });
 };
