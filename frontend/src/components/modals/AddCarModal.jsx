@@ -309,7 +309,7 @@ const AddCarModal = ({ isOpen, onClose, onSave, editingCar = null }) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
+      <DialogContent className="w-[calc(100vw-1.5rem)] sm:max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
         <DialogHeader className="pb-0">
           <DialogTitle className="flex items-center gap-2">
             <Car size={24} className="text-primary" />
