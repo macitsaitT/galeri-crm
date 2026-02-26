@@ -296,14 +296,25 @@ const FinancePage = () => {
                     </p>
                   </div>
 
-                  {/* Delete */}
-                  <button
-                    onClick={() => handleDelete(tx)}
-                    className="p-2 text-muted-foreground hover:text-destructive transition-colors"
-                    data-testid={`delete-tx-${tx.id}`}
-                  >
-                    <Trash2 size={18} />
-                  </button>
+                  {/* Actions */}
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => handleCancel(tx)}
+                      title="İptal Et (Geri Al)"
+                      className="p-1.5 text-muted-foreground hover:text-amber-500 transition-colors"
+                      data-testid={`cancel-tx-${tx.id}`}
+                    >
+                      <RotateCcw size={16} />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(tx)}
+                      title="Kalıcı Sil"
+                      className="p-1.5 text-muted-foreground hover:text-destructive transition-colors"
+                      data-testid={`delete-tx-${tx.id}`}
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
                 </div>
               );
             })}
