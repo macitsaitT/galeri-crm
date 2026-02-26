@@ -213,6 +213,7 @@ const CalendarPage = () => {
                       <span className="flex items-center gap-1"><Clock size={12} /> {app.time}</span>
                       {app.customer_name && <span>{app.customer_name}</span>}
                       {app.car_info && <span className="flex items-center gap-1"><Car size={12} /> {app.car_info}</span>}
+                      {app.reminder_date && <span className="flex items-center gap-1 text-amber-500"><BellRing size={12} /> {app.reminder_date}</span>}
                     </div>
                   </div>
                   <div className="flex items-center gap-1">
