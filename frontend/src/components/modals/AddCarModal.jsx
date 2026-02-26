@@ -396,7 +396,11 @@ const AddCarModal = ({ isOpen, onClose, onSave, editingCar = null }) => {
                   <label className="block text-sm font-medium mb-2">Model</label>
                   <select
                     value={formData.model}
-                    onChange={(e) => handleChange('model', e.target.value)}
+                    onChange={(e) => {
+                      handleChange('model', e.target.value);
+                      handleChange('engine_type', '');
+                      handleChange('package_info', '');
+                    }}
                     className={`w-full h-11 px-3 bg-background border rounded-lg outline-none text-sm ${errors.model ? 'border-destructive' : 'border-border focus:border-primary'}`}
                     data-testid="car-model-select"
                   >
