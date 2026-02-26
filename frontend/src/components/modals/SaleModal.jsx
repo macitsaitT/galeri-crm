@@ -83,6 +83,7 @@ const SaleModal = ({ isOpen, onClose, car, onConfirmSale }) => {
 
   if (!car) return null;
 
+  const isSold = car.status === 'Satıldı';
   const finalPrice = parseNumber(formData.price);
   const deposit = car.deposit_amount || 0;
   const remaining = finalPrice - deposit;
