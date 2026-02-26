@@ -22,8 +22,8 @@ export const formatCurrency = (num) => {
 // Parse formatted number back to number
 export const parseNumber = (str) => {
   if (!str) return 0;
-  const cleaned = String(str).replace(/[^\d.-]/g, '');
-  return parseFloat(cleaned) || 0;
+  const cleaned = String(str).replace(/[^\d]/g, '');
+  return parseInt(cleaned, 10) || 0;
 };
 
 // Format input as user types
