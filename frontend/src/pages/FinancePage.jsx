@@ -28,7 +28,7 @@ const downloadBlob = (blob, filename) => {
 };
 
 const FinancePage = () => {
-  const { transactions, cars, deleteTransaction } = useApp();
+  const { transactions, cars, deleteTransaction, patchCar } = useApp();
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('all');
   const [dateRange, setDateRange] = useState('all');
