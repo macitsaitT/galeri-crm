@@ -32,6 +32,7 @@ const FinancePage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('all');
   const [dateRange, setDateRange] = useState('all');
+  const [exporting, setExporting] = useState(false);
 
   const filteredTransactions = useMemo(() => {
     let result = transactions.filter(t => !t.deleted);
