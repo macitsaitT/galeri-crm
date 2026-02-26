@@ -77,7 +77,7 @@ const CalendarPage = () => {
     
     setFormData({
       title: '', customer_name: '', customer_phone: '', car_id: '', car_info: '',
-      date: selectedDate, time: '10:00', notes: '', status: 'Bekliyor',
+      date: selectedDate, time: '10:00', notes: '', status: 'Bekliyor', reminder_date: '',
     });
     setShowForm(false);
   };
