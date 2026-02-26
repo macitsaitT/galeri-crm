@@ -1,29 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useApp } from '../context/AppContext';
-import { 
-  Settings, 
-  User, 
-  Building, 
-  Phone, 
-  MapPin, 
-  Lock, 
-  Sun, 
+import { fileAPI } from '../services/api';
+import {
+  Settings,
+  User,
+  Building,
+  Phone,
+  MapPin,
+  Lock,
+  Sun,
   Moon,
   Save,
   Eye,
   EyeOff,
   Trash2,
-  AlertTriangle
+  AlertTriangle,
+  ImagePlus,
+  X
 } from 'lucide-react';
+
+const getLogoUrl = (logoPath) => {
+  if (!logoPath) return null;
+  if (logoPath.startsWith('http')) return logoPath;
+  return fileAPI.getUrl(logoPath);
+};
 
 const SettingsPage = () => {
   const { user, updateProfile, deleteAccount, theme, toggleTheme } = useApp();
   const [loading, setLoading] = useState(false);
+  const [logoUploading, setLogoUploading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [success, setSuccess] = useState('');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
-  
+  const fileInputRef = useRef(null);
+
   const [formData, setFormData] = useState({
     company_name: user?.company_name || '',
     phone: user?.phone || '',
@@ -39,17 +50,12 @@ const SettingsPage = () => {
     e.preventDefault();
     setLoading(true);
     setSuccess('');
-
     try {
       const updateData = { ...formData };
-      if (!updateData.password) {
-        delete updateData.password;
-      }
-      
+      if (!updateData.password) delete updateData.password;
       await updateProfile(updateData);
       setSuccess('Ayarlar kaydedildi!');
       setFormData(prev => ({ ...prev, password: '' }));
-      
       setTimeout(() => setSuccess(''), 3000);
     } catch (error) {
       console.error('Error updating profile:', error);
@@ -57,6 +63,51 @@ const SettingsPage = () => {
       setLoading(false);
     }
   };
+
+  const handleLogoUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const allowed = ['image/png', 'image/jpeg', 'image/webp', 'image/gif'];
+    if (!allowed.includes(file.type)) {
+      alert('Sadece resim dosyaları yüklenebilir (PNG, JPG, WEBP)');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Dosya boyutu en fazla 5MB olabilir');
+      return;
+    }
+
+    setLogoUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const response = await fileAPI.upload(formData);
+      const uploadedPath = response.data.path;
+
+      await updateProfile({ logo_url: uploadedPath });
+      setSuccess('Logo başarıyla yüklendi!');
+      setTimeout(() => setSuccess(''), 3000);
+    } catch (error) {
+      console.error('Logo upload error:', error);
+      alert('Logo yüklenirken hata oluştu');
+    } finally {
+      setLogoUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
+  const handleRemoveLogo = async () => {
+    try {
+      await updateProfile({ logo_url: '' });
+      setSuccess('Logo kaldırıldı');
+      setTimeout(() => setSuccess(''), 3000);
+    } catch (error) {
+      console.error('Remove logo error:', error);
+    }
+  };
+
+  const logoUrl = getLogoUrl(user?.logo_url);
 
   return (
     <div className="max-w-2xl mx-auto space-y-6 pb-24 md:pb-6 animate-fade-in">
@@ -72,7 +123,7 @@ const SettingsPage = () => {
       </div>
 
       {success && (
-        <div className="p-4 bg-success/10 border border-success/20 text-success rounded-lg">
+        <div className="p-4 bg-success/10 border border-success/20 text-success rounded-lg" data-testid="settings-success-msg">
           {success}
         </div>
       )}
@@ -101,6 +152,66 @@ const SettingsPage = () => {
             <Moon size={24} className="mx-auto mb-2" />
             <p className="font-medium text-sm">Koyu</p>
           </button>
+        </div>
+      </div>
+
+      {/* Logo Upload */}
+      <div className="bg-card border border-border rounded-xl p-5">
+        <h3 className="font-semibold mb-1">Şirket Logosu</h3>
+        <p className="text-xs text-muted-foreground mb-4">
+          Logo, PDF raporlarında ve yazdırma çıktılarında transparent şekilde kullanılır.
+        </p>
+
+        <div className="flex items-center gap-5">
+          {/* Preview */}
+          {logoUrl ? (
+            <div className="relative group">
+              <div className="w-24 h-24 rounded-xl border-2 border-border overflow-hidden bg-white flex items-center justify-center p-2">
+                <img
+                  src={logoUrl}
+                  alt="Şirket Logosu"
+                  className="max-w-full max-h-full object-contain"
+                  crossOrigin="anonymous"
+                  data-testid="logo-preview"
+                />
+              </div>
+              <button
+                onClick={handleRemoveLogo}
+                className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-destructive text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                data-testid="remove-logo-btn"
+              >
+                <X size={14} />
+              </button>
+            </div>
+          ) : (
+            <div className="w-24 h-24 rounded-xl border-2 border-dashed border-border flex items-center justify-center bg-muted/30">
+              <ImagePlus size={28} className="text-muted-foreground" />
+            </div>
+          )}
+
+          {/* Upload Area */}
+          <div className="flex-1">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/png,image/jpeg,image/webp,image/gif"
+              onChange={handleLogoUpload}
+              className="hidden"
+              data-testid="logo-file-input"
+            />
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              disabled={logoUploading}
+              className="px-5 py-2.5 rounded-lg border border-border bg-background hover:bg-muted transition-colors text-sm font-medium flex items-center gap-2 disabled:opacity-50"
+              data-testid="upload-logo-btn"
+            >
+              <ImagePlus size={16} />
+              {logoUploading ? 'Yükleniyor...' : logoUrl ? 'Logoyu Değiştir' : 'Logo Yükle'}
+            </button>
+            <p className="text-[11px] text-muted-foreground mt-2">
+              PNG, JPG veya WEBP. Maks 5MB. Transparent PNG önerilir.
+            </p>
+          </div>
         </div>
       </div>
 
@@ -203,8 +314,8 @@ const SettingsPage = () => {
 
       {/* App Info */}
       <div className="text-center text-sm text-muted-foreground">
-        <p>Aslanbaş Oto CRM v1.0.0</p>
-        <p className="mt-1">© 2024 Tüm hakları saklıdır.</p>
+        <p>Aslanbaş Oto CRM v2.1.0</p>
+        <p className="mt-1">&copy; 2024 Tüm hakları saklıdır.</p>
       </div>
 
       {/* KVKK - Delete Account */}
@@ -243,11 +354,7 @@ const SettingsPage = () => {
               <button
                 onClick={async () => {
                   if (deleteConfirmText === 'SİL') {
-                    try {
-                      await deleteAccount();
-                    } catch (e) {
-                      console.error('Delete failed:', e);
-                    }
+                    try { await deleteAccount(); } catch (e) { console.error('Delete failed:', e); }
                   }
                 }}
                 disabled={deleteConfirmText !== 'SİL'}
