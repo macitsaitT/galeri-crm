@@ -93,7 +93,7 @@ const SaleModal = ({ isOpen, onClose, car, onConfirmSale }) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="w-[calc(100vw-1.5rem)] sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <ShoppingCart size={24} className="text-success" />
@@ -101,6 +101,12 @@ const SaleModal = ({ isOpen, onClose, car, onConfirmSale }) => {
           </DialogTitle>
         </DialogHeader>
 
+        {isSold ? (
+          <div className="py-8 text-center">
+            <p className="text-destructive font-semibold mb-2">Bu araç zaten satılmış!</p>
+            <p className="text-sm text-muted-foreground">Satış kaydını geri almak için Gelir & Gider sayfasından iptal edin.</p>
+          </div>
+        ) : (
         <div className="mt-4">
           {/* Car Info */}
           <div className="p-4 bg-muted/50 rounded-lg mb-6">
