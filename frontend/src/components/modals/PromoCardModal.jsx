@@ -320,7 +320,7 @@ ${watermarkHTML}
                 </div>
 
                 {/* Right: Body Diagram */}
-                <div className="w-[240px] p-4">
+                <div className="w-full sm:w-[240px] p-4">
                   <h4 className="text-[11px] uppercase tracking-wider text-gray-500 font-semibold mb-2 pb-1 border-b border-[#eee]">Kaporta Durum Özeti</h4>
                   <TopDownDiagram expertise={selectedCar.expertise} />
                 </div>
