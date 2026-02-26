@@ -268,10 +268,10 @@ ${watermarkHTML}
               </div>
 
               {/* Gold info band */}
-              <div className="bg-amber-400 py-5 px-6 flex justify-between items-center">
+              <div className="bg-amber-400 py-4 sm:py-5 px-4 sm:px-6 flex justify-between items-center">
                 <div>
-                  <h2 className="text-[26px] font-extrabold leading-tight text-black">{selectedCar.brand?.toUpperCase()}</h2>
-                  <p className="text-base font-bold text-black">{selectedCar.model?.toUpperCase()} {selectedCar.vehicle_type?.toUpperCase()}</p>
+                  <h2 className="text-xl sm:text-[26px] font-extrabold leading-tight text-black">{selectedCar.brand?.toUpperCase()}</h2>
+                  <p className="text-sm sm:text-base font-bold text-black">{selectedCar.model?.toUpperCase()} {selectedCar.vehicle_type?.toUpperCase()}</p>
                   <p className="text-sm text-black/70">{selectedCar.year}</p>
                 </div>
                 <div className="text-right">
