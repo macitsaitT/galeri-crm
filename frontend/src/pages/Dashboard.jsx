@@ -46,8 +46,8 @@ const StatCard = ({ title, value, icon: Icon, color = 'default', className = '' 
           <p className="text-[10px] text-muted-foreground uppercase font-medium mb-1 truncate">{title}</p>
           <p className="font-heading font-bold text-lg sm:text-2xl tabular-nums truncate">{value}</p>
         </div>
-        <div className={`p-3 rounded-lg bg-background/50 ${iconColors[color]}`}>
-          <Icon size={24} />
+        <div className={`p-2 sm:p-3 rounded-lg bg-background/50 ${iconColors[color]}`}>
+          <Icon size={20} className="sm:w-6 sm:h-6" />
         </div>
       </div>
     </div>
