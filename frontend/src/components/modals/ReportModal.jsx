@@ -349,7 +349,7 @@ const ReportModal = ({ isOpen, onClose }) => {
             </div>
             <div>
               <span className="text-[11px] font-semibold text-muted-foreground tracking-wider uppercase block mb-1">Rapor Kapsamı</span>
-              <div className="flex gap-1">
+              <div className="flex flex-wrap gap-1">
                 {reportTypes.map((type) => {
                   const Icon = type.icon;
                   return (
