@@ -299,7 +299,9 @@ const AddCarModal = ({ isOpen, onClose, onSave, editingCar = null }) => {
   };
 
   const availableModels = carModels[formData.brand] || [];
-  const availablePackages = getPackagesForBrand(formData.brand);
+  const modelEngines = getEnginesForModel(formData.brand, formData.model);
+  const availableEngines = modelEngines || engineTypes;
+  const availablePackages = getPackagesForModel(formData.brand, formData.model);
   const availableDistricts = getDistrictsByProvince(formData.province);
 
   const tabs = [
