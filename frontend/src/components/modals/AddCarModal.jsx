@@ -635,7 +635,7 @@ const AddCarModal = ({ isOpen, onClose, onSave, editingCar = null }) => {
               </div>
 
               {/* Mechanical Parts */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 {mechanicalParts.map((part) => (
                   <div key={part.id}>
                     <label className="block text-sm font-medium mb-2">{part.name}</label>
@@ -666,7 +666,7 @@ const AddCarModal = ({ isOpen, onClose, onSave, editingCar = null }) => {
               </div>
 
               {/* Tramer */}
-              <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-lg">
+              <div className="p-3 sm:p-4 bg-amber-500/10 border border-amber-500/30 rounded-lg">
                 <label className="block text-sm font-medium mb-2 text-amber-400">Tramer Kayıt Tutarı (TL)</label>
                 <input
                   type="text"
@@ -702,7 +702,7 @@ const AddCarModal = ({ isOpen, onClose, onSave, editingCar = null }) => {
           {activeTab === 'ownership' && (
             <div className="space-y-6 py-4">
               {/* Ownership Type */}
-              <div className="flex gap-4">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                 <label className="flex-1">
                   <input
                     type="radio"
