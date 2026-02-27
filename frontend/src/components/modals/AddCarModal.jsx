@@ -461,7 +461,7 @@ const AddCarModal = ({ isOpen, onClose, onSave, editingCar = null }) => {
               </div>
 
               {/* Basic Info Row 3 */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-2">Motor</label>
                   <select
@@ -493,7 +493,7 @@ const AddCarModal = ({ isOpen, onClose, onSave, editingCar = null }) => {
               </div>
 
               {/* Muayene Tarihi */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-2">Muayene Tarihi</label>
                   <input
@@ -520,7 +520,7 @@ const AddCarModal = ({ isOpen, onClose, onSave, editingCar = null }) => {
               </div>
 
               {/* İl / İlçe */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-2">İl</label>
                   <select
@@ -556,8 +556,8 @@ const AddCarModal = ({ isOpen, onClose, onSave, editingCar = null }) => {
               </div>
 
               {/* Insurance Dates */}
-              <div className="p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg">
-                <div className="grid grid-cols-2 gap-4">
+              <div className="p-3 sm:p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <div>
                     <label className="block text-sm font-medium mb-2 text-blue-400">Sigorta Başlangıç Tarihi</label>
                     <input
@@ -582,8 +582,8 @@ const AddCarModal = ({ isOpen, onClose, onSave, editingCar = null }) => {
               </div>
 
               {/* Prices */}
-              <div className="p-4 bg-destructive/10 border border-destructive/30 rounded-lg">
-                <div className="grid grid-cols-2 gap-4">
+              <div className="p-3 sm:p-4 bg-destructive/10 border border-destructive/30 rounded-lg">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <div>
                     <label className="block text-sm font-medium mb-2 text-destructive">Alış Fiyatı *</label>
                     <input
