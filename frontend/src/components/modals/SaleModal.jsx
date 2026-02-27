@@ -243,11 +243,11 @@ const SaleModal = ({ isOpen, onClose, car, onConfirmSale }) => {
               </div>
             </div>
 
-            <div className="flex justify-end gap-3 pt-4 border-t border-border">
+            <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 sm:gap-3 pt-4 border-t border-border">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-6 py-3 rounded-lg border border-border text-muted-foreground hover:bg-muted transition-colors"
+                className="px-4 sm:px-6 py-3 rounded-lg border border-border text-muted-foreground hover:bg-muted transition-colors text-sm"
                 data-testid="cancel-sale-btn"
               >
                 İptal
@@ -255,7 +255,7 @@ const SaleModal = ({ isOpen, onClose, car, onConfirmSale }) => {
               <button
                 type="submit"
                 disabled={loading}
-                className="px-6 py-3 rounded-lg bg-success text-success-foreground font-semibold shadow-lg hover:shadow-xl transition-all active:scale-95 disabled:opacity-50"
+                className="px-4 sm:px-6 py-3 rounded-lg bg-success text-success-foreground font-semibold shadow-lg hover:shadow-xl transition-all active:scale-95 disabled:opacity-50 text-sm"
                 data-testid="confirm-sale-btn"
               >
                 {loading ? 'İşleniyor...' : 'Satışı Onayla'}
