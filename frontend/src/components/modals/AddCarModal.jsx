@@ -712,9 +712,9 @@ const AddCarModal = ({ isOpen, onClose, onSave, editingCar = null }) => {
                     onChange={() => handleChange('ownership', 'stock')}
                     className="sr-only peer"
                   />
-                  <div className="p-6 rounded-xl border-2 border-border peer-checked:border-primary peer-checked:bg-primary/10 cursor-pointer transition-all text-center">
-                    <Car size={32} className="mx-auto mb-2" />
-                    <p className="font-semibold">Stok Araç</p>
+                  <div className="p-4 sm:p-6 rounded-xl border-2 border-border peer-checked:border-primary peer-checked:bg-primary/10 cursor-pointer transition-all text-center">
+                    <Car size={28} className="mx-auto mb-2" />
+                    <p className="font-semibold text-sm sm:text-base">Stok Araç</p>
                     <p className="text-xs text-muted-foreground mt-1">Galeriye ait araç</p>
                   </div>
                 </label>
@@ -727,9 +727,9 @@ const AddCarModal = ({ isOpen, onClose, onSave, editingCar = null }) => {
                     onChange={() => handleChange('ownership', 'consignment')}
                     className="sr-only peer"
                   />
-                  <div className="p-6 rounded-xl border-2 border-border peer-checked:border-primary peer-checked:bg-primary/10 cursor-pointer transition-all text-center">
-                    <Users size={32} className="mx-auto mb-2" />
-                    <p className="font-semibold">Konsinye</p>
+                  <div className="p-4 sm:p-6 rounded-xl border-2 border-border peer-checked:border-primary peer-checked:bg-primary/10 cursor-pointer transition-all text-center">
+                    <Users size={28} className="mx-auto mb-2" />
+                    <p className="font-semibold text-sm sm:text-base">Konsinye</p>
                     <p className="text-xs text-muted-foreground mt-1">Araç sahibine ait</p>
                   </div>
                 </label>
