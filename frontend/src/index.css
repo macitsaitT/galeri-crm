@@ -228,3 +228,20 @@ input[type="number"] {
 .focus-ring {
   @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background;
 }
+
+
+/* Tab label responsive visibility */
+.tab-label-full {
+  display: none;
+}
+.tab-label-short {
+  display: inline;
+}
+@media (min-width: 640px) {
+  .tab-label-full {
+    display: inline;
+  }
+  .tab-label-short {
+    display: none;
+  }
+}
