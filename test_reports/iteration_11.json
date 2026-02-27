@@ -1,5 +1,5 @@
 {
-  "summary": "Mobile responsiveness testing for Turkish Gallery CRM (Aslanbaş Oto). All major mobile UI fixes verified: login/registration work on mobile (390x844), AddCarModal uses 2-column grid on mobile vs 4-column on desktop, tabs show shortened labels on mobile, footer buttons stack vertically on mobile. PromoCardModal specs wrap into 3-column grid and body sections stack vertically. ReportModal type buttons wrap properly. Finance page and Dashboard display correctly on mobile.",
+  "summary": "Mobile responsiveness testing for Turkish Gallery CRM (Aslanbaş Oto). All major mobile UI fixes verified: login/registration work on mobile (390x844), AddCarModal uses 2-column grid on mobile vs 4-column on desktop, tabs show shortened labels on mobile, footer buttons stack vertically on mobile. PromoCardModal specs wrap into 3-column grid and body sections stack vertically. ReportModal type buttons wrap properly. Finance page and Dashboard display correctly on mobile. Fixed tab label CSS for proper responsive display.",
 
   "backend_issues": {
     "critical": [],
@@ -7,14 +7,7 @@
   },
 
   "frontend_issues": {
-    "ui_bugs": [
-      {
-        "component": "AddCarModal tabs",
-        "issue": "Tab labels show both full and abbreviated text on desktop (e.g., 'Genel BilgilerGenel' instead of just 'Genel Bilgiler'). Both spans render due to hidden sm:inline and sm:hidden class conflict.",
-        "selector": "[data-testid^='tab-']",
-        "priority": "LOW"
-      }
-    ],
+    "ui_bugs": [],
     "integration_issues": [],
     "design_issues": []
   },
