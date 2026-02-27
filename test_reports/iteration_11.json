@@ -57,7 +57,7 @@
   "retest_needed": false,
   "should_main_agent_self_test": true,
 
-  "context_for_next_testing_agent": "All mobile responsiveness fixes verified working: 1) Login uses min-h-[100dvh] for mobile keyboard handling 2) AddCarModal grids change from 4→2 cols on mobile (grid-cols-2 sm:grid-cols-4) 3) Tabs show abbreviated labels on mobile via hidden sm:inline spans 4) Footer buttons stack via flex-col-reverse sm:flex-row 5) PromoCardModal specs use grid-cols-3 sm:flex 6) Dialog base uses max-w-[calc(100%-1rem)] on mobile. One minor CSS issue: tab labels show duplicate text on desktop (both full and abbreviated).",
+  "context_for_next_testing_agent": "All mobile responsiveness fixes verified working: 1) Login uses min-h-[100dvh] for mobile keyboard handling 2) AddCarModal grids change from 4→2 cols on mobile (grid-cols-2 sm:grid-cols-4) 3) Tabs show abbreviated labels on mobile via CSS media queries (.tab-label-full, .tab-label-short classes added to index.css) 4) Footer buttons stack via flex-col-reverse sm:flex-row 5) PromoCardModal specs use grid-cols-3 sm:flex 6) Dialog base uses max-w-[calc(100%-1rem)] on mobile. Tab CSS fix applied and verified working.",
 
   "mocked_apis": {
     "Email verification": "MOCKED - verification code displayed on screen",
