@@ -794,11 +794,11 @@ const AddCarModal = ({ isOpen, onClose, onSave, editingCar = null }) => {
         </form>
 
         {/* Actions */}
-        <div className="flex justify-end gap-3 pt-4 border-t border-border mt-4">
+        <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 sm:gap-3 pt-4 border-t border-border mt-4">
           <button
             type="button"
             onClick={onClose}
-            className="px-6 py-3 rounded-lg border border-border text-muted-foreground hover:bg-muted transition-colors"
+            className="px-4 sm:px-6 py-3 rounded-lg border border-border text-muted-foreground hover:bg-muted transition-colors text-sm sm:text-base"
             data-testid="cancel-car-btn"
           >
             İptal
@@ -806,7 +806,7 @@ const AddCarModal = ({ isOpen, onClose, onSave, editingCar = null }) => {
           <button
             onClick={handleSubmit}
             disabled={loading}
-            className="px-6 py-3 rounded-lg bg-foreground text-background font-semibold hover:bg-foreground/90 transition-all active:scale-95 disabled:opacity-50 flex items-center gap-2"
+            className="px-4 sm:px-6 py-3 rounded-lg bg-foreground text-background font-semibold hover:bg-foreground/90 transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2 text-sm sm:text-base"
             data-testid="save-car-btn"
           >
             <FileText size={18} />
