@@ -333,8 +333,8 @@ const AddCarModal = ({ isOpen, onClose, onSave, editingCar = null }) => {
                 data-testid={`tab-${tab.id}`}
               >
                 <Icon size={16} />
-                <span className="hidden sm:block">{tab.label}</span>
-                <span className="block sm:hidden">{tab.label.split(' ')[0].substring(0, 6)}</span>
+                <span className="tab-label-full">{tab.label}</span>
+                <span className="tab-label-short">{tab.label.split(' ')[0].substring(0, 6)}</span>
               </button>
             );
           })}
