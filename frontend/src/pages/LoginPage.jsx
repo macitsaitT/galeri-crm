@@ -88,8 +88,8 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen gradient-asphalt flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-[100dvh] gradient-asphalt flex items-center justify-center p-4 overflow-y-auto">
+      <div className="w-full max-w-md my-auto py-8">
         {/* Logo */}
         <div className="text-center mb-8 animate-fade-in">
           <div className="w-20 h-20 mx-auto rounded-full gradient-gold flex items-center justify-center mb-4 shadow-lg">
