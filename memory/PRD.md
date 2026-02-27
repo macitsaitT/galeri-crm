@@ -3,7 +3,7 @@
 ## Project Overview
 - **Project Name:** Aslanbaş Oto Galeri CRM
 - **Version:** 2.4.0
-- **Last Updated:** 2026-02-26
+- **Last Updated:** 2026-02-27
 - **Status:** MVP Complete - Tüm Özellikler Aktif
 
 ## Original Problem Statement
@@ -22,6 +22,7 @@ Kullanıcı, GitHub'daki mevcut Galeri CRM uygulamasını profesyonelleştirmek 
 - [x] Çift satış engelleme (SaleModal guard + App.js guard)
 - [x] Satış/Kapora iptalinde araç durumu otomatik geri dönüşü
 - [x] Satılan araçlarda aksiyon menüsü: Satışı İptal Et, Düzenle, Detay, Ekspertiz PDF, Sil
+- [x] Kapsamlı mobil responsive tasarım: AddCarModal (2-col grid), PromoCard (3-col specs), Raporlar, LoginPage (dvh fix)
 
 ### Finans Yönetimi
 - [x] Gelir/Gider takibi, filtreleme, arama
