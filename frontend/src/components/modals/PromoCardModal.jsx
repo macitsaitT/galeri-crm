@@ -220,10 +220,10 @@ ${watermarkHTML}
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="w-[calc(100vw-1.5rem)] sm:max-w-3xl max-h-[92vh] overflow-hidden flex flex-col" data-testid="promo-card-modal">
-        <DialogHeader className="flex-row items-center justify-between pr-10">
+        <DialogHeader className="flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-y-0 pr-10">
           <DialogTitle className="flex items-center gap-2">
             <FileText size={22} className="text-primary" />
-            Tanıtım Kartı Oluştur
+            Tanıtım Kartı
           </DialogTitle>
           <button
             onClick={handleDownloadPDF}
