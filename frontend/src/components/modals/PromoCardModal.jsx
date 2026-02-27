@@ -281,7 +281,7 @@ ${watermarkHTML}
               </div>
 
               {/* Specs row */}
-              <div className="flex bg-[#f5f5f5] border-b border-[#ddd]">
+              <div className="grid grid-cols-3 sm:flex bg-[#f5f5f5] border-b border-[#ddd]">
                 {[
                   { label: 'Kilometre', value: `${selectedCar.km || '0'} KM` },
                   { label: 'Yakıt', value: selectedCar.fuel_type || '-' },
@@ -289,9 +289,9 @@ ${watermarkHTML}
                   { label: 'Kasa Tipi', value: selectedCar.vehicle_type || '-' },
                   { label: 'Muayene', value: selectedCar.inspection_date ? new Date(selectedCar.inspection_date).toLocaleDateString('tr-TR', { month: '2-digit', year: '2-digit' }) : '-' },
                 ].map((spec, i) => (
-                  <div key={i} className={`flex-1 text-center py-3 px-2 ${i < 4 ? 'border-r border-[#ddd]' : ''}`}>
-                    <p className="text-[9px] uppercase tracking-wider text-gray-500 mb-1">{spec.label}</p>
-                    <p className="text-[13px] font-bold text-black">{spec.value}</p>
+                  <div key={i} className={`sm:flex-1 text-center py-2.5 sm:py-3 px-1.5 sm:px-2 border-b sm:border-b-0 border-[#ddd] ${i < 4 ? 'sm:border-r' : ''}`}>
+                    <p className="text-[8px] sm:text-[9px] uppercase tracking-wider text-gray-500 mb-0.5 sm:mb-1">{spec.label}</p>
+                    <p className="text-[11px] sm:text-[13px] font-bold text-black">{spec.value}</p>
                   </div>
                 ))}
               </div>
